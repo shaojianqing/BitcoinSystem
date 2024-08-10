@@ -1,7 +1,7 @@
 package sjq.bitcoin.graphics;
 
 import sjq.bitcoin.core.BitcoinCore;
-import sjq.bitcoin.storage.dao.StorageRepo;
+import sjq.bitcoin.storage.StorageRepo;
 
 
 public class GuiSystem {

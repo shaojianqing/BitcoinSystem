@@ -1,4 +1,6 @@
 package sjq.bitcoin.storage.dao.impl;
 
-public class TransactionDaoImpl {
+import sjq.bitcoin.storage.dao.ITransactionDao;
+
+public class TransactionDaoImpl implements ITransactionDao {
 }

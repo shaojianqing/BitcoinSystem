@@ -1,4 +1,6 @@
 package sjq.bitcoin.storage.dao.impl;
 
-public class BlockDaoImpl {
+import sjq.bitcoin.storage.dao.IBlockDao;
+
+public class BlockDaoImpl implements IBlockDao {
 }

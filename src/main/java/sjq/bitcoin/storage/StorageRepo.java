@@ -1,4 +1,4 @@
-package sjq.bitcoin.storage.dao;
+package sjq.bitcoin.storage;
 
 public class StorageRepo {
 

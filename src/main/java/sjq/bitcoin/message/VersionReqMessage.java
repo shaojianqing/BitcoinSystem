@@ -1,6 +1,8 @@
 package sjq.bitcoin.message;
 
-public class VersionMessage implements Message {
+public class VersionReqMessage implements Message {
+
+    public static String COMMAND = "";
 
     public int messageSize() {
         return 0;
@@ -8,5 +10,9 @@ public class VersionMessage implements Message {
 
     public byte[] serialize() {
         return new byte[0];
+    }
+
+    public void deserialize(byte[] data){
+
     }
 }

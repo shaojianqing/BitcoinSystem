@@ -46,4 +46,12 @@ public class PeerNode implements Callback {
     public void connectionClose() {
         manager.disconnectPeerNode(this);
     }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getStatus() {
+        return status;
+    }
 }

@@ -1,6 +1,6 @@
 package sjq.bitcoin.server;
 
-import sjq.bitcoin.storage.dao.StorageRepo;
+import sjq.bitcoin.storage.StorageRepo;
 
 public class APIServer {
 
