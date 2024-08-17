@@ -2,11 +2,16 @@ package sjq.bitcoin.storage;
 
 public class StorageRepo {
 
+    private static StorageRepo Instance;
+
     private StorageRepo() {
 
     }
 
     public static StorageRepo build() {
-        return new StorageRepo();
+        if (Instance == null) {
+            Instance = new StorageRepo();
+        }
+        return Instance;
     }
 }

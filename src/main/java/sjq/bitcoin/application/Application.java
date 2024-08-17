@@ -27,6 +27,7 @@ public class Application {
 
         this.apiServer.setStorageRepo(storageRepo);
         this.guiSystem.setBitcoinCore(bitcoinCore);
+        this.guiSystem.setStorageRepo(storageRepo);
         this.bitcoinCore.setStorageRepo(storageRepo);
     }
 

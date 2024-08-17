@@ -1,13 +1,17 @@
 package sjq.bitcoin.network.client;
 
+import sjq.bitcoin.logger.Logger;
 import sjq.bitcoin.utility.ThreadUtils;
 
 import javax.net.SocketFactory;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetSocketAddress;
-import java.net.Socket;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 
 public class Client implements Runnable {
 
@@ -23,23 +27,31 @@ public class Client implements Runnable {
 
     private InetSocketAddress address;
 
-    private boolean running = false;
+    private AtomicBoolean running = new AtomicBoolean(false);
 
-    public Client(String host, int port, Callback clientCallback) throws IOException {
-        callback = clientCallback;
-        address = new InetSocketAddress(host, port);
-        socket = SocketFactory.getDefault().createSocket();
+    public Client(String host, int port, Callback callback) throws IOException {
+        this.callback = callback;
+        this.address = new InetSocketAddress(host, port);
+        this.socket = SocketFactory.getDefault().createSocket();
     }
 
-    public void startConnection() throws IOException {
-        if (socket.isConnected()) {
-            return;
-        }
+    public void startConnection() {
+        try {
+            if (socket.isConnected()) {
+                return;
+            }
 
-        socket.connect(address, CONNECTION_TIMEOUT);
-        String threadName = String.format("Peer node client thread(%s:%d)",
-                address.getHostName(),address.getPort());
-        ThreadUtils.run(this, threadName);
+            socket.connect(address, CONNECTION_TIMEOUT);
+            running.compareAndSet(false, true);
+            String threadName = String.format("Peer node client thread(%s:%d)", address.getHostName(), address.getPort());
+            ThreadUtils.run(this, threadName);
+            Logger.info("connect to peer successfully, remote peer address:%s, port:%d", address.getAddress(), address.getPort());
+            callback.connectionOpened();
+        } catch (Exception e) {
+            running.compareAndSet(true, false);
+            callback.connectionClose();
+            Logger.error("connect to peer failure, remote peer address:%s, port:%d, error:%s", address.getAddress(), address.getPort(), e);
+        }
     }
 
     public void sendData(byte[] data) throws IOException {
@@ -49,18 +61,25 @@ public class Client implements Runnable {
     }
 
     public void run() {
-        running = true;
-        while(running) {
+        while(running.get()) {
             try {
                 InputStream stream = socket.getInputStream();
                 int length = stream.read(buffer);
+                if (length<=0) {
+                    continue;
+                }
                 byte[] data = new byte[length];
                 System.arraycopy(buffer,0, data, 0,length);
                 callback.receiveData(data);
-            } catch (IOException e) {
-                running = false;
+            } catch (Exception e) {
+                running.compareAndSet(true, false);
                 callback.connectionClose();
+                Logger.error("receive data from peer error:%s", e);
             }
         }
+    }
+
+    public boolean isRunning() {
+        return running.get();
     }
 }

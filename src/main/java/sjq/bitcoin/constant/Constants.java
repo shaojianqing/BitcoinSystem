@@ -4,13 +4,17 @@ public class Constants {
 
     public static final String SYSTEM_NAME = "Bitcoin System by Smith Shao";
 
-    public static final String[] DNS_SEED = {
-            "seed.bitcoin.sipa.be",
-            "dnsseed.bluematt.me",
-            "dnsseed.bitcoin.dashjr.org",
-            "dnsseed.emzy.de",
-            "seed.bitcoin.wiz.biz"};
+    public static final String SYSTEM_USER_AGENT = "/Bitcoin-System(Smith Shao):1.0.0/";
 
+    public static final Integer VERSION_MINIMUM = 70000;
 
+    public static final Integer VERSION_BLOOM_FILTER = 70001;
 
+    public static final Integer VERSION_BLOOM_FILTER_BIP111 = 70011;
+
+    public static final Integer VERSION_WITNESS_VERSION = 70012;
+
+    public static final Integer VERSION_FEEFILTER = 70013;
+
+    public static final Integer VERSION_CURRENT = 70013;
 }

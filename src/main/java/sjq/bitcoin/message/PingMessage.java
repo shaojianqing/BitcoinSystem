@@ -1,19 +1,32 @@
 package sjq.bitcoin.message;
 
-public class PingMessage implements Message {
+import sjq.bitcoin.message.base.BaseMessage;
+import sjq.bitcoin.message.base.Message;
 
-    public static String COMMAND = "";
+import java.io.IOException;
 
+public class PingMessage extends BaseMessage implements Message {
+
+    public static String COMMAND = "ping";
+
+    @Override
     public int messageSize() {
         return 0;
     }
 
-    public byte[] serialize() {
+    @Override
+    protected byte[] serializeMessage() throws IOException {
         return new byte[0];
     }
 
+    @Override
     public void deserialize(byte[] data){
 
+    }
+
+    @Override
+    public String getCommand() {
+        return COMMAND;
     }
 }
 
