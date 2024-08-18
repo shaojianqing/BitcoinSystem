@@ -20,7 +20,7 @@ public class FeeFilterMessage extends BaseMessage implements Message {
     }
 
     @Override
-    public void deserialize(byte[] data){
+    public void deserialize(byte[] data) throws Exception {
 
     }
 

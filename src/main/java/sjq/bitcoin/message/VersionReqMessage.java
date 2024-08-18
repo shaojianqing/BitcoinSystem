@@ -1,5 +1,6 @@
 package sjq.bitcoin.message;
 
+import sjq.bitcoin.constant.Constants;
 import sjq.bitcoin.message.base.BaseMessage;
 import sjq.bitcoin.message.base.Message;
 import sjq.bitcoin.message.data.VariableInteger;
@@ -9,11 +10,17 @@ import sjq.bitcoin.utility.ByteUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+
+import static sjq.bitcoin.constant.Constants.IPV6_LENGTH;
 
 public class VersionReqMessage extends BaseMessage implements Message {
 
     public static String COMMAND = "version";
+
+    private static final int NONCE_LENGTH = 8;
 
     private int clientVersion;
 
@@ -56,8 +63,30 @@ public class VersionReqMessage extends BaseMessage implements Message {
     }
 
     @Override
-    public void deserialize(byte[] data){
+    public void deserialize(byte[] data) throws Exception {
+        ByteBuffer buffer = ByteBuffer.wrap(data);
+        this.clientVersion = (int) ByteUtils.readUint32LE(buffer);
+        this.localServices = Services.read(buffer);
+        this.timestamp = ByteUtils.readInt64LE(buffer);
+        this.receivingServices = Services.read(buffer);
+        byte[] receivingAddressBytes = new byte[IPV6_LENGTH];
+        buffer.get(receivingAddressBytes);
+        InetAddress receivingAddress = InetAddress.getByAddress(receivingAddressBytes);
+        int receivingPort = ByteUtils.readUint16BE(buffer);
+        this.receivingAddress =  new InetSocketAddress(receivingAddress, receivingPort);
+        // Here we just ignore some data fields which is not important.
+        // They are mainly from address and nonce field
+        int skipByteCount = Services.LENGTH + IPV6_LENGTH + Short.BYTES + NONCE_LENGTH;
+        buffer.position(buffer.position() + skipByteCount);
 
+        byte[] userAgentBytes = ByteUtils.readLengthPrefixedBytes(buffer);
+        this.userAgent = new String(userAgentBytes);
+        this.bestBlockHeight = ByteUtils.readInt32LE(buffer);
+        if (clientVersion >= Constants.VERSION_BLOOM_FILTER) {
+            this.relay = (buffer.get() != 0);
+        } else {
+            this.relay = true;
+        }
     }
 
     @Override

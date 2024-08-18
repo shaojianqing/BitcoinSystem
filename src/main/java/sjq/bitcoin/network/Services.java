@@ -1,6 +1,7 @@
 package sjq.bitcoin.network;
 
 import java.nio.BufferOverflowException;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
@@ -44,6 +45,10 @@ public class Services {
 
     public byte[] serialize() {
         return write(ByteBuffer.allocate(LENGTH)).array();
+    }
+
+    public static Services read(ByteBuffer buf) throws BufferUnderflowException {
+        return new Services(buf.order(ByteOrder.LITTLE_ENDIAN).getLong());
     }
 
     @Override

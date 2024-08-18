@@ -17,4 +17,6 @@ public class Constants {
     public static final Integer VERSION_FEEFILTER = 70013;
 
     public static final Integer VERSION_CURRENT = 70013;
+
+    public static final int IPV6_LENGTH = 16;
 }

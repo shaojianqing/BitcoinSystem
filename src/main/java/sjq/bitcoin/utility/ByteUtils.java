@@ -16,6 +16,8 @@
 
 package sjq.bitcoin.utility;
 
+import sjq.bitcoin.message.data.VariableInteger;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
@@ -297,13 +299,41 @@ public class ByteUtils {
     }
 
     /**
+     * Read 2 bytes from the buffer as unsigned 16-bit integer in big endian format.
+     * @param buf buffer to be read from
+     * @throws BufferUnderflowException if the read value extends beyond the remaining bytes of the buffer
+     */
+    public static int readUint16BE(ByteBuffer buf) throws BufferUnderflowException {
+        return Short.toUnsignedInt(buf.order(ByteOrder.BIG_ENDIAN).getShort());
+    }
+
+    /**
+     * Read 4 bytes from the buffer as unsigned 32-bit integer in little endian format.
+     * @param buf buffer to be read from
+     * @throws BufferUnderflowException if the read value extends beyond the remaining bytes of the buffer
+     */
+    public static long readUint32LE(ByteBuffer buf) throws BufferUnderflowException {
+        return Integer.toUnsignedLong(buf.order(ByteOrder.LITTLE_ENDIAN).getInt());
+    }
+
+    /**
      * Read 4 bytes from the byte array (starting at the offset) as signed 32-bit integer in little endian format.
      * @param buf buffer to be read from
      * @return read integer
      * @throws BufferUnderflowException if the read value extends beyond the remaining bytes of the buffer
      */
-    public static int readInt32(ByteBuffer buf) throws BufferUnderflowException {
+    public static int readInt32LE(ByteBuffer buf) throws BufferUnderflowException {
         return buf.order(ByteOrder.LITTLE_ENDIAN).getInt();
+    }
+
+    /**
+     * Read 4 bytes from the byte array (starting at the offset) as signed 32-bit integer in big endian format.
+     * @param buf buffer to be read from
+     * @return read integer
+     * @throws BufferUnderflowException if the read value extends beyond the remaining bytes of the buffer
+     */
+    public static int readInt32BE(ByteBuffer buf) throws BufferUnderflowException {
+        return buf.order(ByteOrder.BIG_ENDIAN).getInt();
     }
 
     /**
@@ -311,7 +341,7 @@ public class ByteUtils {
      * @param buf buffer to be read from
      * @throws BufferUnderflowException if the read value extends beyond the remaining bytes of the buffer
      */
-    public static long readInt64(ByteBuffer buf) throws BufferUnderflowException {
+    public static long readInt64LE(ByteBuffer buf) throws BufferUnderflowException {
         return buf.order(ByteOrder.LITTLE_ENDIAN).getLong();
     }
 
@@ -322,8 +352,23 @@ public class ByteUtils {
      * @throws ArrayIndexOutOfBoundsException if offset points outside of the buffer, or
      *                                        if the read value extends beyond the remaining bytes of the buffer
      */
-    public static long readInt64(byte[] bytes, int offset) throws ArrayIndexOutOfBoundsException {
-        return readInt64(ByteBuffer.wrap(bytes, offset, bytes.length - offset));
+    public static long readInt64LE(byte[] bytes, int offset) throws ArrayIndexOutOfBoundsException {
+        return readInt64LE(ByteBuffer.wrap(bytes, offset, bytes.length - offset));
+    }
+
+    /**
+     * First read a {@link VariableInteger} from the buffer and use it to determine the number of bytes to be read. Then read
+     * that many bytes into the byte array to be returned. This construct is frequently used by Bitcoin protocols.
+     *
+     * @param buf buffer to read from
+     * @return read bytes
+     * @throws BufferUnderflowException if the read value extends beyond the remaining bytes of the buffer
+     */
+    public static byte[] readLengthPrefixedBytes(ByteBuffer buf) throws BufferUnderflowException {
+        VariableInteger length = VariableInteger.read(buf);
+        byte[] bytes = new byte[length.intValue()];
+        buf.get(bytes);
+        return bytes;
     }
 
     /**

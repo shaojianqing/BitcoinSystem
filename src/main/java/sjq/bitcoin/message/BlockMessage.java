@@ -35,16 +35,16 @@ public class BlockMessage extends BaseMessage implements Message {
     }
 
     @Override
-    public void deserialize(byte[] data){
+    public void deserialize(byte[] data) throws Exception {
         ByteBuffer buffer = ByteBuffer.wrap(data);
-        this.version = ByteUtils.readInt32(buffer);
+        this.version = ByteUtils.readInt32LE(buffer);
 
         this.prevBlockHash = Hash.read(buffer);
         this.merkleRoot = Hash.read(buffer);
 
-        this.timestamp = ByteUtils.readInt32(buffer);
-        this.difficulty = ByteUtils.readInt32(buffer);
-        this.nonce = ByteUtils.readInt32(buffer);
+        this.timestamp = ByteUtils.readInt32LE(buffer);
+        this.difficulty = ByteUtils.readInt32LE(buffer);
+        this.nonce = ByteUtils.readInt32LE(buffer);
 
         buffer.rewind();
 

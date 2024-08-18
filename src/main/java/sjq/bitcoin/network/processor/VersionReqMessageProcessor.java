@@ -1,5 +1,6 @@
 package sjq.bitcoin.network.processor;
 
+import sjq.bitcoin.logger.Logger;
 import sjq.bitcoin.message.base.Message;
 import sjq.bitcoin.message.VersionReqMessage;
 import sjq.bitcoin.network.PeerProcessor;
@@ -10,9 +11,7 @@ public class VersionReqMessageProcessor implements PeerProcessor {
     public void processMessage(PeerNode peerNode, Message message) {
         if (message instanceof VersionReqMessage) {
             VersionReqMessage versionReqMessage = (VersionReqMessage)message;
-
-
+            Logger.info("receive version request message:%s", versionReqMessage);
         }
-
     }
 }
