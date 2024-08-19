@@ -10,11 +10,6 @@ public class GetDataMessage extends BaseMessage implements Message {
     public static String COMMAND = "getdata";
 
     @Override
-    public int messageSize() {
-        return 0;
-    }
-
-    @Override
     protected byte[] serializeMessage() throws IOException {
         return new byte[0];
     }

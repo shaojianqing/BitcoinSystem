@@ -94,11 +94,6 @@ public class VersionReqMessage extends BaseMessage implements Message {
         return COMMAND;
     }
 
-    @Override
-    public int messageSize() {
-        return 0;
-    }
-
     public int getClientVersion() {
         return clientVersion;
     }

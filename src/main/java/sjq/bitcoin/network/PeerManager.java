@@ -19,10 +19,13 @@ public class PeerManager {
 
     private List<PeerNode> peerNodeList;
 
+    private Services requiredServices;
+
     private int maxConnectionCount;
 
     private PeerManager(){
         configuration = NetworkConfiguration.getConfiguration();
+        requiredServices = Services.none();
         peerNodeList = new ArrayList<>();
     }
 
@@ -34,7 +37,7 @@ public class PeerManager {
     }
 
     public PeerNode createPeerNode(String address) throws Exception {
-        return new PeerNode(this, address, blockchain.getBestBlockHeight());
+        return new PeerNode(this, address, requiredServices, blockchain.getBestBlockHeight());
     }
 
     public void addPeerNode(PeerNode peerNode) {

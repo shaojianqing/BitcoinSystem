@@ -10,18 +10,12 @@ public class VersionAckMessage extends BaseMessage implements Message {
     public static String COMMAND = "verack";
 
     @Override
-    public int messageSize() {
-        return 0;
-    }
-
-    @Override
     protected byte[] serializeMessage() throws IOException {
         return new byte[0];
     }
 
     @Override
     public void deserialize(byte[] data) throws Exception {
-
     }
 
     @Override

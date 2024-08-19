@@ -24,22 +24,28 @@ public class Services {
 
     public static final int LENGTH = 8;
 
-    private final long definitionBits;
+    private final long definition;
 
     private Services(long bits) {
-        this.definitionBits = bits;
+        this.definition = bits;
     }
 
     public boolean has(long bitmask) {
-        return (definitionBits & bitmask) == bitmask;
+        return (definition & bitmask) == bitmask;
     }
+
+    public boolean has(Services services) {
+        return (definition & services.definition) == services.definition;
+    }
+
+    public boolean any(long bitmask) {return (definition & bitmask) != 0;}
 
     public static Services none() {
         return new Services(0);
     }
 
     public ByteBuffer write(ByteBuffer buf) throws BufferOverflowException {
-        buf.order(ByteOrder.LITTLE_ENDIAN).putLong(definitionBits);
+        buf.order(ByteOrder.LITTLE_ENDIAN).putLong(definition);
         return buf;
     }
 
@@ -55,11 +61,15 @@ public class Services {
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        return this.definitionBits == ((Services) o).definitionBits;
+        return this.definition == ((Services) o).definition;
+    }
+
+    public long getDefinition() {
+        return definition;
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(new Object[]{definitionBits});
+        return Arrays.hashCode(new Object[]{definition});
     }
 }

@@ -24,6 +24,11 @@ public class InventoryItem {
 
     private Hash hash;
 
+    public InventoryItem(int type, Hash hash) {
+        this.type = type;
+        this.hash = hash;
+    }
+
     public int getType() {
         return type;
     }

@@ -31,9 +31,6 @@ public class BlockMessage extends BaseMessage implements Message {
 
     private List<TransactionMessage> transactions;
 
-    public BlockMessage() {
-    }
-
     @Override
     public void deserialize(byte[] data) throws Exception {
         ByteBuffer buffer = ByteBuffer.wrap(data);
@@ -53,12 +50,6 @@ public class BlockMessage extends BaseMessage implements Message {
         this.blockHash = Hash.wrapReversed(blockHashBytes);
 
     }
-
-    @Override
-    public int messageSize() {
-        return 0;
-    }
-
 
     @Override
     protected byte[] serializeMessage() throws IOException {

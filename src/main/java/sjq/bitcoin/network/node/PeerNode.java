@@ -28,14 +28,19 @@ public class PeerNode implements Callback {
 
     private VersionReqMessage versionReqMessage;
 
+    private VersionReqMessage peerVersionReqMessage;
+
+    private Services requiredServices;
+
     private InetSocketAddress address;
 
     private String status;
 
     private Client client;
 
-    public PeerNode(PeerManager manager, String address, int bestBlockHeight) throws IOException {
+    public PeerNode(PeerManager manager, String address, Services requiredServices, int bestBlockHeight) throws IOException {
         this.manager = manager;
+        this.requiredServices = requiredServices;
         this.configuration = NetworkConfiguration.getConfiguration();
         this.address = new InetSocketAddress(address, configuration.getPort());
         this.versionReqMessage = prepareVersionReqMessage(bestBlockHeight);
@@ -91,11 +96,31 @@ public class PeerNode implements Callback {
         return versionReqMessage;
     }
 
+    public VersionReqMessage getVersionReqMessage() {
+        return versionReqMessage;
+    }
+
+    public VersionReqMessage getPeerVersionReqMessage() {
+        return peerVersionReqMessage;
+    }
+
+    public void setPeerVersionReqMessage(VersionReqMessage peerVersionReqMessage) {
+        this.peerVersionReqMessage = peerVersionReqMessage;
+    }
+
+    public Services getRequiredServices() {
+        return requiredServices;
+    }
+
     public InetSocketAddress getAddress() {
         return address;
     }
 
     public String getStatus() {
         return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
