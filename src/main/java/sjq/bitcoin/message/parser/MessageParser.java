@@ -17,6 +17,7 @@ public class MessageParser {
         classMap.put(BloomFilterMessage.COMMAND, BloomFilterMessage.class);
         classMap.put(FeeFilterMessage.COMMAND, FeeFilterMessage.class);
         classMap.put(FilteredBlockMessage.COMMAND, FilteredBlockMessage.class);
+        classMap.put(GetAddressMessage.COMMAND, GetAddressMessage.class);
         classMap.put(GetBlocksMessage.COMMAND, GetBlocksMessage.class);
         classMap.put(GetDataMessage.COMMAND, GetDataMessage.class);
         classMap.put(GetHeadersMessage.COMMAND, GetHeadersMessage.class);

@@ -48,8 +48,8 @@ public class BitcoinCore {
     }
 
     public void start() {
-        peerManager.start();
-        peerDiscovery.start();
+        //peerManager.start();
+        //peerDiscovery.start();
     }
 
     public void setStorageRepo(StorageRepo storageRepo) {

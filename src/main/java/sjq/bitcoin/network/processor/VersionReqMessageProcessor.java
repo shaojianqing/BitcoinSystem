@@ -1,6 +1,7 @@
 package sjq.bitcoin.network.processor;
 
 import sjq.bitcoin.logger.Logger;
+import sjq.bitcoin.message.GetAddressMessage;
 import sjq.bitcoin.message.SendAddrV2Message;
 import sjq.bitcoin.message.VersionAckMessage;
 import sjq.bitcoin.message.base.Message;
@@ -47,8 +48,9 @@ public class VersionReqMessageProcessor implements PeerProcessor {
             }
 
             try {
-                peerNode.sendMessage(new SendAddrV2Message());
+                //peerNode.sendMessage(new SendAddrV2Message());
                 peerNode.sendMessage(new VersionAckMessage());
+                peerNode.sendMessage(new GetAddressMessage());
             } catch (Exception e) {
                 peerNode.connectionClose();
                 Logger.error("peer sends sendAddrV2Message or versionAckMessage error:%s", e);

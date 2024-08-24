@@ -38,6 +38,7 @@ public class PeerHandler {
         processorMap.put(BloomFilterMessage.COMMAND, new BloomFilterMessageProcessor());
         processorMap.put(FeeFilterMessage.COMMAND, new FeeFilterMessageProcessor());
         processorMap.put(FilteredBlockMessage.COMMAND, new FilteredBlockMessageProcessor());
+        processorMap.put(GetAddressMessage.COMMAND, new GetAddressMessageProcessor());
         processorMap.put(GetBlocksMessage.COMMAND, new GetBlocksMessageProcessor());
         processorMap.put(GetDataMessage.COMMAND, new GetDataMessageProcessor());
         processorMap.put(GetHeadersMessage.COMMAND, new GetHeadersMessageProcessor());
