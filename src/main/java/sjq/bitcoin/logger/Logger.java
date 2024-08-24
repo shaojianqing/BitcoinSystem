@@ -14,6 +14,8 @@ public class Logger {
 
     private static final String ERROR = "[ERROR]";
 
+    private static Buffer logBuffer = new Buffer();
+
     public static void debug(String format, Object... args) {
         log(DEBUG, format, args);
     }
@@ -33,7 +35,12 @@ public class Logger {
     private static void log(String level, String format, Object... args) {
         String text = String.format(format, args);
         String timestamp = DateUtils.formatDate(new Date());
-        String content = String.format("%s %s %s", timestamp, level, text);
-        System.out.println(content);
+        String content = String.format("%s %s %s\n", timestamp, level, text);
+        System.out.print(content);
+        logBuffer.log(content);
+    }
+
+    public static String getContent() {
+        return logBuffer.build();
     }
 }

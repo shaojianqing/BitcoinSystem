@@ -3,7 +3,6 @@ package sjq.bitcoin.components;
 import sjq.bitcoin.constant.Appearance;
 
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicArrowButton;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
 
@@ -30,7 +29,7 @@ public class VerticalScrollBarUI extends BasicScrollBarUI {
         // 绘制滑块时使用自定义背景色
         g.setColor(Appearance.MAIN_COLOR);
         g.fillRect(thumbBounds.x, thumbBounds.y, thumbBounds.width, thumbBounds.height);
-        g.setColor(Color.BLACK); // 滑块边缘颜色
-        g.drawRect(thumbBounds.x+2, thumbBounds.y, thumbBounds.width - 2, thumbBounds.height - 2);
+        g.setColor(Appearance.AREA_COLOR); // 滑块边缘颜色
+        g.drawRect(thumbBounds.x+1, thumbBounds.y, thumbBounds.width - 2, thumbBounds.height);
     }
 }

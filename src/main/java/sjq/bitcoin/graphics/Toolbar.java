@@ -1,5 +1,6 @@
 package sjq.bitcoin.graphics;
 
+import sjq.bitcoin.components.HorizontalLine;
 import sjq.bitcoin.constant.Appearance;
 
 import javax.swing.*;
@@ -14,6 +15,8 @@ public class Toolbar extends JPanel {
     private static final int BUTTON_WIDTH = 100;
 
     private static final int BUTTON_HEIGHT = 80;
+
+    private HorizontalLine separateLine;
 
     private JButton queryBlockBtn;
 
@@ -48,6 +51,9 @@ public class Toolbar extends JPanel {
         queryTransactionBtn.setBackground(new Color(2,2,2));
         queryTransactionBtn.setIcon(new ImageIcon("res/images/icon_transaction.png"));
 
+
+        separateLine = new HorizontalLine();
+        separateLine.setSize(TOOLBAR_WIDTH, 2);
 
         add(queryBlockBtn);
         add(queryTransactionBtn);
