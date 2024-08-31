@@ -9,17 +9,6 @@ public class FeeFilterMessage extends BaseMessage implements Message {
 
     public static String COMMAND = "feefilter";
 
-    @Override
-    protected byte[] serializeMessage() throws IOException {
-        return new byte[0];
-    }
-
-    @Override
-    public void deserialize(byte[] data) throws Exception {
-
-    }
-
-    @Override
     public String getCommand() {
         return COMMAND;
     }

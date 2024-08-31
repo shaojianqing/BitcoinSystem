@@ -3,6 +3,7 @@ package sjq.bitcoin.network;
 import sjq.bitcoin.blockchain.Blockchain;
 import sjq.bitcoin.logger.Logger;
 import sjq.bitcoin.message.*;
+import sjq.bitcoin.message.base.Message;
 import sjq.bitcoin.network.node.PeerNode;
 import sjq.bitcoin.network.packet.BitcoinPacket;
 import sjq.bitcoin.network.processor.*;
@@ -19,6 +20,8 @@ public class PeerHandler {
 
     private PeerManager peerManager;
 
+    private PeerDiscovery peerDiscovery;
+
     private Blockchain blockchain;
 
     private PeerHandler() {
@@ -32,8 +35,8 @@ public class PeerHandler {
     }
 
     public void initialize() {
-        processorMap.put(AddressV1Message.COMMAND, new AddressV1MessageProcessor());
-        processorMap.put(AddressV2Message.COMMAND, new AddressV2MessageProcessor());
+        processorMap.put(AddressV1Message.COMMAND, new AddressV1MessageProcessor(peerDiscovery));
+        processorMap.put(AddressV2Message.COMMAND, new AddressV2MessageProcessor(peerDiscovery));
         processorMap.put(BlockMessage.COMMAND, new BlockMessageProcessor());
         processorMap.put(BloomFilterMessage.COMMAND, new BloomFilterMessageProcessor());
         processorMap.put(FeeFilterMessage.COMMAND, new FeeFilterMessageProcessor());
@@ -41,8 +44,8 @@ public class PeerHandler {
         processorMap.put(GetAddressMessage.COMMAND, new GetAddressMessageProcessor());
         processorMap.put(GetBlocksMessage.COMMAND, new GetBlocksMessageProcessor());
         processorMap.put(GetDataMessage.COMMAND, new GetDataMessageProcessor());
-        processorMap.put(GetHeadersMessage.COMMAND, new GetHeadersMessageProcessor());
-        processorMap.put(HeadersMessage.COMMAND, new HeadersMessageProcessor());
+        processorMap.put(GetHeadersMessage.COMMAND, new GetHeadersMessageProcessor(blockchain));
+        processorMap.put(HeadersMessage.COMMAND, new HeadersMessageProcessor(blockchain));
         processorMap.put(InventoryMessage.COMMAND, new InventoryMessageProcessor());
         processorMap.put(MemoryPoolMessage.COMMAND, new MemoryPoolMessageProcessor());
         processorMap.put(NotFoundMessage.COMMAND, new NotFoundMessageProcessor());
@@ -57,17 +60,15 @@ public class PeerHandler {
         processorMap.put(VersionReqMessage.COMMAND, new VersionReqMessageProcessor());
     }
 
-    public void handlePeerData(PeerNode node, byte[] data) {
+    public void handlePeerData(PeerNode node, Message message) {
         try {
-            ByteBuffer buffer = ByteBuffer.wrap(data);
-            BitcoinPacket packet = BitcoinPacket.parse(buffer);
-            Logger.info("received %s message from peer address:%s", packet.getCommand(), node.getAddress());
-
-            PeerProcessor processor = processorMap.get(packet.getCommand());
-            processor.processMessage(node, packet.getMessage());
-            Logger.info("finish processing %s message from peer address:%s", packet.getCommand(), node.getAddress());
+            Logger.info("received %s message from peer address:%s", message.getCommand(), node.getAddress());
+            PeerProcessor processor = processorMap.get(message.getCommand());
+            processor.processMessage(node, message);
+            Logger.info("finish processing %s message from peer address:%s", message.getCommand(), node.getAddress());
         } catch (Exception e) {
             Logger.error("processing peer message error:%s, peer address:%s", e, node.getAddress());
+            e.printStackTrace();
         }
     }
 
@@ -77,5 +78,9 @@ public class PeerHandler {
 
     public void setBlockchain(Blockchain blockchain) {
         this.blockchain = blockchain;
+    }
+
+    public void setPeerDiscovery(PeerDiscovery peerDiscovery) {
+        this.peerDiscovery = peerDiscovery;
     }
 }

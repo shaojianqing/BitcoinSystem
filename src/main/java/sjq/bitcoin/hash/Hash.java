@@ -1,17 +1,20 @@
 package sjq.bitcoin.hash;
 
 import sjq.bitcoin.utility.ByteUtils;
+import sjq.bitcoin.utility.HexUtils;
 
 import java.nio.ByteBuffer;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 
 public class Hash {
 
     public static final int HASH_LENGTH = 32;
 
-    private byte[] value = new byte[HASH_LENGTH];
+    public static final Hash ZERO_HASH = wrap(new byte[HASH_LENGTH]);
+
+    private byte[] value;
 
     private Hash(byte[] rawBytes) {
         checkHash(rawBytes);
@@ -19,7 +22,7 @@ public class Hash {
     }
 
     private void checkHash(byte[] rawBytes) {
-        if (rawBytes.length!=HASH_LENGTH) {
+        if (rawBytes.length != HASH_LENGTH) {
             throw new IllegalArgumentException("hash length is not correct!");
         }
     }
@@ -39,10 +42,8 @@ public class Hash {
         return new Hash(rawBytes);
     }
 
-    public static Hash calculate(byte[] content) {
-        MessageDigest digest = newSha256Digest();
-        digest.update(content, 0, content.length);
-        return new Hash(digest.digest());
+    public byte[] serialize() {
+        return ByteUtils.reverseBytes(value);
     }
 
     public static byte[] calculateTwice(byte[] content) {
@@ -55,7 +56,12 @@ public class Hash {
         try {
             return MessageDigest.getInstance("SHA-256");
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);  // Can't happen.
+            throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public String toString() {
+        return HexUtils.formatHex(value);
     }
 }

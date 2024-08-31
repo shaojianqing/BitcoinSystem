@@ -30,6 +30,10 @@ public class Services {
         this.definition = bits;
     }
 
+    public static Services wrap(long bits) {
+        return new Services(bits);
+    }
+
     public boolean has(long bitmask) {
         return (definition & bitmask) == bitmask;
     }

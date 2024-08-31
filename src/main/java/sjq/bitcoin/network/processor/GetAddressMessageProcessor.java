@@ -8,7 +8,6 @@ import sjq.bitcoin.network.node.PeerNode;
 
 public class GetAddressMessageProcessor implements PeerProcessor {
 
-    @Override
     public void processMessage(PeerNode peerNode, Message message) {
         if (message instanceof GetAddressMessage) {
             Logger.info("received GetAddressMessage");

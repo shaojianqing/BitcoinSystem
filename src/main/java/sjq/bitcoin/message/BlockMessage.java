@@ -32,7 +32,12 @@ public class BlockMessage extends BaseMessage implements Message {
     private List<TransactionMessage> transactions;
 
     @Override
-    public void deserialize(byte[] data) throws Exception {
+    protected byte[] serializeMessage() throws IOException {
+        return new byte[0];
+    }
+
+    @Override
+    public void deserializeMessage(byte[] data) throws Exception {
         ByteBuffer buffer = ByteBuffer.wrap(data);
         this.version = ByteUtils.readInt32LE(buffer);
 
@@ -48,15 +53,8 @@ public class BlockMessage extends BaseMessage implements Message {
         byte[] headerBytes = new byte[HEADER_LENGTH];
         byte[] blockHashBytes = Hash.calculateTwice(headerBytes);
         this.blockHash = Hash.wrapReversed(blockHashBytes);
-
     }
 
-    @Override
-    protected byte[] serializeMessage() throws IOException {
-        return new byte[0];
-    }
-
-    @Override
     public String getCommand() {
         return COMMAND;
     }

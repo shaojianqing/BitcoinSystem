@@ -1,8 +1,10 @@
 package sjq.bitcoin.network.client;
 
+import java.nio.ByteBuffer;
+
 public interface Callback {
 
-    void receiveData(byte[] data);
+    int receiveData(ByteBuffer buffer);
 
     void connectionOpened();
 

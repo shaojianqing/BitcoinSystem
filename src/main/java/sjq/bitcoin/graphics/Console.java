@@ -1,5 +1,6 @@
 package sjq.bitcoin.graphics;
 
+import sjq.bitcoin.components.HorizontalScrollBar;
 import sjq.bitcoin.components.VerticalScrollBar;
 import sjq.bitcoin.constant.Appearance;
 import sjq.bitcoin.logger.Logger;
@@ -25,6 +26,8 @@ public class Console extends JPanel {
 
     private VerticalScrollBar vScrollBar;
 
+    private HorizontalScrollBar hScrollBar;
+
     private Timer logTasktimer;
 
     public Console() {
@@ -44,10 +47,12 @@ public class Console extends JPanel {
         output.setEditable(false);
 
         vScrollBar = new VerticalScrollBar(JScrollBar.VERTICAL);
+        hScrollBar = new HorizontalScrollBar(JScrollBar.HORIZONTAL);
 
         panel = new JScrollPane(output);
         panel.setFocusable(false);
         panel.setVerticalScrollBar(vScrollBar);
+        panel.setHorizontalScrollBar(hScrollBar);
         panel.setBackground(Appearance.AREA_COLOR);
         panel.setBounds(0,0, CONSOLE_TABLE_WIDTH, CONSOLE_TABLE_HEIGHT);
         panel.setPreferredSize(new Dimension(CONSOLE_TABLE_WIDTH, CONSOLE_TABLE_HEIGHT));

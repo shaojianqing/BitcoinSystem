@@ -48,9 +48,8 @@ public class VersionReqMessageProcessor implements PeerProcessor {
             }
 
             try {
-                //peerNode.sendMessage(new SendAddrV2Message());
+                peerNode.sendMessage(new SendAddrV2Message());
                 peerNode.sendMessage(new VersionAckMessage());
-                peerNode.sendMessage(new GetAddressMessage());
             } catch (Exception e) {
                 peerNode.connectionClose();
                 Logger.error("peer sends sendAddrV2Message or versionAckMessage error:%s", e);

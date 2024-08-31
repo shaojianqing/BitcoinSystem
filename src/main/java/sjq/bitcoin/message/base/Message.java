@@ -8,5 +8,5 @@ public interface Message {
 
     byte[] serialize() throws IOException;
 
-    void deserialize(byte[] data) throws Exception;
+    void deserializeMessage(byte[] data) throws Exception;
 }

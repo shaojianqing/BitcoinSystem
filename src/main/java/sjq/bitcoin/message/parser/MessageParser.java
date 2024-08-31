@@ -1,5 +1,6 @@
 package sjq.bitcoin.message.parser;
 
+import sjq.bitcoin.logger.Logger;
 import sjq.bitcoin.message.*;
 import sjq.bitcoin.message.base.Message;
 

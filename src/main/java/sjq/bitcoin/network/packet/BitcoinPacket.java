@@ -4,10 +4,10 @@ import sjq.bitcoin.configuration.NetworkConfiguration;
 import sjq.bitcoin.hash.Hash;
 import sjq.bitcoin.message.base.Message;
 import sjq.bitcoin.message.parser.MessageParser;
+import sjq.bitcoin.network.protocol.ProtocolException;
 import sjq.bitcoin.utility.ByteUtils;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 public class BitcoinPacket {
 
@@ -33,7 +33,7 @@ public class BitcoinPacket {
 
     private Message message;
 
-    private BitcoinPacket(){
+    private BitcoinPacket() {
     }
 
     public static BitcoinPacket parse(ByteBuffer buffer) throws Exception {
@@ -41,12 +41,24 @@ public class BitcoinPacket {
 
         packet.parseHeader(buffer);
         packet.parseMessage(buffer);
-        packet.verifyMessage();
 
         return packet;
     }
 
-    private void parseHeader(ByteBuffer buffer) throws Exception {
+    public static BitcoinPacket parse(PacketHeader header, ByteBuffer buffer) throws Exception {
+        BitcoinPacket packet = new BitcoinPacket();
+
+        packet.magic = header.getMagic();
+        packet.command = header.getCommand();
+        packet.size = header.getSize();
+        packet.checksum = header.getChecksum();
+
+        packet.parseMessage(buffer);
+
+        return packet;
+    }
+
+    private void parseHeader(ByteBuffer buffer) {
         this.magic = ByteUtils.readInt32BE(buffer);
 
         byte[] commandBytes = new byte[COMMAND_LENGTH];
@@ -60,26 +72,19 @@ public class BitcoinPacket {
         byte[] checksumBytes = new byte[CHECKSUM_LENGTH];
         buffer.get(checksumBytes, 0, CHECKSUM_LENGTH);
         this.checksum = checksumBytes;
+
+        if (magic != Configuration.getMagicCode()) {
+            throw new ProtocolException("message magic code is not correct!");
+        }
     }
 
     private void parseMessage(ByteBuffer buffer) throws Exception {
         this.message = MessageParser.newMessageInstance(this.command);
-        byte[] messageBytes = new byte[size];
-        buffer.get(messageBytes, 0, size);
-        this.message.deserialize(messageBytes);
+        byte[] messageBytes = new byte[buffer.remaining()];
+        buffer.get(messageBytes);
+
+        this.message.deserializeMessage(messageBytes);
         this.messageHash = Hash.calculateTwice(messageBytes);
-    }
-
-    private void verifyMessage() throws ParseException {
-        if (magic != Configuration.getMagicCode()) {
-            throw new ParseException("message magic code is not correct!");
-        }
-
-        byte[] checkHash = new byte[CHECKSUM_LENGTH];
-        System.arraycopy(messageHash, 0, checkHash, 0, CHECKSUM_LENGTH);
-        if (!Arrays.equals(checksum, checkHash)) {
-            throw new ParseException("message checksum is not correct!");
-        }
     }
 
     private String parseCommand(byte[] commandBytes){

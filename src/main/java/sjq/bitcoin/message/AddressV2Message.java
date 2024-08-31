@@ -1,25 +1,16 @@
 package sjq.bitcoin.message;
 
-import sjq.bitcoin.message.base.BaseMessage;
 import sjq.bitcoin.message.base.Message;
+import sjq.bitcoin.message.data.NetworkAddress;
 
-import java.io.IOException;
-
-public class AddressV2Message extends BaseMessage implements Message {
+public class AddressV2Message extends AddressMessage implements Message {
 
     public static String COMMAND = "addrv2";
 
-    @Override
-    protected byte[] serializeMessage() throws IOException {
-        return new byte[0];
+    public AddressV2Message() {
+        super.protocolVersion = NetworkAddress.PROTOCOL_VERSION_2;
     }
 
-    @Override
-    public void deserialize(byte[] data) throws Exception {
-
-    }
-
-    @Override
     public String getCommand() {
         return COMMAND;
     }

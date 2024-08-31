@@ -14,12 +14,12 @@ public class Buffer {
 
     public Buffer() {
         this.capacity = DEFAULT_CAPACITY;
-        this.queue = new LinkedList<>();
+        this.queue = new LinkedList<String>();
     }
 
     public Buffer(int capacity) {
         this.capacity = capacity;
-        this.queue = new LinkedList<>();
+        this.queue = new LinkedList<String>();
     }
 
     public void log(String content) {

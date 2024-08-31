@@ -18,5 +18,7 @@ public class Constants {
 
     public static final Integer VERSION_CURRENT = 70013;
 
-    public static final int IPV6_LENGTH = 16;
+    public static final Integer MAX_CONNECTION_COUNT = 20;
+
+    public static final Integer IPV6_LENGTH = 16;
 }

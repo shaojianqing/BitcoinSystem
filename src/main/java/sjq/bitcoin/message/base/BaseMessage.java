@@ -14,8 +14,6 @@ public abstract class BaseMessage implements Message {
 
     private static final int magicCode = NetworkConfiguration.getConfiguration().getMagicCode();
 
-    abstract protected byte[] serializeMessage() throws IOException;
-
     private byte[] serializeHeader(byte[] messageBody) {
         byte[] messageHeader = new byte[MAGIC_LENGTH + COMMAND_LENGTH + MESSAGE_LENGTH + CHECKSUM_LENGTH];
         ByteUtils.writeInt32BE(magicCode, messageHeader, 0);
@@ -41,5 +39,13 @@ public abstract class BaseMessage implements Message {
         outputStream.write(messageBody);
 
         return outputStream.toByteArray();
+    }
+
+    protected byte[] serializeMessage() throws IOException {
+        return new byte[0];
+    }
+
+    @Override
+    public void deserializeMessage(byte[] data) throws Exception {
     }
 }

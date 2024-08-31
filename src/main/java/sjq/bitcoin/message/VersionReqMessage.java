@@ -63,7 +63,7 @@ public class VersionReqMessage extends BaseMessage implements Message {
     }
 
     @Override
-    public void deserialize(byte[] data) throws Exception {
+    public void deserializeMessage(byte[] data) throws Exception {
         ByteBuffer buffer = ByteBuffer.wrap(data);
         this.clientVersion = (int) ByteUtils.readUint32LE(buffer);
         this.localServices = Services.read(buffer);
@@ -89,7 +89,6 @@ public class VersionReqMessage extends BaseMessage implements Message {
         }
     }
 
-    @Override
     public String getCommand() {
         return COMMAND;
     }

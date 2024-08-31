@@ -32,6 +32,7 @@ public class BitcoinCore {
         peerDiscovery.setPeerManager(peerManager);
         peerHandler.setBlockchain(blockchain);
         peerHandler.setPeerManager(peerManager);
+        peerHandler.setPeerDiscovery(peerDiscovery);
         blockchain.setPeerManager(peerManager);
         blockchain.setStorageRepo(storageRepo);
 
@@ -48,6 +49,7 @@ public class BitcoinCore {
     }
 
     public void start() {
+        blockchain.start();
         peerManager.start();
         peerDiscovery.start();
     }

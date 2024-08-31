@@ -24,7 +24,7 @@ public class InventoryMessage extends BaseMessage implements Message {
     private List<InventoryItem> inventoryItemList;
 
     public InventoryMessage() {
-        inventoryItemList = new ArrayList<>();
+        inventoryItemList = new ArrayList<InventoryItem>();
     }
 
     @Override
@@ -33,7 +33,7 @@ public class InventoryMessage extends BaseMessage implements Message {
     }
 
     @Override
-    public void deserialize(byte[] data) throws Exception {
+    public void deserializeMessage(byte[] data) throws Exception {
         ByteBuffer buffer = ByteBuffer.wrap(data);
         VariableInteger itemCount = VariableInteger.read(buffer);
 
@@ -52,7 +52,6 @@ public class InventoryMessage extends BaseMessage implements Message {
         }
     }
 
-    @Override
     public String getCommand() {
         return COMMAND;
     }
