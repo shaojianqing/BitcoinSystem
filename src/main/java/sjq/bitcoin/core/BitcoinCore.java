@@ -10,8 +10,6 @@ public class BitcoinCore {
 
     private static BitcoinCore Instance;
 
-    private StorageRepo storageRepo;
-
     private PeerManager peerManager;
 
     private PeerHandler peerHandler;
@@ -20,11 +18,12 @@ public class BitcoinCore {
 
     private Blockchain blockchain;
 
+    private StorageRepo storageRepo;
+
     private BitcoinCore() {
         peerManager = PeerManager.build();
         peerHandler = PeerHandler.build();
         peerDiscovery = PeerDiscovery.build();
-        storageRepo = StorageRepo.build();
         blockchain = Blockchain.build();
 
         peerManager.setPeerHandler(peerHandler);
