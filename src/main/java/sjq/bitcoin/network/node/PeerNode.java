@@ -41,7 +41,7 @@ public class PeerNode implements Callback {
 
     private Client client;
 
-    public PeerNode(PeerManager manager, String address, Services requiredServices, int bestBlockHeight) throws IOException {
+    public PeerNode(PeerManager manager, String address, Services requiredServices, Long bestBlockHeight) throws IOException {
         this.manager = manager;
         this.requiredServices = requiredServices;
         this.configuration = NetworkConfiguration.getConfiguration();
@@ -93,7 +93,7 @@ public class PeerNode implements Callback {
         manager.disconnectPeerNode(this);
     }
 
-    private VersionReqMessage prepareVersionReqMessage(int bestBlockHeight) {
+    private VersionReqMessage prepareVersionReqMessage(Long bestBlockHeight) {
         VersionReqMessage versionReqMessage = new VersionReqMessage();
         versionReqMessage.setClientVersion(Constants.VERSION_CURRENT);
         versionReqMessage.setLocalServices(Services.none());
@@ -101,7 +101,7 @@ public class PeerNode implements Callback {
         versionReqMessage.setReceivingServices(Services.none());
         versionReqMessage.setTimestamp(System.currentTimeMillis()/1000);
         versionReqMessage.setUserAgent(Constants.SYSTEM_USER_AGENT);
-        versionReqMessage.setBestBlockHeight(bestBlockHeight);
+        versionReqMessage.setBestBlockHeight(bestBlockHeight.intValue());
         versionReqMessage.setRelay(true);
 
         return versionReqMessage;

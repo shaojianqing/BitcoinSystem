@@ -1,59 +1,35 @@
 package sjq.bitcoin.core;
 
 import sjq.bitcoin.blockchain.Blockchain;
+import sjq.bitcoin.context.Autowire;
+import sjq.bitcoin.context.Context;
 import sjq.bitcoin.network.PeerHandler;
 import sjq.bitcoin.network.PeerManager;
 import sjq.bitcoin.network.PeerDiscovery;
-import sjq.bitcoin.storage.StorageRepo;
 
 public class BitcoinCore {
 
-    private static BitcoinCore Instance;
-
+    @Autowire
     private PeerManager peerManager;
 
+    @Autowire
     private PeerHandler peerHandler;
 
+    @Autowire
     private PeerDiscovery peerDiscovery;
 
+    @Autowire
     private Blockchain blockchain;
 
-    private StorageRepo storageRepo;
-
-    private BitcoinCore() {
-        peerManager = PeerManager.build();
-        peerHandler = PeerHandler.build();
-        peerDiscovery = PeerDiscovery.build();
-        blockchain = Blockchain.build();
-
-        peerManager.setPeerHandler(peerHandler);
-        peerManager.setBlockchain(blockchain);
-        peerDiscovery.setPeerManager(peerManager);
-        peerHandler.setBlockchain(blockchain);
-        peerHandler.setPeerManager(peerManager);
-        peerHandler.setPeerDiscovery(peerDiscovery);
-        blockchain.setPeerManager(peerManager);
-        blockchain.setStorageRepo(storageRepo);
-
+    public void initialize() {
         peerManager.initialize();
         peerHandler.initialize();
         peerDiscovery.initialize();
-    }
-
-    public static BitcoinCore build() {
-        if (Instance == null) {
-            Instance = new BitcoinCore();
-        }
-        return Instance;
     }
 
     public void start() {
         blockchain.start();
         peerManager.start();
         peerDiscovery.start();
-    }
-
-    public void setStorageRepo(StorageRepo storageRepo) {
-        this.storageRepo = storageRepo;
     }
 }

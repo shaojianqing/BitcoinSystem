@@ -1,22 +1,60 @@
 package sjq.bitcoin.configuration;
 
-import sjq.bitcoin.message.BlockMessage;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainnetConfiguration extends NetworkConfiguration {
+    private static final int MAIN_NET_MAGIC_CODE = 0xf9beb4d9;
+
+    private static final short MAIN_NET_NODE_PORT = 8333;
+
+    private static final long GENESIS_BLOCK_VERSION = 1;
+
+    private static final long GENESIS_BLOCK_NONCE = 2083236893;
+
+    private static final long GENESIS_BLOCK_TIMESTAMP = 1231006505;
+
+    private static final long GENESIS_BLOCK_DIFFICULTY = 0x1d00ffffL;
+
+    private static final List<String> DNS_SEED_LIST = new ArrayList<>();
 
     public MainnetConfiguration() {
-        dnsSeedList = new String[] {
-                "seed.bitcoin.sipa.be",
-                "dnsseed.bluematt.me",
-                "dnsseed.bitcoin.dashjr.org",
-                "dnsseed.emzy.de",
-                "seed.bitcoin.wiz.biz"};
-
-        port = 8333;
-        magicCode = 0xf9beb4d9;
+        initDnsSeedList();
     }
 
-    public BlockMessage getGenesisBlock() {
-        return new BlockMessage();
+    private void initDnsSeedList() {
+        DNS_SEED_LIST.add("dnsseed.emzy.de");
+        DNS_SEED_LIST.add("dnsseed.bluematt.me");
+        DNS_SEED_LIST.add("seed.bitcoin.sipa.be");
+        DNS_SEED_LIST.add("seed.bitcoin.wiz.biz");
+        DNS_SEED_LIST.add("dnsseed.bitcoin.dashjr.org");
+    }
+
+    public int getMagicCode() {
+        return MAIN_NET_MAGIC_CODE;
+    }
+
+    public short getPort() {
+        return MAIN_NET_NODE_PORT;
+    }
+
+    public List<String> getDnsSeedList() {
+        return DNS_SEED_LIST;
+    }
+
+    public long getGenesisBlockVersion() {
+        return GENESIS_BLOCK_VERSION;
+    }
+
+    public long getGenesisBlockNonce() {
+        return GENESIS_BLOCK_NONCE;
+    }
+
+    public long getGenesisBlockTimestamp() {
+        return GENESIS_BLOCK_TIMESTAMP;
+    }
+
+    public long getGenesisBlockDifficulty() {
+        return GENESIS_BLOCK_DIFFICULTY;
     }
 }

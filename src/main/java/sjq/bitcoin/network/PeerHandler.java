@@ -1,63 +1,124 @@
 package sjq.bitcoin.network;
 
 import sjq.bitcoin.blockchain.Blockchain;
+import sjq.bitcoin.context.Autowire;
+import sjq.bitcoin.context.Context;
 import sjq.bitcoin.logger.Logger;
 import sjq.bitcoin.message.*;
 import sjq.bitcoin.message.base.Message;
 import sjq.bitcoin.network.node.PeerNode;
-import sjq.bitcoin.network.packet.BitcoinPacket;
 import sjq.bitcoin.network.processor.*;
 
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
 public class PeerHandler {
 
-    private static PeerHandler Instance;
-
     private Map<String, PeerProcessor> processorMap = new HashMap();
 
+    @Autowire
     private PeerManager peerManager;
 
+    @Autowire
     private PeerDiscovery peerDiscovery;
 
+    @Autowire
     private Blockchain blockchain;
 
-    private PeerHandler() {
-    }
+    @Autowire
+    private AddressV1MessageProcessor addressV1MessageProcessor;
 
-    public static PeerHandler build() {
-        if (Instance == null) {
-            Instance = new PeerHandler();
-        }
-        return Instance;
-    }
+    @Autowire
+    private AddressV2MessageProcessor addressV2MessageProcessor;
+
+    @Autowire
+    private BlockMessageProcessor blockMessageProcessor;
+
+    @Autowire
+    private BloomFilterMessageProcessor bloomFilterMessageProcessor;
+
+    @Autowire
+    private FeeFilterMessageProcessor feeFilterMessageProcessor;
+
+    @Autowire
+    private FilteredBlockMessageProcessor filteredBlockMessageProcessor;
+
+    @Autowire
+    private GetAddressMessageProcessor getAddressMessageProcessor;
+
+    @Autowire
+    private GetBlocksMessageProcessor getBlocksMessageProcessor;
+
+    @Autowire
+    private GetDataMessageProcessor getDataMessageProcessor;
+
+    @Autowire
+    private GetHeadersMessageProcessor getHeadersMessageProcessor;
+
+    @Autowire
+    private HeadersMessageProcessor headersMessageProcessor;
+
+    @Autowire
+    private InventoryMessageProcessor inventoryMessageProcessor;
+
+    @Autowire
+    private MemoryPoolMessageProcessor memoryPoolMessageProcessor;
+
+    @Autowire
+    private NotFoundMessageProcessor notFoundMessageProcessor;
+
+    @Autowire
+    private PingMessageProcessor pingMessageProcessor;
+
+    @Autowire
+    private PongMessageProcessor pongMessageProcessor;
+
+    @Autowire
+    private RejectMessageProcessor rejectMessageProcessor;
+
+    @Autowire
+    private SendAddrV2MessageProcessor sendAddrV2MessageProcessor;
+
+    @Autowire
+    private SendHeadersMessageProcessor sendHeadersMessageProcessor;
+
+    @Autowire
+    private UnknownMessageProcessor unknownMessageProcessor;
+
+    @Autowire
+    private TransactionMessageProcessor transactionMessageProcessor;
+
+    @Autowire
+    private VersionAckMessageProcessor versionAckMessageProcessor;
+
+    @Autowire
+    private VersionReqMessageProcessor versionReqMessageProcessor;
+
 
     public void initialize() {
-        processorMap.put(AddressV1Message.COMMAND, new AddressV1MessageProcessor(peerDiscovery));
-        processorMap.put(AddressV2Message.COMMAND, new AddressV2MessageProcessor(peerDiscovery));
-        processorMap.put(BlockMessage.COMMAND, new BlockMessageProcessor());
-        processorMap.put(BloomFilterMessage.COMMAND, new BloomFilterMessageProcessor());
-        processorMap.put(FeeFilterMessage.COMMAND, new FeeFilterMessageProcessor());
-        processorMap.put(FilteredBlockMessage.COMMAND, new FilteredBlockMessageProcessor());
-        processorMap.put(GetAddressMessage.COMMAND, new GetAddressMessageProcessor());
-        processorMap.put(GetBlocksMessage.COMMAND, new GetBlocksMessageProcessor());
-        processorMap.put(GetDataMessage.COMMAND, new GetDataMessageProcessor());
-        processorMap.put(GetHeadersMessage.COMMAND, new GetHeadersMessageProcessor(blockchain));
-        processorMap.put(HeadersMessage.COMMAND, new HeadersMessageProcessor(blockchain));
-        processorMap.put(InventoryMessage.COMMAND, new InventoryMessageProcessor());
-        processorMap.put(MemoryPoolMessage.COMMAND, new MemoryPoolMessageProcessor());
-        processorMap.put(NotFoundMessage.COMMAND, new NotFoundMessageProcessor());
-        processorMap.put(PingMessage.COMMAND, new PingMessageProcessor());
-        processorMap.put(PongMessage.COMMAND, new PongMessageProcessor());
-        processorMap.put(RejectMessage.COMMAND, new RejectMessageProcessor());
-        processorMap.put(SendAddrV2Message.COMMAND, new SendAddrV2MessageProcessor());
-        processorMap.put(SendHeadersMessage.COMMAND, new SendHeadersMessageProcessor());
-        processorMap.put(UnknownMessage.COMMAND, new UnknownMessageProcessor());
-        processorMap.put(TransactionMessage.COMMAND, new TransactionMessageProcessor());
-        processorMap.put(VersionAckMessage.COMMAND, new VersionAckMessageProcessor());
-        processorMap.put(VersionReqMessage.COMMAND, new VersionReqMessageProcessor());
+        processorMap.put(AddressV1Message.COMMAND, addressV1MessageProcessor);
+        processorMap.put(AddressV2Message.COMMAND, addressV2MessageProcessor);
+        processorMap.put(BlockMessage.COMMAND, blockMessageProcessor);
+        processorMap.put(BloomFilterMessage.COMMAND, bloomFilterMessageProcessor);
+        processorMap.put(FeeFilterMessage.COMMAND, feeFilterMessageProcessor);
+        processorMap.put(FilteredBlockMessage.COMMAND, filteredBlockMessageProcessor);
+        processorMap.put(GetAddressMessage.COMMAND, getAddressMessageProcessor);
+        processorMap.put(GetBlocksMessage.COMMAND, getBlocksMessageProcessor);
+        processorMap.put(GetDataMessage.COMMAND, getDataMessageProcessor);
+        processorMap.put(GetHeadersMessage.COMMAND, getHeadersMessageProcessor);
+        processorMap.put(HeadersMessage.COMMAND, headersMessageProcessor);
+        processorMap.put(InventoryMessage.COMMAND, inventoryMessageProcessor);
+        processorMap.put(MemoryPoolMessage.COMMAND, memoryPoolMessageProcessor);
+        processorMap.put(NotFoundMessage.COMMAND, notFoundMessageProcessor);
+        processorMap.put(PingMessage.COMMAND, pingMessageProcessor);
+        processorMap.put(PongMessage.COMMAND, pongMessageProcessor);
+        processorMap.put(RejectMessage.COMMAND, rejectMessageProcessor);
+        processorMap.put(SendAddrV2Message.COMMAND, sendAddrV2MessageProcessor);
+        processorMap.put(SendHeadersMessage.COMMAND, sendHeadersMessageProcessor);
+        processorMap.put(UnknownMessage.COMMAND, unknownMessageProcessor);
+        processorMap.put(TransactionMessage.COMMAND, transactionMessageProcessor);
+        processorMap.put(VersionAckMessage.COMMAND, versionAckMessageProcessor);
+        processorMap.put(VersionReqMessage.COMMAND, versionReqMessageProcessor);
     }
 
     public void handlePeerData(PeerNode node, Message message) {
@@ -70,17 +131,5 @@ public class PeerHandler {
             Logger.error("processing peer message error:%s, peer address:%s", e, node.getAddress());
             e.printStackTrace();
         }
-    }
-
-    public void setPeerManager(PeerManager peerManager) {
-        this.peerManager = peerManager;
-    }
-
-    public void setBlockchain(Blockchain blockchain) {
-        this.blockchain = blockchain;
-    }
-
-    public void setPeerDiscovery(PeerDiscovery peerDiscovery) {
-        this.peerDiscovery = peerDiscovery;
     }
 }

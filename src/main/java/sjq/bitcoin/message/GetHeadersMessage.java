@@ -1,13 +1,11 @@
 package sjq.bitcoin.message;
 
-import sjq.bitcoin.constant.Constants;
 import sjq.bitcoin.hash.Hash;
 import sjq.bitcoin.message.base.BaseMessage;
 import sjq.bitcoin.message.base.Message;
 import sjq.bitcoin.message.data.VariableInteger;
 import sjq.bitcoin.network.protocol.ProtocolException;
 import sjq.bitcoin.utility.ByteUtils;
-import sjq.bitcoin.utility.HexUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

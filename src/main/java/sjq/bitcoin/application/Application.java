@@ -1,30 +1,24 @@
 package sjq.bitcoin.application;
 
+import sjq.bitcoin.context.Autowire;
+import sjq.bitcoin.context.Context;
 import sjq.bitcoin.core.BitcoinCore;
 import sjq.bitcoin.graphics.GuiSystem;
 import sjq.bitcoin.server.APIServer;
-import sjq.bitcoin.storage.StorageRepo;
 
 public class Application {
 
+    @Autowire
     private GuiSystem guiSystem;
 
+    @Autowire
     private APIServer apiServer;
 
+    @Autowire
     private BitcoinCore bitcoinCore;
 
-    private StorageRepo storageRepo;
-
-    public Application() {
-        this.apiServer = APIServer.build();
-        this.guiSystem = GuiSystem.build();
-        this.bitcoinCore = BitcoinCore.build();
-        this.storageRepo = StorageRepo.build();
-
-        this.apiServer.setStorageRepo(storageRepo);
-        this.guiSystem.setBitcoinCore(bitcoinCore);
-        this.guiSystem.setStorageRepo(storageRepo);
-        this.bitcoinCore.setStorageRepo(storageRepo);
+    public void initialize() {
+        bitcoinCore.initialize();
     }
 
     public void start() {
@@ -34,7 +28,8 @@ public class Application {
     }
 
     public static void main(String[] args){
-        Application application = new Application();
+        Application application = Context.getInstance(Application.class);
+        application.initialize();
         application.start();
     }
 }

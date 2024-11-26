@@ -2,6 +2,7 @@ package sjq.bitcoin.network;
 
 
 import sjq.bitcoin.configuration.NetworkConfiguration;
+import sjq.bitcoin.context.Autowire;
 import sjq.bitcoin.logger.Logger;
 import sjq.bitcoin.message.data.NetworkAddress;
 import sjq.bitcoin.network.node.PeerNode;
@@ -17,10 +18,9 @@ public class PeerDiscovery {
 
     private static final long REFRESH_PEER_PERIOD = 10000;
 
-    private static PeerDiscovery Instance;
-
     private NetworkConfiguration configuration;
 
+    @Autowire
     private PeerManager peerManager;
 
     private Timer refreshPeerTimer;
@@ -28,16 +28,6 @@ public class PeerDiscovery {
     private RefreshPeerTask refreshPeerTask;
 
     private PrepareSeedPeerTask prepareSeedPeerTask;
-
-    private PeerDiscovery(){
-    }
-
-    public static PeerDiscovery build() {
-        if (Instance == null) {
-            Instance = new PeerDiscovery();
-        }
-        return Instance;
-    }
 
     public void initialize() {
         configuration = NetworkConfiguration.getConfiguration();

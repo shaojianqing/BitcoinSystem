@@ -1,34 +1,22 @@
 package sjq.bitcoin.graphics;
 
+import sjq.bitcoin.context.Autowire;
+import sjq.bitcoin.context.Context;
 import sjq.bitcoin.core.BitcoinCore;
-import sjq.bitcoin.storage.StorageRepo;
 
 
 public class GuiSystem {
 
+    private final MainFrame mainFrame;
+
+    @Autowire
     private BitcoinCore bitcoinCore;
 
-    private StorageRepo storageRepo;
-
-    private MainFrame mainFrame;
-
-    private GuiSystem() {
+    public GuiSystem() {
         mainFrame = new MainFrame(this);
-    }
-
-    public static GuiSystem build() {
-        return new GuiSystem();
     }
 
     public void start() {
         mainFrame.start();
-    }
-
-    public void setBitcoinCore(BitcoinCore bitcoinCore) {
-        this.bitcoinCore = bitcoinCore;
-    }
-
-    public void setStorageRepo(StorageRepo storageRepo) {
-        this.storageRepo = storageRepo;
     }
 }

@@ -4,6 +4,16 @@ import java.util.Date;
 
 public class Block {
 
+    public static final String STATUS_SYNC_HEADER = "SyncHeader";
+
+    public static final String STATUS_SYNC_TRANSACTION = "SyncTransaction";
+
+    public static final String STATUS_UN_VERIFY_HEADER = "UnVerifyHeader";
+
+    public static final String STATUS_VERIFY_HEADER = "VerifyHeader";
+
+    public static final String STATUS_VERIFY_TRANSACTION = "VerifyTransaction";
+
     private Long version;
 
     private Long blockHeight;
@@ -22,9 +32,16 @@ public class Block {
 
     private Long trxCount;
 
+    private String syncStatus;
+
+    private String verifyStatus;
+
     private Date createTime;
 
     private Date modifyTime;
+
+    public Block(){
+    }
 
     public Block(Long version, Long blockHeight, String blockHash, String parentHash,
                  String merkleRoot, Long timestamp, Long difficulty, Long nonce, Long trxCount) {
@@ -111,6 +128,22 @@ public class Block {
 
     public void setTrxCount(Long trxCount) {
         this.trxCount = trxCount;
+    }
+
+    public String getSyncStatus() {
+        return syncStatus;
+    }
+
+    public void setSyncStatus(String syncStatus) {
+        this.syncStatus = syncStatus;
+    }
+
+    public String getVerifyStatus() {
+        return verifyStatus;
+    }
+
+    public void setVerifyStatus(String verifyStatus) {
+        this.verifyStatus = verifyStatus;
     }
 
     public Date getCreateTime() {

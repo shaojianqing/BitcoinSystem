@@ -3,6 +3,8 @@ package sjq.bitcoin.network;
 import sjq.bitcoin.blockchain.Blockchain;
 import sjq.bitcoin.configuration.NetworkConfiguration;
 import sjq.bitcoin.constant.Constants;
+import sjq.bitcoin.context.Autowire;
+import sjq.bitcoin.context.Context;
 import sjq.bitcoin.hash.Hash;
 import sjq.bitcoin.logger.Logger;
 import sjq.bitcoin.message.GetAddressMessage;
@@ -17,12 +19,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class PeerManager {
 
-    private static PeerManager Instance;
-
     private NetworkConfiguration configuration;
 
+    @Autowire
     private PeerHandler peerHandler;
 
+    @Autowire
     private Blockchain blockchain;
 
     private Map<String, PeerNode> peerMap;
@@ -33,18 +35,11 @@ public class PeerManager {
 
     private int maxConnectionCount;
 
-    private PeerManager(){
+    public PeerManager(){
         configuration = NetworkConfiguration.getConfiguration();
         requiredServices = Services.none();
         maxConnectionCount = Constants.MAX_CONNECTION_COUNT;
         peerMap = new ConcurrentHashMap<String, PeerNode>(maxConnectionCount);
-    }
-
-    public static PeerManager build() {
-         if (Instance == null) {
-             Instance = new PeerManager();
-         }
-         return Instance;
     }
 
     public PeerNode createPeerNode(String address) throws Exception {
@@ -110,14 +105,6 @@ public class PeerManager {
 
     public void disconnectPeerNode(PeerNode node) {
         peerMap.remove(node.getIPAddress());
-    }
-
-    public void setPeerHandler(PeerHandler peerHandler) {
-        this.peerHandler = peerHandler;
-    }
-
-    public void setBlockchain(Blockchain blockchain) {
-        this.blockchain = blockchain;
     }
 
     public int getMaxConnectionCount() {

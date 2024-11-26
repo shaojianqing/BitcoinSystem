@@ -60,6 +60,10 @@ public class Hash {
         }
     }
 
+    public String hexValue() {
+        return HexUtils.formatHex(value);
+    }
+
     @Override
     public String toString() {
         return HexUtils.formatHex(value);

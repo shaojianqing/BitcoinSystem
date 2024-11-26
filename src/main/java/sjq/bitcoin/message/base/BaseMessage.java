@@ -45,7 +45,6 @@ public abstract class BaseMessage implements Message {
         return new byte[0];
     }
 
-    @Override
     public void deserializeMessage(byte[] data) throws Exception {
     }
 }

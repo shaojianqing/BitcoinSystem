@@ -1,6 +1,7 @@
 package sjq.bitcoin.network.processor;
 
 import sjq.bitcoin.blockchain.Blockchain;
+import sjq.bitcoin.context.Autowire;
 import sjq.bitcoin.logger.Logger;
 import sjq.bitcoin.message.GetHeadersMessage;
 import sjq.bitcoin.message.HeadersMessage;
@@ -10,11 +11,8 @@ import sjq.bitcoin.network.node.PeerNode;
 
 public class GetHeadersMessageProcessor implements PeerProcessor {
 
+    @Autowire
     private Blockchain blockchain;
-
-    public GetHeadersMessageProcessor(Blockchain blockchain) {
-        this.blockchain = blockchain;
-    }
 
     public void processMessage(PeerNode peerNode, Message message) {
         if (message instanceof GetHeadersMessage) {

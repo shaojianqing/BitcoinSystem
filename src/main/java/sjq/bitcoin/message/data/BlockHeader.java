@@ -51,7 +51,7 @@ public class BlockHeader {
         return outputStream.toByteArray();
     }
 
-    private Hash calculateHash() throws Exception {
+    public Hash calculateHash() throws Exception {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream(HEADER_SIZE);
         ByteUtils.writeInt32LE(version, outputStream);
         outputStream.write(parentHash.serialize());
@@ -124,5 +124,19 @@ public class BlockHeader {
 
     public void setTrxCount(VariableInteger trxCount) {
         this.trxCount = trxCount;
+    }
+
+    @Override
+    public String toString() {
+        return "BlockHeader[" +
+                "blockHash=" + blockHash +
+                ", version=" + version +
+                ", parentHash=" + parentHash +
+                ", merkleRoot=" + merkleRoot +
+                ", timestamp=" + timestamp +
+                ", difficulty=" + difficulty +
+                ", nonce=" + nonce +
+                ", trxCount=" + trxCount +
+                ']';
     }
 }

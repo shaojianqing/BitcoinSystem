@@ -1,17 +1,9 @@
-package sjq.bitcoin.storage.dao.impl;
+package sjq.bitcoin.storage.dao;
 
-import sjq.bitcoin.storage.dao.ITransactionDao;
 import sjq.bitcoin.storage.data.Page;
 import sjq.bitcoin.storage.domain.Transaction;
-import sjq.bitcoin.storage.manager.DatabaseManager;
 
-public class TransactionDaoImpl implements ITransactionDao {
-
-    private DatabaseManager databaseManager;
-
-    public TransactionDaoImpl(DatabaseManager databaseManager) {
-        this.databaseManager = databaseManager;
-    }
+public class TransactionDao {
 
     public Transaction getTransactionByTrxHash(String transactionHash) {
         return null;

@@ -14,6 +14,8 @@ public class Logger {
 
     private static final String ERROR = "[ERROR]";
 
+    private static final String FATAL = "[FATAL]";
+
     private static Buffer logBuffer = new Buffer();
 
     public static void debug(String format, Object... args) {
@@ -30,6 +32,10 @@ public class Logger {
 
     public static void error(String format, Object... args) {
         log(ERROR, format, args);
+    }
+
+    public static void fatal(String format, Object... args) {
+        log(FATAL, format, args);
     }
 
     private static void log(String level, String format, Object... args) {
