@@ -1,4 +1,12 @@
 package sjq.bitcoin.script;
 
-public class Instruction {
+import java.nio.ByteBuffer;
+
+public interface Instruction {
+
+    short getOpCode();
+
+    String getOpName();
+
+    void execute(ByteBuffer scriptBuffer, OperandStack stack);
 }

@@ -371,6 +371,12 @@ public class ByteUtils {
         return bytes;
     }
 
+    public static byte[] readBytesByLength(ByteBuffer buf, int length) throws BufferUnderflowException {
+        byte[] bytes = new byte[length];
+        buf.get(bytes);
+        return bytes;
+    }
+
     /**
      * Returns a copy of the given byte array in reverse order.
      */

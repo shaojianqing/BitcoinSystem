@@ -26,7 +26,7 @@ public class Context {
             }
             return (T)instanceMap.get(clazz);
         } catch (Exception e) {
-            Logger.fatal("can not initiate instance with class:%s,exception:%s", clazz.getName(), e);
+            Logger.fatal("can not initiate instance with class:%s, exception:%s", clazz.getName(), e);
         }
         return null;
     }
