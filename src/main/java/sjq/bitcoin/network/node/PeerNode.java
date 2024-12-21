@@ -3,15 +3,15 @@ package sjq.bitcoin.network.node;
 import sjq.bitcoin.configuration.NetworkConfiguration;
 import sjq.bitcoin.constant.Constants;
 import sjq.bitcoin.logger.Logger;
-import sjq.bitcoin.message.base.Message;
 import sjq.bitcoin.message.VersionReqMessage;
+import sjq.bitcoin.message.base.Message;
 import sjq.bitcoin.network.PeerManager;
 import sjq.bitcoin.network.Services;
 import sjq.bitcoin.network.client.Callback;
 import sjq.bitcoin.network.client.Client;
+import sjq.bitcoin.network.client.ClientFactory;
 import sjq.bitcoin.network.socket.SocketHandler;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 
@@ -41,17 +41,16 @@ public class PeerNode implements Callback {
 
     private Client client;
 
-    public PeerNode(PeerManager manager, String address, Services requiredServices, Long bestBlockHeight) throws IOException {
+    public PeerNode(PeerManager manager, String url, Services requiredServices, Long bestBlockHeight) throws Exception {
         this.manager = manager;
         this.requiredServices = requiredServices;
         this.configuration = NetworkConfiguration.getConfiguration();
-        this.address = new InetSocketAddress(address, configuration.getPort());
+        this.address = new InetSocketAddress(url, configuration.getPort());
         this.socketHandler = new SocketHandler(this);
         this.versionReqMessage = prepareVersionReqMessage(bestBlockHeight);
 
-
         this.status = INACTIVE;
-        this.client = new Client(address, configuration.getPort(), this);
+        this.client = ClientFactory.createClientInstance(address, this);
     }
 
     public boolean start() {

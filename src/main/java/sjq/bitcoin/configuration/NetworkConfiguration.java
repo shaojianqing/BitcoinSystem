@@ -35,4 +35,6 @@ public abstract class NetworkConfiguration {
     public abstract int getMagicCode();
 
     public abstract short getPort();
+
+    public abstract String getClientType();
 }

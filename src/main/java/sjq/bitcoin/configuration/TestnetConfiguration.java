@@ -5,11 +5,13 @@ import java.util.List;
 
 public class TestnetConfiguration extends NetworkConfiguration {
 
+    private static final String NETWORK_CLIENT_TYPE = "netty";
+
     private static final int TEST_NET_MAGIC_CODE = 0xf9beb4d9;
 
     private static final short TEST_NET_NODE_PORT = 18333;
 
-    private static final List<String> DNS_SEED_LIST = new ArrayList<>();
+    private static final List<String> DNS_SEED_LIST = new ArrayList<String>();
 
     public TestnetConfiguration() {
         initDnsSeedList();
@@ -56,5 +58,10 @@ public class TestnetConfiguration extends NetworkConfiguration {
     @Override
     public long getGenesisBlockDifficulty() {
         return 0;
+    }
+
+    @Override
+    public String getClientType() {
+        return NETWORK_CLIENT_TYPE;
     }
 }

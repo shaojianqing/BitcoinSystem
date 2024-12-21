@@ -28,7 +28,7 @@ public class Application {
     }
 
     public static void main(String[] args){
-        Application application = Context.getInstance(Application.class);
+        Application application = Context.build(Application.class);
         application.initialize();
         application.start();
     }

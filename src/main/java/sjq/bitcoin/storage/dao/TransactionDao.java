@@ -1,6 +1,6 @@
 package sjq.bitcoin.storage.dao;
 
-import sjq.bitcoin.storage.data.Page;
+import sjq.bitcoin.storage.data.page.Page;
 import sjq.bitcoin.storage.domain.Transaction;
 
 public class TransactionDao {
