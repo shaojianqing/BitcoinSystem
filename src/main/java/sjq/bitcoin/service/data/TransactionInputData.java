@@ -1,4 +1,4 @@
-package sjq.bitcoin.storage.data;
+package sjq.bitcoin.service.data;
 
 import sjq.bitcoin.constant.Constants;
 import sjq.bitcoin.hash.Hash;

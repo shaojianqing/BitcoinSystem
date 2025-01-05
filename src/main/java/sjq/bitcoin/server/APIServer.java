@@ -1,8 +1,14 @@
 package sjq.bitcoin.server;
 
+import sjq.bitcoin.context.Autowire;
+import sjq.bitcoin.wallet.WalletCore;
+
 public class APIServer {
 
-    public void start() {
-    }
+    @Autowire
+    private WalletCore walletCore;
 
+    public void start() {
+
+    }
 }

@@ -1,14 +1,17 @@
 package sjq.bitcoin.blockchain;
 
-import sjq.bitcoin.configuration.NetworkConfiguration;
 import sjq.bitcoin.context.Autowire;
-import sjq.bitcoin.context.Context;
 import sjq.bitcoin.core.task.BlockSyncTask;
 import sjq.bitcoin.logger.Logger;
+import sjq.bitcoin.message.TransactionMessage;
 import sjq.bitcoin.message.convertor.BlockConvertor;
+import sjq.bitcoin.message.convertor.TransactionConvertor;
 import sjq.bitcoin.message.data.BlockHeader;
 import sjq.bitcoin.network.PeerManager;
 import sjq.bitcoin.service.BlockService;
+import sjq.bitcoin.service.TransactionService;
+import sjq.bitcoin.service.data.TransactionData;
+import sjq.bitcoin.storage.dao.TransactionDao;
 import sjq.bitcoin.storage.domain.Block;
 
 import java.util.Timer;
@@ -27,6 +30,9 @@ public class Blockchain {
 
     @Autowire
     private BlockService blockService;
+
+    @Autowire
+    private TransactionService transactionService;
 
     private Timer syncTaskTimer;
 
@@ -48,11 +54,22 @@ public class Blockchain {
         return bestBlock.getBlockHeight();
     }
 
+    public void processTransaction(TransactionMessage transactionMessage) {
+        TransactionData transactionData = TransactionConvertor.convertTransactionDataFromMessage(transactionMessage);
+        boolean success = transactionService.acceptTransaction(transactionData);
+        if (success) {
+            Logger.info("verify and persist transaction successfully, transaction hash:%s", transactionData.getTransactionHash());
+        } else {
+            Logger.error("verify and persist transaction failure, transaction hash:%s", transactionData.getTransactionHash());
+        }
+    }
+
     /**
      * In header first strategy, the block data is persisted into database with block header directly, and
      * the corresponding status is set to be initial value, so that the block data could be completed later.
+     * 
      * @param header block header data by getHeaders message from another remote peer node.
-     */
+     **/
     public void persistBlockWithHeader(BlockHeader header) {
         Block block = BlockConvertor.convertBlockFromHeader(header);
         block.setSyncStatus(Block.STATUS_SYNC_HEADER);

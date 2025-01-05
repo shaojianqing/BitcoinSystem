@@ -1,7 +1,9 @@
-package sjq.bitcoin.storage.data;
+package sjq.bitcoin.service.data;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import sjq.bitcoin.hash.Hash;
 
 public class TransactionData {
 
@@ -27,5 +29,9 @@ public class TransactionData {
         this.transactionOutputList.add(transactionOutput);
         transactionOutput.setParentTransaction(this);
         return transactionOutput;
+    }
+
+    public Hash getTransactionHash() {
+        return null;
     }
 }

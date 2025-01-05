@@ -2,7 +2,7 @@ package sjq.bitcoin.storage.dao;
 
 import sjq.bitcoin.context.Autowire;
 import sjq.bitcoin.logger.Logger;
-import sjq.bitcoin.storage.data.page.Page;
+import sjq.bitcoin.service.data.page.Page;
 import sjq.bitcoin.storage.domain.Block;
 import sjq.bitcoin.storage.manager.DatabaseManager;
 
