@@ -2,7 +2,6 @@ package sjq.bitcoin.service;
 
 import sjq.bitcoin.configuration.NetworkConfiguration;
 import sjq.bitcoin.context.Autowire;
-import sjq.bitcoin.context.Context;
 import sjq.bitcoin.hash.Hash;
 import sjq.bitcoin.logger.Logger;
 import sjq.bitcoin.message.data.BlockHeader;
@@ -29,7 +28,7 @@ public class BlockService {
             GENESIS_BLOCK.setNonce(configuration.getGenesisBlockNonce());
             GENESIS_BLOCK.setVersion(configuration.getGenesisBlockVersion());
             GENESIS_BLOCK.setTimestamp(configuration.getGenesisBlockTimestamp());
-            //GENESIS_BLOCK.setBlockHash(calculateBlockHash(GENESIS_BLOCK));
+            GENESIS_BLOCK.setBlockHash(calculateBlockHash(GENESIS_BLOCK));
         } catch (Exception e) {
             Logger.fatal("can not initiate genesis block,exception:%s", e);
             System.exit(-1);

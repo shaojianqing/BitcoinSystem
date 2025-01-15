@@ -2,7 +2,6 @@ package sjq.bitcoin.network.processor;
 
 import sjq.bitcoin.logger.Logger;
 import sjq.bitcoin.message.InventoryMessage;
-import sjq.bitcoin.message.VersionReqMessage;
 import sjq.bitcoin.message.base.Message;
 import sjq.bitcoin.network.PeerProcessor;
 import sjq.bitcoin.network.node.PeerNode;

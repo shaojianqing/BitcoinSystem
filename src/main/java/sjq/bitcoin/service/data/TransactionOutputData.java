@@ -1,4 +1,4 @@
-package sjq.bitcoin.storage.data;
+package sjq.bitcoin.service.data;
 
 import sjq.bitcoin.monetary.Coin;
 import sjq.bitcoin.script.ScriptProgram;

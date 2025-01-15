@@ -2,7 +2,6 @@ package sjq.bitcoin.core;
 
 import sjq.bitcoin.blockchain.Blockchain;
 import sjq.bitcoin.context.Autowire;
-import sjq.bitcoin.context.Context;
 import sjq.bitcoin.network.PeerHandler;
 import sjq.bitcoin.network.PeerManager;
 import sjq.bitcoin.network.PeerDiscovery;

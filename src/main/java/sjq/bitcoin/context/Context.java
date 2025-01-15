@@ -9,6 +9,7 @@ import java.util.Map;
 public class Context {
     private static Map<Class, Object> instanceMap = new HashMap<Class, Object>();
 
+    @SuppressWarnings("unchecked")
     public synchronized static <T> T build(Class<T> clazz) {
         try {
             if (!instanceMap.containsKey(clazz)) {

@@ -1,17 +1,21 @@
 package sjq.bitcoin.service;
 
 import sjq.bitcoin.hash.Hash;
-import sjq.bitcoin.storage.domain.Transaction;
+import sjq.bitcoin.service.data.TransactionData;
 
 import java.util.List;
 
 public class TransactionService {
 
-    public List<Transaction> getGenesisTransactions() {
+    public TransactionData getGenesisTransaction() {
         return null;
     }
 
-    public Hash calculateMerkleRoot(List<Transaction> transactions) {
+    public Hash calculateMerkleRoot(List<TransactionData> transactions) {
         return null;
+    }
+
+    public boolean acceptTransaction(TransactionData transaction) {
+        return false;
     }
 }
