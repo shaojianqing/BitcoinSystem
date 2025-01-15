@@ -181,7 +181,7 @@ public interface ScriptOpcode {
     short OP_MAX = 0xa4;
     short OP_WITHIN = 0xa5;
 
-    // crypto
+    // EccKey
     short OP_RIPEMD160 = 0xa6;
     short OP_SHA1 = 0xa7;
     short OP_SHA256 = 0xa8;

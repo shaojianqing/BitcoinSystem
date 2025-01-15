@@ -1,6 +1,8 @@
 package sjq.bitcoin.script;
 
+import sjq.bitcoin.utility.AssertUtils;
 import sjq.bitcoin.utility.ByteUtils;
+import sjq.bitcoin.utility.CryptoUtils;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -94,7 +96,9 @@ public class InstructionTable {
         instructionMap.put(ScriptOpcode.OP_PUSHDATA2, new OpPushData2Insruction());
         instructionMap.put(ScriptOpcode.OP_PUSHDATA4, new OpPushData4Insruction());
 
+        instructionMap.put(ScriptOpcode.OP_SHA1, new OpSha256Instruction());
         instructionMap.put(ScriptOpcode.OP_SHA256, new OpSha256Instruction());
+        instructionMap.put(ScriptOpcode.OP_HASH256, new OpHash256Instruction());
     }
 
     public static Instruction getInstructionByOpCode(short opCode) {
@@ -108,8 +112,22 @@ public class InstructionTable {
 
         private short code;
 
+        private byte[] data;
+
         public OpPushInstruction(short code) {
             this.code = code;
+        }
+
+        public void fetch(ByteBuffer scriptBuffer) {
+            data = ByteUtils.readBytesByLength(scriptBuffer, code);
+        }
+
+        public void execute(OperandStack stack) {
+            if (code==0) {
+                stack.push(EMPTY);
+            } else {
+                stack.push(data);
+            }
         }
 
         public short getOpCode() {
@@ -120,18 +138,20 @@ public class InstructionTable {
             return "OP_PUSH";
         }
 
-        public void execute(ByteBuffer scriptBuffer, OperandStack stack) {
-            if (code==0) {
-                stack.push(EMPTY);
-            } else {
-                int length = code;
-                byte[] operand = ByteUtils.readBytesByLength(scriptBuffer, length);
-                stack.push(operand);
-            }
+        public byte[] getOpData() {
+            return data;
         }
     }
 
     private static class OpPushData1Insruction implements Instruction {
+
+        public void fetch(ByteBuffer scriptBuffer) {
+
+        }
+
+        public void execute(OperandStack stack) {
+
+        }
 
         public short getOpCode() {
             return ScriptOpcode.OP_PUSHDATA1;
@@ -141,12 +161,20 @@ public class InstructionTable {
             return "OP_PUSHDATA1";
         }
 
-        public void execute(ByteBuffer scriptBuffer, OperandStack stack) {
-
+        public byte[] getOpData() {
+            return null;
         }
     }
 
     private static class OpPushData2Insruction implements Instruction {
+
+        public void fetch(ByteBuffer scriptBuffer) {
+
+        }
+
+        public void execute(OperandStack stack) {
+
+        }
 
         public short getOpCode() {
             return ScriptOpcode.OP_PUSHDATA2;
@@ -156,12 +184,20 @@ public class InstructionTable {
             return "OP_PUSHDATA2";
         }
 
-        public void execute(ByteBuffer scriptBuffer, OperandStack stack) {
-
+        public byte[] getOpData() {
+            return null;
         }
     }
 
     private static class OpPushData4Insruction implements Instruction {
+
+        public void fetch(ByteBuffer scriptBuffer) {
+
+        }
+
+        public void execute(OperandStack stack) {
+
+        }
 
         public short getOpCode() {
             return ScriptOpcode.OP_PUSHDATA4;
@@ -171,12 +207,30 @@ public class InstructionTable {
             return "OP_PUSHDATA4";
         }
 
-        public void execute(ByteBuffer scriptBuffer, OperandStack stack) {
-
+        public byte[] getOpData() {
+            return null;
         }
     }
 
     private static class OpSha256Instruction implements Instruction {
+
+        public void fetch(ByteBuffer scriptBuffer) {
+
+        }
+
+        public void execute(OperandStack stack) {
+            try {
+                byte[] source = stack.pop();
+                AssertUtils.notNull(source,
+                        "the input source for sha256 can not be null!");
+                byte[] result = CryptoUtils.sha256(source);
+                stack.push(result);
+            } catch (Exception e) {
+                String message = String.format("script execution exception, " +
+                        "opCode:%s, opName:%s, message:%s", getOpCode(), getOpName(), e.getMessage());
+                throw new ScriptException(message);
+            }
+        }
 
         public short getOpCode() {
             return ScriptOpcode.OP_SHA256;
@@ -186,8 +240,64 @@ public class InstructionTable {
             return "OP_SHA256";
         }
 
-        public void execute(ByteBuffer scriptBuffer, OperandStack stack) {
+        public byte[] getOpData() {
+            return null;
+        }
+    }
 
+    private static class OpHash256Instruction implements Instruction {
+
+        public void fetch(ByteBuffer scriptBuffer) {
+
+        }
+
+        public void execute(OperandStack stack) {
+            try {
+                byte[] source = stack.pop();
+                AssertUtils.notNull(source,
+                        "the input source for hash256 can not be null!");
+                byte[] result = CryptoUtils.hash256(source);
+                stack.push(result);
+            } catch (Exception e) {
+                String message = String.format("script execution exception, " +
+                        "opCode:%s, opName:%s, message:%s", getOpCode(), getOpName(), e.getMessage());
+                throw new ScriptException(message);
+            }
+        }
+
+        public short getOpCode() {
+            return ScriptOpcode.OP_HASH256;
+        }
+
+        public String getOpName() {
+            return "OP_HASH256";
+        }
+
+        public byte[] getOpData() {
+            return null;
+        }
+    }
+
+    private static class OpCheckSigInstruction implements Instruction {
+
+        public void fetch(ByteBuffer scriptBuffer) {
+
+        }
+
+        public void execute(OperandStack stack) {
+
+        }
+
+        public short getOpCode() {
+            return ScriptOpcode.OP_CHECKSIG;
+        }
+
+        public String getOpName() {
+            return "OP_CHECKSIG";
+        }
+
+        public byte[] getOpData() {
+            return null;
         }
     }
 }

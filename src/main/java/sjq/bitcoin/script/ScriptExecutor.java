@@ -1,20 +1,18 @@
 package sjq.bitcoin.script;
 
 
-import java.nio.ByteBuffer;
+import java.util.List;
 
 public class ScriptExecutor {
 
-    public static boolean verify(byte[] scriptData) {
+    public static boolean verify(ScriptProgram program) {
         OperandStack operandStack = new OperandStack();
-        ByteBuffer scriptBuffer = ByteBuffer.wrap(scriptData);
+        List<Instruction> instructions = program.getInstructions();
 
-        while(scriptBuffer.position()<scriptBuffer.limit()) {
-            short opCode = scriptBuffer.get();
-            Instruction instruction = InstructionTable.getInstructionByOpCode(opCode);
-            instruction.execute(scriptBuffer,operandStack);
+        for(Instruction instruction:instructions) {
+            instruction.execute(operandStack);
         }
 
-        return operandStack.getResult();
+        return operandStack.peekSuccess();
     }
 }

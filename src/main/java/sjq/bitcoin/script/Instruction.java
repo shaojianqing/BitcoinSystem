@@ -8,5 +8,9 @@ public interface Instruction {
 
     String getOpName();
 
-    void execute(ByteBuffer scriptBuffer, OperandStack stack);
+    byte[] getOpData();
+
+    void fetch(ByteBuffer scriptBuffer);
+
+    void execute(OperandStack stack);
 }

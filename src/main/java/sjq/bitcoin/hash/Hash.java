@@ -42,14 +42,17 @@ public class Hash {
         return new Hash(rawBytes);
     }
 
+    public byte[] byteData() {
+        return value;
+    }
+
     public byte[] serialize() {
         return ByteUtils.reverseBytes(value);
     }
 
     public static byte[] calculateTwice(byte[] content) {
         MessageDigest digest = newSha256Digest();
-        digest.update(content, 0, content.length);
-        return digest.digest(digest.digest());
+        return digest.digest(digest.digest(content));
     }
 
     public static MessageDigest newSha256Digest() {

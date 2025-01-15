@@ -23,7 +23,8 @@ public class OperandStack {
         return stack.peek();
     }
 
-    public boolean getResult() {
-        return false;
+    public boolean peekSuccess() {
+        byte[] data = stack.peek();
+        return true;
     }
 }
