@@ -8,8 +8,7 @@ import sjq.bitcoin.message.base.Message;
 import sjq.bitcoin.network.PeerManager;
 import sjq.bitcoin.network.Services;
 import sjq.bitcoin.network.client.Callback;
-import sjq.bitcoin.network.client.Client;
-import sjq.bitcoin.network.client.ClientFactory;
+import sjq.bitcoin.network.client.SocketClient;
 import sjq.bitcoin.network.socket.SocketHandler;
 
 import java.net.InetSocketAddress;
@@ -39,7 +38,7 @@ public class PeerNode implements Callback {
 
     private String status;
 
-    private Client client;
+    private SocketClient client;
 
     public PeerNode(PeerManager manager, String url, Services requiredServices, Long bestBlockHeight) throws Exception {
         this.manager = manager;
@@ -50,7 +49,7 @@ public class PeerNode implements Callback {
         this.versionReqMessage = prepareVersionReqMessage(bestBlockHeight);
 
         this.status = INACTIVE;
-        this.client = ClientFactory.createClientInstance(address, this);
+        this.client = new SocketClient(address, this);
     }
 
     public boolean start() {

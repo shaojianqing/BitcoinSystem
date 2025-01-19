@@ -3,6 +3,7 @@ package sjq.bitcoin.message.base;
 
 import sjq.bitcoin.configuration.NetworkConfiguration;
 import sjq.bitcoin.hash.Hash;
+import sjq.bitcoin.message.data.NetworkAddress;
 import sjq.bitcoin.utility.ByteUtils;
 
 import java.io.ByteArrayOutputStream;
@@ -13,6 +14,20 @@ import static sjq.bitcoin.network.packet.BitcoinPacket.*;
 public abstract class BaseMessage implements Message {
 
     private static final int magicCode = NetworkConfiguration.getConfiguration().getMagicCode();
+
+    private final String command;
+
+    protected final int protocolVersion;
+
+    public BaseMessage(String command, int protocolVersion) {
+        this.command = command;
+        this.protocolVersion = protocolVersion;
+    }
+
+    public BaseMessage(String command) {
+        this.command = command;
+        this.protocolVersion = NetworkAddress.PROTOCOL_VERSION_1;
+    }
 
     private byte[] serializeHeader(byte[] messageBody) {
         byte[] messageHeader = new byte[MAGIC_LENGTH + COMMAND_LENGTH + MESSAGE_LENGTH + CHECKSUM_LENGTH];
@@ -46,5 +61,9 @@ public abstract class BaseMessage implements Message {
     }
 
     public void deserializeMessage(byte[] data) throws Exception {
+    }
+
+    public String getCommand() {
+        return command;
     }
 }

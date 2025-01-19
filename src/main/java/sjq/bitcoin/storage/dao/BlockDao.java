@@ -16,7 +16,7 @@ public class BlockDao {
             "insert into " +
                     "block(block_hash, parent_hash, merkle_root, block_height, version, difficulty, nonce, " +
                     "sync_status, verify_status, timestamp, trx_count, create_time, modify_time) " +
-                    "values('%s', '%s', '%s', '%ld', '%ld', '%ld', '%ld', '%s', '%s', '%ld', '%ld', now(), now())";
+                    "values('%s', '%s', '%s', '%d', '%d', '%d', '%d', '%s', '%s', '%d', '%d', now(), now())";
 
     private static String QUERY_BEST_BLOCK_FORMAT =
             "select " +

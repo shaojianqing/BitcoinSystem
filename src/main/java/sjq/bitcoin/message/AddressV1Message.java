@@ -8,10 +8,6 @@ public class AddressV1Message extends AddressMessage implements Message {
     public static String COMMAND = "addr";
 
     public AddressV1Message() {
-        super.protocolVersion = NetworkAddress.PROTOCOL_VERSION_1;
-    }
-
-    public String getCommand() {
-        return COMMAND;
+        super(COMMAND, NetworkAddress.PROTOCOL_VERSION_1);
     }
 }

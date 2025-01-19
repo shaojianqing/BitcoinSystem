@@ -36,5 +36,5 @@ public abstract class NetworkConfiguration {
 
     public abstract short getPort();
 
-    public abstract String getClientType();
+    public abstract BlockMessage getGenesisBlock();
 }

@@ -17,7 +17,9 @@ public abstract class AddressMessage extends BaseMessage implements Message {
 
     protected List<NetworkAddress> addressList = new ArrayList<NetworkAddress>();
 
-    protected int protocolVersion;
+    public AddressMessage(String command, int protocolVersion) {
+        super(command, protocolVersion);
+    }
 
     @Override
     public byte[] serializeMessage() throws IOException {

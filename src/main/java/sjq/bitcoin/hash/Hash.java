@@ -7,6 +7,7 @@ import java.nio.ByteBuffer;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 public class Hash {
 
@@ -70,5 +71,13 @@ public class Hash {
     @Override
     public String toString() {
         return HexUtils.formatHex(value);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Hash hash = (Hash) o;
+        return Arrays.equals(value, hash.value);
     }
 }

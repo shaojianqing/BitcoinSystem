@@ -38,6 +38,10 @@ public class VersionReqMessage extends BaseMessage implements Message {
 
     private boolean relay;
 
+    public VersionReqMessage() {
+        super(COMMAND);
+    }
+
     @Override
     public byte[] serializeMessage() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -87,10 +91,6 @@ public class VersionReqMessage extends BaseMessage implements Message {
         } else {
             this.relay = true;
         }
-    }
-
-    public String getCommand() {
-        return COMMAND;
     }
 
     public int getClientVersion() {

@@ -1,11 +1,11 @@
 package sjq.bitcoin.configuration;
 
+import sjq.bitcoin.message.BlockMessage;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class TestnetConfiguration extends NetworkConfiguration {
-
-    private static final String NETWORK_CLIENT_TYPE = "netty";
 
     private static final int TEST_NET_MAGIC_CODE = 0xf9beb4d9;
 
@@ -60,8 +60,7 @@ public class TestnetConfiguration extends NetworkConfiguration {
         return 0;
     }
 
-    @Override
-    public String getClientType() {
-        return NETWORK_CLIENT_TYPE;
+    public BlockMessage getGenesisBlock() {
+        return null;
     }
 }

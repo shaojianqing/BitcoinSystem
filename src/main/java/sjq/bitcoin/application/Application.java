@@ -5,6 +5,7 @@ import sjq.bitcoin.context.Context;
 import sjq.bitcoin.core.BitcoinCore;
 import sjq.bitcoin.graphics.GuiSystem;
 import sjq.bitcoin.server.APIServer;
+import sjq.bitcoin.storage.manager.DatabaseManager;
 import sjq.bitcoin.wallet.WalletCore;
 
 public class Application {
@@ -21,8 +22,12 @@ public class Application {
     @Autowire
     private WalletCore walletCore;
 
+    @Autowire
+    private DatabaseManager databaseManager;
+
     public void initialize() {
         bitcoinCore.initialize();
+        databaseManager.initialize();
     }
 
     public void start() {

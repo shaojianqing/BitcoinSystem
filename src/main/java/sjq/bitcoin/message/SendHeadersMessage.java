@@ -9,7 +9,7 @@ public class SendHeadersMessage extends BaseMessage implements Message {
 
     public static String COMMAND = "sendheaders";
 
-    public String getCommand() {
-        return COMMAND;
+    public SendHeadersMessage() {
+        super(COMMAND);
     }
 }

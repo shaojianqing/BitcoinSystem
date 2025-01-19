@@ -9,8 +9,8 @@ public class PingMessage extends BaseMessage implements Message {
 
     public static String COMMAND = "ping";
 
-    public String getCommand() {
-        return COMMAND;
+    public PingMessage() {
+        super(COMMAND);
     }
 }
 

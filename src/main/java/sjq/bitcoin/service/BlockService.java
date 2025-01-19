@@ -31,7 +31,7 @@ public class BlockService {
             GENESIS_BLOCK.setBlockHash(calculateBlockHash(GENESIS_BLOCK));
         } catch (Exception e) {
             Logger.fatal("can not initiate genesis block,exception:%s", e);
-            System.exit(-1);
+            //System.exit(-1);
         }
     }
 
@@ -52,8 +52,8 @@ public class BlockService {
         blockHeader.setVersion(block.getVersion());
         String parentHash = block.getParentHash();
         blockHeader.setParentHash(Hash.wrap(HexUtils.parseHex(parentHash)));
-        String merkleRoot = block.getMerkleRoot();
-        blockHeader.setMerkleRoot(Hash.wrap(HexUtils.parseHex(merkleRoot)));
+        String merkelRoot = block.getMerkleRoot();
+        blockHeader.setMerkleRoot(Hash.wrap(HexUtils.parseHex(merkelRoot)));
         blockHeader.setTimestamp(block.getTimestamp());
         blockHeader.setDifficulty(block.getDifficulty());
         blockHeader.setNonce(block.getNonce());

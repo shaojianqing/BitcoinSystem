@@ -15,7 +15,7 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
-public class SocketClient implements Runnable, Client {
+public class SocketClient implements Runnable {
 
     private static final int CONNECTION_TIMEOUT = 30000;
 
@@ -44,7 +44,6 @@ public class SocketClient implements Runnable, Client {
     }
 
     public boolean openConnection() {
-        boolean success;
         try {
             if (socket.isConnected()) {
                 return true;
@@ -54,18 +53,16 @@ public class SocketClient implements Runnable, Client {
             inputstream = socket.getInputStream();
             outputStream = socket.getOutputStream();
             running.compareAndSet(false, true);
+            callback.connectionOpened();
             String threadName = String.format("Peer node client thread(%s:%d)", address.getHostName(), address.getPort());
             ThreadUtils.run(this, threadName);
             Logger.info("connect to peer successfully, remote peer address:%s, port:%d", address.getAddress(), address.getPort());
-            callback.connectionOpened();
-            success = true;
         } catch (Exception e) {
             running.compareAndSet(true, false);
             callback.connectionClose();
             Logger.error("connect to peer failure, remote peer address:%s, port:%d, error:%s", address.getAddress(), address.getPort(), e);
-            success = false;
         }
-        return success;
+        return running.get();
     }
 
     public void sendData(byte[] data) throws IOException {
@@ -76,36 +73,36 @@ public class SocketClient implements Runnable, Client {
     public void run() {
 
         try {
-            ByteBuffer dbuf = ByteBuffer.allocateDirect(Math.min(Math.max(MAX_MESSAGE_SIZE, BUFFER_SIZE_LOWER_BOUND), BUFFER_SIZE_UPPER_BOUND));
-            byte[] readBuff = new byte[dbuf.capacity()];
+            ByteBuffer dataBuf = ByteBuffer.allocateDirect(Math.min(Math.max(MAX_MESSAGE_SIZE, BUFFER_SIZE_LOWER_BOUND), BUFFER_SIZE_UPPER_BOUND));
+            byte[] readBuff = new byte[dataBuf.capacity()];
             while (true) {
-                boolean bufferCheck = (dbuf.remaining() > 0 && dbuf.remaining() <= readBuff.length);
+                boolean bufferCheck = (dataBuf.remaining() > 0 && dataBuf.remaining() <= readBuff.length);
                 if (!bufferCheck) {
                     throw new IllegalStateException();
                 }
 
-                int read = inputstream.read(readBuff, 0, Math.max(1, Math.min(dbuf.remaining(), inputstream.available())));
+                int read = inputstream.read(readBuff, 0, Math.max(1, Math.min(dataBuf.remaining(), inputstream.available())));
                 if (read == -1) {
                     return;
                 }
-                dbuf.put(readBuff, 0, read);
-                ((Buffer) dbuf).flip();
-                int bytesConsumed = callback.receiveData(dbuf);
+                dataBuf.put(readBuff, 0, read);
+                ((Buffer) dataBuf).flip();
+                int bytesConsumed = callback.receiveData(dataBuf);
 
-                if (dbuf.position() != bytesConsumed) {
+                if (dataBuf.position() != bytesConsumed) {
                     throw new IllegalStateException();
                 }
-                dbuf.compact();
+                dataBuf.compact();
             }
-
         } catch (Exception e) {
             Logger.error("client receive bytes from peer error:%s, address:%s", e, address);
         } finally {
             try {
                 socket.close();
+                callback.connectionClose();
             } catch (IOException e1) {
+                Logger.error("client socket close error:%s, address:%s", e1, address);
             }
-            callback.connectionClose();
         }
     }
 

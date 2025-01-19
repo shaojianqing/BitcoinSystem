@@ -9,7 +9,7 @@ public class MemoryPoolMessage extends BaseMessage implements Message {
 
     public static String COMMAND = "mempool";
 
-    public String getCommand() {
-        return COMMAND;
+    public MemoryPoolMessage() {
+        super(COMMAND);
     }
 }

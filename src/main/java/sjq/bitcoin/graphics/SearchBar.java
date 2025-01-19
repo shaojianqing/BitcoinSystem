@@ -4,6 +4,8 @@ import sjq.bitcoin.constant.Appearance;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class SearchBar extends JPanel {
 
@@ -24,7 +26,7 @@ public class SearchBar extends JPanel {
     public SearchBar() {
         setBackground(Appearance.MAIN_COLOR);
         setLayout(new FlowLayout(FlowLayout.LEFT));
-        setPreferredSize(new Dimension(1180, 36));
+        setPreferredSize(new Dimension(1180, 38));
         setBorder(BorderFactory.createLineBorder(Appearance.SEARCHBAR_COLOR));
 
         blockHeightLbl = new JLabel();
@@ -43,15 +45,17 @@ public class SearchBar extends JPanel {
         blockHashTxt = new JTextField();
         blockStatusCmb = new JComboBox();
 
-        blockHeightTxt.setPreferredSize(new Dimension(120, 28));
-        blockHashTxt.setPreferredSize(new Dimension(400, 28));
-        blockStatusCmb.setPreferredSize(new Dimension(160, 28));
+        blockHeightTxt.setPreferredSize(new Dimension(120, 24));
+        blockHashTxt.setPreferredSize(new Dimension(400, 24));
+        blockStatusCmb.setPreferredSize(new Dimension(160, 24));
 
         blockHeightTxt.setBorder(BorderFactory.createLineBorder(Appearance.BORDER_COLOR));
         blockHashTxt.setBorder(BorderFactory.createLineBorder(Appearance.BORDER_COLOR));
 
         blockHeightTxt.setBackground(Appearance.AREA_COLOR);
+        blockHeightTxt.setCaretColor(Appearance.INPUT_TEXT_COLOR);
         blockHashTxt.setBackground(Appearance.AREA_COLOR);
+        blockHashTxt.setCaretColor(Appearance.INPUT_TEXT_COLOR);
         blockStatusCmb.setBackground(Appearance.AREA_COLOR);
 
         blockHeightTxt.setForeground(Color.WHITE);
@@ -60,12 +64,16 @@ public class SearchBar extends JPanel {
 
         blockStatusCmb.addItem("Confirmed");
         blockStatusCmb.addItem("Unconfirmed");
+        blockStatusCmb.setBorder(BorderFactory.createLineBorder(Appearance.BORDER_COLOR));
         blockStatusCmb.setForeground(Appearance.INPUT_TEXT_COLOR);
         blockStatusCmb.setBackground(Appearance.GRID_COLOR);
 
         searchBtn = new JButton();
         searchBtn.setText("Search");
-        searchBtn.setPreferredSize(new Dimension(120, 28));
+        searchBtn.setEnabled(true);
+        searchBtn.setBorder(BorderFactory.createLineBorder(Appearance.BORDER_COLOR));
+        searchBtn.setPreferredSize(new Dimension(120, 24));
+        searchBtn.setContentAreaFilled(false);
         searchBtn.setForeground(Appearance.INPUT_TEXT_COLOR);
         searchBtn.setBackground(Appearance.GRID_COLOR);
 

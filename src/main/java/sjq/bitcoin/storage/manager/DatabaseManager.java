@@ -18,13 +18,15 @@ public class DatabaseManager {
 
     private static final String DB_PASSWORD = "BITCOIN_PASSWORD";
 
-    private static final String DATABASE_NAME = "bitcoin";
+    private static final String DATABASE_NAME = "BitcoinDB";
 
     private static final String CONN_FORMAT = "jdbc:mysql://%s:3306/%s";
 
+    private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
+
     private BasicDataSource dataSource;
 
-    public void initDatabaseManager() {
+    public void initialize() {
         String dbUrl = System.getenv(DATABASE_URL);
         String username = System.getenv(DB_USERNAME);
         String password = System.getenv(DB_PASSWORD);
@@ -34,7 +36,7 @@ public class DatabaseManager {
         String connectionString = String.format(CONN_FORMAT, dbUrl, DATABASE_NAME);
 
         dataSource = new BasicDataSource();
-        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+        dataSource.setDriverClassName(JDBC_DRIVER);
         dataSource.setUrl(connectionString);
         dataSource.setUsername(username);
         dataSource.setPassword(password);

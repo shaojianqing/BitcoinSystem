@@ -71,6 +71,7 @@ public class PeerTable extends JPanel {
         table.setForeground(new Color(220,220,220));
 
         vScrollBar = new VerticalScrollBar(JScrollBar.VERTICAL);
+        vScrollBar.setUnitIncrement(8);
         panel = new JScrollPane(table);
         panel.setBackground(Appearance.MAIN_COLOR);
         panel.setBounds(0,0, 380, 630);

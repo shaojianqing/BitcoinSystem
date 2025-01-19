@@ -9,7 +9,7 @@ public class NotFoundMessage extends BaseMessage implements Message {
 
     public static String COMMAND = "notfound";
 
-    public String getCommand() {
-        return COMMAND;
+    public NotFoundMessage() {
+        super(COMMAND);
     }
 }

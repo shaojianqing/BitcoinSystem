@@ -13,7 +13,6 @@ import java.nio.ByteOrder;
 public class VariableInteger {
     private final long value;
     private final int originalSize;
-
     private static final int SIZE_BYTE = 1; // 1 data byte
     private static final int SIZE_SHORT = 1 + 2; // 1 marker + 2 data bytes
     private static final int SIZE_INT = 1 + 4; // 1 marker + 4 data bytes

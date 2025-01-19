@@ -1,12 +1,18 @@
 package sjq.bitcoin.monetary;
 
+import sjq.bitcoin.utility.ByteUtils;
+
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 public class Coin {
 
+    public static final long ONE_COIN = 100_000_000;
+
     public static Coin ZERO = new Coin(0);
+
+    public static Coin ONE = new Coin(ONE_COIN);
 
     private long value;
 
@@ -14,8 +20,23 @@ public class Coin {
         this.value = value;
     }
 
-    public static Coin read(ByteBuffer buf) throws BufferUnderflowException {
-        long value = buf.order(ByteOrder.LITTLE_ENDIAN).getLong();
+    public static Coin read(ByteBuffer buffer) throws BufferUnderflowException {
+        long value = ByteUtils.readInt64LE(buffer);
+        return new Coin(value);
+    }
+
+    public ByteBuffer write(ByteBuffer buffer) {
+        ByteUtils.writeInt64LE(value, buffer);
+        return buffer;
+    }
+
+    public Coin multiply(final long factor) {
+        long value = Math.multiplyExact(this.value, factor);
+        return new Coin(value);
+    }
+
+    public Coin divide(final long factor) {
+        long value = this.value/factor;
         return new Coin(value);
     }
 

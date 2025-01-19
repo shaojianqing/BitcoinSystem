@@ -9,7 +9,7 @@ public class GetDataMessage extends BaseMessage implements Message {
 
     public static String COMMAND = "getdata";
 
-    public String getCommand() {
-        return COMMAND;
+    public GetDataMessage() {
+        super(COMMAND);
     }
 }

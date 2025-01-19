@@ -299,6 +299,27 @@ public class ByteUtils {
     }
 
     /**
+     * First write the length of the byte array as a {@link VariableInteger}. Then write the array contents.
+     *
+     * @param buf   buffer to write to
+     * @param bytes bytes to write
+     * @return the buffer
+     * @throws BufferOverflowException if the value doesn't fit the remaining buffer
+     */
+    public static void writeLengthPrefixedBytes(byte[] bytes, ByteBuffer buf) throws BufferOverflowException {
+        buf.put(VariableInteger.of(bytes.length).serialize()).put(bytes);
+    }
+
+    /**
+     * Read 1 byte from the buffer.
+     * @param buf buffer to be read from
+     * @throws BufferUnderflowException if the read value extends beyond the remaining bytes of the buffer
+     */
+    public static byte readByte(ByteBuffer buf) throws BufferUnderflowException {
+        return buf.get();
+    }
+
+    /**
      * Read 2 bytes from the buffer as unsigned 16-bit integer in big endian format.
      * @param buf buffer to be read from
      * @throws BufferUnderflowException if the read value extends beyond the remaining bytes of the buffer
@@ -334,6 +355,15 @@ public class ByteUtils {
      */
     public static int readInt32BE(ByteBuffer buf) throws BufferUnderflowException {
         return buf.order(ByteOrder.BIG_ENDIAN).getInt();
+    }
+
+    /**
+     * Read 4 bytes from the buffer as unsigned 32-bit integer in big endian format.
+     * @param buf buffer to be read from
+     * @throws BufferUnderflowException if the read value extends beyond the remaining bytes of the buffer
+     */
+    public static long readUint32BE(ByteBuffer buf) throws BufferUnderflowException {
+        return Integer.toUnsignedLong(buf.order(ByteOrder.BIG_ENDIAN).getInt());
     }
 
     /**

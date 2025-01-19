@@ -19,7 +19,7 @@ public class TransactionInputData {
     private Coin value;
 
     /**
-     * Coinbase transaction is made in case of new block mining. It is
+     * coinbase transaction is made in case of new block mining. It is
      * designed by Bitcoin protocol as the only way for new bitcoin issuance.
      **/
     public static TransactionInputData buildCoinbaseTransactionInput(TransactionData parentTransaction, byte[] scriptData) {

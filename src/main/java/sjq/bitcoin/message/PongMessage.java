@@ -9,8 +9,8 @@ public class PongMessage extends BaseMessage implements Message {
 
     public static String COMMAND = "pong";
 
-    public String getCommand() {
-        return COMMAND;
+    public PongMessage() {
+        super(COMMAND);
     }
 }
 

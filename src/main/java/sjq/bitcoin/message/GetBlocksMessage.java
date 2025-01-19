@@ -9,7 +9,7 @@ public class GetBlocksMessage extends BaseMessage implements Message {
 
     public static String COMMAND = "getblocks";
 
-    public String getCommand() {
-        return COMMAND;
+    public GetBlocksMessage() {
+        super(COMMAND);
     }
 }

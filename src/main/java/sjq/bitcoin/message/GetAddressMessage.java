@@ -7,7 +7,7 @@ public class GetAddressMessage extends BaseMessage implements Message {
 
     public static String COMMAND = "getaddr";
 
-    public String getCommand() {
-        return COMMAND;
+    public GetAddressMessage() {
+        super(COMMAND);
     }
 }

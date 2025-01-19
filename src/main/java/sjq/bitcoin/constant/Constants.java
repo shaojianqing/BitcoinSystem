@@ -18,10 +18,15 @@ public class Constants {
 
     public static final Integer VERSION_FEEFILTER = 70013;
 
+    public static final Integer SERIALIZE_TRANSACTION_NO_WITNESS = 0x40000000;
+
+    public static final Integer TRANSACTION_WITNESS_VERSION = 70012;
+
+    public static final Integer MAX_INITIAL_ARRAY_LENGTH = 20;
+
     public static final Integer VERSION_CURRENT = 70013;
 
     public static final Integer MAX_CONNECTION_COUNT = 20;
 
     public static final Integer IPV6_LENGTH = 16;
-
 }

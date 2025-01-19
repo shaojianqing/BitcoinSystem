@@ -24,7 +24,8 @@ public class InventoryMessage extends BaseMessage implements Message {
     private List<InventoryItem> inventoryItemList;
 
     public InventoryMessage() {
-        inventoryItemList = new ArrayList<InventoryItem>();
+        super(COMMAND);
+        this.inventoryItemList = new ArrayList<>();
     }
 
     @Override
@@ -42,17 +43,9 @@ public class InventoryMessage extends BaseMessage implements Message {
         }
 
         for (int i=0;i<itemCount.intValue();++i) {
-            if (buffer.remaining() < INVENTORY_ITEM_LENGTH) {
-                throw new ProtocolException("buffer remaining less than item length!");
-            }
-
             int type = ByteUtils.readInt32LE(buffer);
             Hash hash = Hash.read(buffer);
             inventoryItemList.add(new InventoryItem(type, hash));
         }
-    }
-
-    public String getCommand() {
-        return COMMAND;
     }
 }

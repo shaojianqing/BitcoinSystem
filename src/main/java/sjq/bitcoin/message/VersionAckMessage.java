@@ -9,8 +9,8 @@ public class VersionAckMessage extends BaseMessage implements Message {
 
     public static String COMMAND = "verack";
 
-    public String getCommand() {
-        return COMMAND;
+    public VersionAckMessage() {
+        super(COMMAND);
     }
 }
 

@@ -3,6 +3,7 @@ package sjq.bitcoin.message;
 import sjq.bitcoin.hash.Hash;
 import sjq.bitcoin.message.base.BaseMessage;
 import sjq.bitcoin.message.base.Message;
+import sjq.bitcoin.message.data.NetworkAddress;
 import sjq.bitcoin.utility.ByteUtils;
 
 import java.io.IOException;
@@ -31,6 +32,10 @@ public class BlockMessage extends BaseMessage implements Message {
 
     private List<TransactionMessage> transactions;
 
+    public BlockMessage() {
+        super(COMMAND);
+    }
+
     @Override
     protected byte[] serializeMessage() throws IOException {
         return new byte[0];
@@ -55,8 +60,67 @@ public class BlockMessage extends BaseMessage implements Message {
         this.blockHash = Hash.wrapReversed(blockHashBytes);
     }
 
-    public String getCommand() {
-        return COMMAND;
+    public long getVersion() {
+        return version;
     }
 
+    public void setVersion(long version) {
+        this.version = version;
+    }
+
+    public Hash getPrevBlockHash() {
+        return prevBlockHash;
+    }
+
+    public void setPrevBlockHash(Hash prevBlockHash) {
+        this.prevBlockHash = prevBlockHash;
+    }
+
+    public Hash getBlockHash() {
+        return blockHash;
+    }
+
+    public void setBlockHash(Hash blockHash) {
+        this.blockHash = blockHash;
+    }
+
+    public Hash getMerkleRoot() {
+        return merkleRoot;
+    }
+
+    public void setMerkleRoot(Hash merkleRoot) {
+        this.merkleRoot = merkleRoot;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public long getDifficulty() {
+        return difficulty;
+    }
+
+    public void setDifficulty(long difficulty) {
+        this.difficulty = difficulty;
+    }
+
+    public long getNonce() {
+        return nonce;
+    }
+
+    public void setNonce(long nonce) {
+        this.nonce = nonce;
+    }
+
+    public List<TransactionMessage> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(List<TransactionMessage> transactions) {
+        this.transactions = transactions;
+    }
 }

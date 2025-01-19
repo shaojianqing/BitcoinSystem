@@ -25,6 +25,10 @@ public class GetHeadersMessage extends BaseMessage implements Message {
 
     private Hash stopHash;
 
+    public GetHeadersMessage() {
+        super(COMMAND);
+    }
+
     @Override
     protected byte[] serializeMessage() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -61,10 +65,6 @@ public class GetHeadersMessage extends BaseMessage implements Message {
 
     public void addHash(Hash hash) {
         this.hashList.add(hash);
-    }
-
-    public String getCommand() {
-        return COMMAND;
     }
 
     public long getVersion() {

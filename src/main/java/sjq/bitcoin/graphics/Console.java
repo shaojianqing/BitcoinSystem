@@ -48,6 +48,8 @@ public class Console extends JPanel {
 
         vScrollBar = new VerticalScrollBar(JScrollBar.VERTICAL);
         hScrollBar = new HorizontalScrollBar(JScrollBar.HORIZONTAL);
+        vScrollBar.setUnitIncrement(8);
+        hScrollBar.setUnitIncrement(8);
 
         panel = new JScrollPane(output);
         panel.setFocusable(false);

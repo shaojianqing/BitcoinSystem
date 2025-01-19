@@ -9,7 +9,7 @@ public class SendAddrV2Message extends BaseMessage implements Message {
 
     public static String COMMAND = "sendaddrv2";
 
-    public String getCommand() {
-        return COMMAND;
+    public SendAddrV2Message() {
+        super(COMMAND);
     }
 }

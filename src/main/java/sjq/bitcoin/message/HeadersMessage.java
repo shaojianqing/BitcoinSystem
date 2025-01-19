@@ -20,7 +20,8 @@ public class HeadersMessage extends BaseMessage implements Message {
     private List<BlockHeader> headerList;
 
     public HeadersMessage() {
-        headerList = new ArrayList<BlockHeader>();
+        super(COMMAND);
+        this.headerList = new ArrayList<BlockHeader>();
     }
 
     @Override
@@ -46,10 +47,6 @@ public class HeadersMessage extends BaseMessage implements Message {
             header.read(buffer);
             headerList.add(header);
         }
-    }
-
-    public String getCommand() {
-        return COMMAND;
     }
 
     public int getHeaderCount() {
