@@ -15,7 +15,7 @@ public abstract class NetworkConfiguration {
 
     private static NetworkConfiguration configuration;
 
-    public static NetworkConfiguration getConfiguration() {
+    public synchronized static NetworkConfiguration getConfiguration() {
         if (configuration == null) {
             configuration = new MainnetConfiguration();
         }

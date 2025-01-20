@@ -8,7 +8,6 @@ import sjq.bitcoin.message.base.Message;
 import sjq.bitcoin.message.data.*;
 import sjq.bitcoin.network.protocol.ProtocolException;
 import sjq.bitcoin.utility.ByteUtils;
-import sjq.bitcoin.utility.HexUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -114,6 +113,10 @@ public class TransactionMessage extends BaseMessage implements Message {
     public Hash getTransactionHash() throws IOException {
         byte[] rawTransactionData = serializeMessage();
         return Hash.wrapReversed(Hash.calculateTwice(rawTransactionData));
+    }
+
+    public Hash getWitnessTransactionHash() throws IOException {
+        return Hash.ZERO_HASH;
     }
 
     public boolean isCoinbaseTransaction() {

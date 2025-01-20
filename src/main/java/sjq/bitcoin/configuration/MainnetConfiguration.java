@@ -1,6 +1,9 @@
 package sjq.bitcoin.configuration;
 
+import sjq.bitcoin.hash.Hash;
 import sjq.bitcoin.logger.Logger;
+import sjq.bitcoin.merkle.MerkleTree;
+import sjq.bitcoin.merkle.TreeNode;
 import sjq.bitcoin.message.BlockMessage;
 import sjq.bitcoin.message.TransactionMessage;
 import sjq.bitcoin.message.data.TransactionLockTime;
@@ -30,6 +33,8 @@ public class MainnetConfiguration extends NetworkConfiguration {
     private static final long GENESIS_BLOCK_DIFFICULTY = 0x1d00ffffL;
 
     private static final long GENESIS_INITIAL_REWARD_COIN = 50;
+
+    private static final Hash GENESIS_PREVIOUS_BLOCK_HASH = Hash.ZERO_HASH;
 
     private static final byte[] GENESIS_TRANSACTION_INPUT_SCRIPT = HexUtils.parseHex("04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73");
 
@@ -86,12 +91,22 @@ public class MainnetConfiguration extends NetworkConfiguration {
 
     public BlockMessage getGenesisBlock() {
         BlockMessage blockMessage = new BlockMessage();
-        List<TransactionMessage> transactions = getGenesisTransactions();
-        blockMessage.setTransactions(transactions);
-        blockMessage.setDifficulty(GENESIS_BLOCK_DIFFICULTY);
-        blockMessage.setNonce(GENESIS_BLOCK_NONCE);
-        blockMessage.setVersion(GENESIS_BLOCK_VERSION);
-        blockMessage.setTimestamp(GENESIS_BLOCK_TIMESTAMP);
+        try {
+            List<TransactionMessage> transactions = getGenesisTransactions();
+            MerkleTree rootTree = MerkleTree.build(transactions, false);
+            TreeNode rootNode = rootTree.getRoot();
+            blockMessage.setTransactions(transactions);
+            blockMessage.setVersion(GENESIS_BLOCK_VERSION);
+            blockMessage.setPrevBlockHash(GENESIS_PREVIOUS_BLOCK_HASH);
+            blockMessage.setMerkleRoot(rootNode.getNodeHash());
+            blockMessage.setTimestamp(GENESIS_BLOCK_TIMESTAMP);
+            blockMessage.setDifficulty(GENESIS_BLOCK_DIFFICULTY);
+            blockMessage.setNonce(GENESIS_BLOCK_NONCE);
+            blockMessage.calculateBlockHash();
+        } catch (Exception e) {
+            Logger.fatal("prepare genesis block exception:%s", e);
+            System.exit(-1);
+        }
         return blockMessage;
     }
 
@@ -118,5 +133,12 @@ public class MainnetConfiguration extends NetworkConfiguration {
             System.exit(-1);
         }
         return transactionList;
+    }
+
+    public static void main(String[] args) {
+        NetworkConfiguration configuration = NetworkConfiguration.getConfiguration();
+        BlockMessage block = configuration.getGenesisBlock();
+        System.out.println(block.getMerkleRoot());
+        System.out.println(block.getBlockHash());
     }
 }

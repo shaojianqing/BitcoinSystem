@@ -36,6 +36,20 @@ public class BlockMessage extends BaseMessage implements Message {
         super(COMMAND);
     }
 
+    public void calculateBlockHash() {
+        ByteBuffer buffer = ByteBuffer.allocate(HEADER_LENGTH);
+        ByteUtils.writeInt32LE(this.version, buffer);
+        buffer.put(this.prevBlockHash.serialize());
+        buffer.put(this.merkleRoot.serialize());
+        ByteUtils.writeInt32LE(this.timestamp, buffer);
+        ByteUtils.writeInt32LE(this.difficulty, buffer);
+        ByteUtils.writeInt32LE(this.nonce, buffer);
+
+        byte[] headerBytes = buffer.array();
+        byte[] blockHashBytes = Hash.calculateTwice(headerBytes);
+        this.blockHash = Hash.wrapReversed(blockHashBytes);
+    }
+
     @Override
     protected byte[] serializeMessage() throws IOException {
         return new byte[0];
