@@ -1,10 +1,13 @@
 package sjq.bitcoin.configuration;
 
+import sjq.bitcoin.logger.Logger;
 import sjq.bitcoin.message.BlockMessage;
 import sjq.bitcoin.message.TransactionMessage;
 import sjq.bitcoin.message.data.TransactionLockTime;
 import sjq.bitcoin.message.data.TransactionOutput;
 import sjq.bitcoin.monetary.Coin;
+import sjq.bitcoin.script.ScriptOpcode;
+import sjq.bitcoin.script.ScriptProgram;
 import sjq.bitcoin.utility.HexUtils;
 
 import java.util.ArrayList;
@@ -94,17 +97,26 @@ public class MainnetConfiguration extends NetworkConfiguration {
 
     public List<TransactionMessage> getGenesisTransactions() {
         List<TransactionMessage> transactionList = new ArrayList<>();
-        TransactionMessage transaction = TransactionMessage.coinbaseTransaction(GENESIS_TRANSACTION_INPUT_SCRIPT);
-        transaction.setMessageVersion(GENESIS_MESSAGE_VERSION);
-        TransactionOutput transactionOutput = new TransactionOutput();
-        transactionOutput.setValue(Coin.ONE.multiply(GENESIS_INITIAL_REWARD_COIN));
-        transactionOutput.setScriptPubKey(GENESIS_TRANSACTION_OUTPUT_SCRIPT);
-        transactionOutput.setParentTransaction(transaction);
-        transaction.addTransactionOutput(transactionOutput);
-        TransactionLockTime transactionLockTime = TransactionLockTime.of(0);
-        transaction.setTransactionLockTime(transactionLockTime);
-        transactionList.add(transaction);
+        try {
+            TransactionMessage transaction = TransactionMessage.coinbaseTransaction(GENESIS_TRANSACTION_INPUT_SCRIPT);
+            transaction.setMessageVersion(GENESIS_MESSAGE_VERSION);
+            TransactionOutput transactionOutput = new TransactionOutput();
+            transactionOutput.setValue(Coin.ONE.multiply(GENESIS_INITIAL_REWARD_COIN));
 
+            ScriptProgram scriptProgram = ScriptProgram.build().
+                    data(GENESIS_TRANSACTION_OUTPUT_SCRIPT).
+                    opCode(ScriptOpcode.OP_CHECKSIG);
+
+            transactionOutput.setScriptPubKey(scriptProgram.program());
+            transactionOutput.setParentTransaction(transaction);
+            transaction.addTransactionOutput(transactionOutput);
+            TransactionLockTime transactionLockTime = TransactionLockTime.of(0);
+            transaction.setTransactionLockTime(transactionLockTime);
+            transactionList.add(transaction);
+        } catch (Exception e) {
+            Logger.fatal("prepare genesis transaction exception:%s", e);
+            System.exit(-1);
+        }
         return transactionList;
     }
 }

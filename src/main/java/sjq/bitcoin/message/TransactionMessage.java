@@ -174,27 +174,4 @@ public class TransactionMessage extends BaseMessage implements Message {
     public void setTransactionLockTime(TransactionLockTime transactionLockTime) {
         this.transactionLockTime = transactionLockTime;
     }
-
-    public static void main(String[] args) {
-        /*String rawTransaction = "0100000000010161a76ac1c323d2e01668cafc15833c4b163074bcbe0088cf292674e11b71786d0300000000fdffffff040000000000000000536a4c5058325b545950060e87178b5d0a454ccfe703282a080d44b3b5e7fdd642d3922bb00068801f243240247bb816202efcc32345ebdaa87c6ff3055eb0d8662d119a14d738000d6c94062f000d3db100706ca086010000000000160014d22050accdfbad4a3a98e376facae17e2591e82ea086010000000000160014db14133a9dbb1d0e16b60513453e48b6ff2847a9c283af0000000000160014ef2df7d92fee707394a55ca8668d691535d76c040247304402205a20f506f2a649c2dca12ae05a48895ca47c9e6bf7e1eb96a0c788afe273498502202a993febdee588d6f2fb2bfda7e7ffd424fa2b34321c0036430db00a8f2fe3680121033db2ed1fce8a036e09a5937a494d3da8b465f386a8651dbc1a5f16ad343c362a00000000";
-        byte[] rawData = HexUtils.parseHex(rawTransaction);
-        ByteBuffer buffer = ByteBuffer.wrap(rawData);
-
-        try {
-            TransactionMessage transactionMessage = TransactionMessage.read(buffer, Constants.VERSION_CURRENT);
-            System.out.println(HexUtils.formatHex(transactionMessage.serializeToStream(true).toByteArray()));
-            System.out.println(transactionMessage.getTransactionHash().hexValue());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
-
-        try {
-            MainnetConfiguration configuration = (MainnetConfiguration) MainnetConfiguration.getConfiguration();
-            List<TransactionMessage>  transactions = configuration.getGenesisTransactions();
-            System.out.println(HexUtils.formatHex(transactions.get(0).serializeToStream(false).toByteArray()));
-            System.out.println(transactions.get(0).getTransactionHash().hexValue());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

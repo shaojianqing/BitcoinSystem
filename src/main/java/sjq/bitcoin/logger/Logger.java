@@ -16,7 +16,7 @@ public class Logger {
 
     private static final String FATAL = "[FATAL]";
 
-    private static Buffer logBuffer = new Buffer();
+    private static final Buffer logBuffer = new Buffer();
 
     public static void debug(String format, Object... args) {
         log(DEBUG, format, args);

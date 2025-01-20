@@ -8,114 +8,202 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
+import static sjq.bitcoin.script.OperandStack.MAX_SCRIPT_ELEMENT_SIZE;
+
 public class InstructionTable {
 
     private static final byte[] EMPTY = new byte[]{};
 
-    private static Map<Short, Instruction> instructionMap = new HashMap<Short, Instruction>();
+    private static Map<Short, Class<? extends Instruction>> instructionMap = new HashMap<>();
 
     static {
+        instructionMap.put(ScriptOpcode.OP_PUSH_1, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_2, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_3, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_4, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_5, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_6, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_7, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_8, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_9, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_10, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_11, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_12, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_13, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_14, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_15, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_16, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_17, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_18, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_19, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_20, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_21, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_22, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_23, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_24, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_25, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_26, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_27, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_28, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_29, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_30, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_31, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_32, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_33, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_34, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_35, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_36, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_37, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_38, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_39, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_40, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_41, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_42, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_43, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_44, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_45, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_46, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_47, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_48, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_49, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_50, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_51, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_52, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_53, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_54, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_55, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_56, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_57, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_58, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_59, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_60, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_61, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_62, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_63, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_64, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_65, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_66, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_67, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_68, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_69, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_70, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_71, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_72, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_73, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_74, OpPushInstruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSH_75, OpPushInstruction.class);
 
-        instructionMap.put(ScriptOpcode.OP_PUSH_1, new OpPushInstruction(ScriptOpcode.OP_PUSH_1));
-        instructionMap.put(ScriptOpcode.OP_PUSH_2, new OpPushInstruction(ScriptOpcode.OP_PUSH_2));
-        instructionMap.put(ScriptOpcode.OP_PUSH_3, new OpPushInstruction(ScriptOpcode.OP_PUSH_3));
-        instructionMap.put(ScriptOpcode.OP_PUSH_4, new OpPushInstruction(ScriptOpcode.OP_PUSH_4));
-        instructionMap.put(ScriptOpcode.OP_PUSH_5, new OpPushInstruction(ScriptOpcode.OP_PUSH_5));
-        instructionMap.put(ScriptOpcode.OP_PUSH_6, new OpPushInstruction(ScriptOpcode.OP_PUSH_6));
-        instructionMap.put(ScriptOpcode.OP_PUSH_7, new OpPushInstruction(ScriptOpcode.OP_PUSH_7));
-        instructionMap.put(ScriptOpcode.OP_PUSH_8, new OpPushInstruction(ScriptOpcode.OP_PUSH_8));
-        instructionMap.put(ScriptOpcode.OP_PUSH_9, new OpPushInstruction(ScriptOpcode.OP_PUSH_9));
-        instructionMap.put(ScriptOpcode.OP_PUSH_10, new OpPushInstruction(ScriptOpcode.OP_PUSH_10));
-        instructionMap.put(ScriptOpcode.OP_PUSH_11, new OpPushInstruction(ScriptOpcode.OP_PUSH_11));
-        instructionMap.put(ScriptOpcode.OP_PUSH_12, new OpPushInstruction(ScriptOpcode.OP_PUSH_12));
-        instructionMap.put(ScriptOpcode.OP_PUSH_13, new OpPushInstruction(ScriptOpcode.OP_PUSH_13));
-        instructionMap.put(ScriptOpcode.OP_PUSH_14, new OpPushInstruction(ScriptOpcode.OP_PUSH_14));
-        instructionMap.put(ScriptOpcode.OP_PUSH_15, new OpPushInstruction(ScriptOpcode.OP_PUSH_15));
-        instructionMap.put(ScriptOpcode.OP_PUSH_16, new OpPushInstruction(ScriptOpcode.OP_PUSH_16));
-        instructionMap.put(ScriptOpcode.OP_PUSH_17, new OpPushInstruction(ScriptOpcode.OP_PUSH_17));
-        instructionMap.put(ScriptOpcode.OP_PUSH_18, new OpPushInstruction(ScriptOpcode.OP_PUSH_18));
-        instructionMap.put(ScriptOpcode.OP_PUSH_19, new OpPushInstruction(ScriptOpcode.OP_PUSH_19));
-        instructionMap.put(ScriptOpcode.OP_PUSH_20, new OpPushInstruction(ScriptOpcode.OP_PUSH_20));
-        instructionMap.put(ScriptOpcode.OP_PUSH_21, new OpPushInstruction(ScriptOpcode.OP_PUSH_21));
-        instructionMap.put(ScriptOpcode.OP_PUSH_22, new OpPushInstruction(ScriptOpcode.OP_PUSH_22));
-        instructionMap.put(ScriptOpcode.OP_PUSH_23, new OpPushInstruction(ScriptOpcode.OP_PUSH_23));
-        instructionMap.put(ScriptOpcode.OP_PUSH_24, new OpPushInstruction(ScriptOpcode.OP_PUSH_24));
-        instructionMap.put(ScriptOpcode.OP_PUSH_25, new OpPushInstruction(ScriptOpcode.OP_PUSH_25));
-        instructionMap.put(ScriptOpcode.OP_PUSH_26, new OpPushInstruction(ScriptOpcode.OP_PUSH_26));
-        instructionMap.put(ScriptOpcode.OP_PUSH_27, new OpPushInstruction(ScriptOpcode.OP_PUSH_27));
-        instructionMap.put(ScriptOpcode.OP_PUSH_28, new OpPushInstruction(ScriptOpcode.OP_PUSH_28));
-        instructionMap.put(ScriptOpcode.OP_PUSH_29, new OpPushInstruction(ScriptOpcode.OP_PUSH_29));
-        instructionMap.put(ScriptOpcode.OP_PUSH_30, new OpPushInstruction(ScriptOpcode.OP_PUSH_30));
-        instructionMap.put(ScriptOpcode.OP_PUSH_31, new OpPushInstruction(ScriptOpcode.OP_PUSH_31));
-        instructionMap.put(ScriptOpcode.OP_PUSH_32, new OpPushInstruction(ScriptOpcode.OP_PUSH_32));
-        instructionMap.put(ScriptOpcode.OP_PUSH_33, new OpPushInstruction(ScriptOpcode.OP_PUSH_33));
-        instructionMap.put(ScriptOpcode.OP_PUSH_34, new OpPushInstruction(ScriptOpcode.OP_PUSH_34));
-        instructionMap.put(ScriptOpcode.OP_PUSH_35, new OpPushInstruction(ScriptOpcode.OP_PUSH_35));
-        instructionMap.put(ScriptOpcode.OP_PUSH_36, new OpPushInstruction(ScriptOpcode.OP_PUSH_36));
-        instructionMap.put(ScriptOpcode.OP_PUSH_37, new OpPushInstruction(ScriptOpcode.OP_PUSH_37));
-        instructionMap.put(ScriptOpcode.OP_PUSH_38, new OpPushInstruction(ScriptOpcode.OP_PUSH_38));
-        instructionMap.put(ScriptOpcode.OP_PUSH_39, new OpPushInstruction(ScriptOpcode.OP_PUSH_39));
-        instructionMap.put(ScriptOpcode.OP_PUSH_40, new OpPushInstruction(ScriptOpcode.OP_PUSH_40));
-        instructionMap.put(ScriptOpcode.OP_PUSH_41, new OpPushInstruction(ScriptOpcode.OP_PUSH_41));
-        instructionMap.put(ScriptOpcode.OP_PUSH_42, new OpPushInstruction(ScriptOpcode.OP_PUSH_42));
-        instructionMap.put(ScriptOpcode.OP_PUSH_43, new OpPushInstruction(ScriptOpcode.OP_PUSH_43));
-        instructionMap.put(ScriptOpcode.OP_PUSH_44, new OpPushInstruction(ScriptOpcode.OP_PUSH_44));
-        instructionMap.put(ScriptOpcode.OP_PUSH_45, new OpPushInstruction(ScriptOpcode.OP_PUSH_45));
-        instructionMap.put(ScriptOpcode.OP_PUSH_46, new OpPushInstruction(ScriptOpcode.OP_PUSH_46));
-        instructionMap.put(ScriptOpcode.OP_PUSH_47, new OpPushInstruction(ScriptOpcode.OP_PUSH_47));
-        instructionMap.put(ScriptOpcode.OP_PUSH_48, new OpPushInstruction(ScriptOpcode.OP_PUSH_48));
-        instructionMap.put(ScriptOpcode.OP_PUSH_49, new OpPushInstruction(ScriptOpcode.OP_PUSH_49));
-        instructionMap.put(ScriptOpcode.OP_PUSH_50, new OpPushInstruction(ScriptOpcode.OP_PUSH_50));
-        instructionMap.put(ScriptOpcode.OP_PUSH_51, new OpPushInstruction(ScriptOpcode.OP_PUSH_51));
-        instructionMap.put(ScriptOpcode.OP_PUSH_52, new OpPushInstruction(ScriptOpcode.OP_PUSH_52));
-        instructionMap.put(ScriptOpcode.OP_PUSH_53, new OpPushInstruction(ScriptOpcode.OP_PUSH_53));
-        instructionMap.put(ScriptOpcode.OP_PUSH_54, new OpPushInstruction(ScriptOpcode.OP_PUSH_54));
-        instructionMap.put(ScriptOpcode.OP_PUSH_55, new OpPushInstruction(ScriptOpcode.OP_PUSH_55));
-        instructionMap.put(ScriptOpcode.OP_PUSH_56, new OpPushInstruction(ScriptOpcode.OP_PUSH_56));
-        instructionMap.put(ScriptOpcode.OP_PUSH_57, new OpPushInstruction(ScriptOpcode.OP_PUSH_57));
-        instructionMap.put(ScriptOpcode.OP_PUSH_58, new OpPushInstruction(ScriptOpcode.OP_PUSH_58));
-        instructionMap.put(ScriptOpcode.OP_PUSH_59, new OpPushInstruction(ScriptOpcode.OP_PUSH_59));
-        instructionMap.put(ScriptOpcode.OP_PUSH_60, new OpPushInstruction(ScriptOpcode.OP_PUSH_60));
-        instructionMap.put(ScriptOpcode.OP_PUSH_61, new OpPushInstruction(ScriptOpcode.OP_PUSH_61));
-        instructionMap.put(ScriptOpcode.OP_PUSH_62, new OpPushInstruction(ScriptOpcode.OP_PUSH_62));
-        instructionMap.put(ScriptOpcode.OP_PUSH_63, new OpPushInstruction(ScriptOpcode.OP_PUSH_63));
-        instructionMap.put(ScriptOpcode.OP_PUSH_64, new OpPushInstruction(ScriptOpcode.OP_PUSH_63));
-        instructionMap.put(ScriptOpcode.OP_PUSH_65, new OpPushInstruction(ScriptOpcode.OP_PUSH_65));
-        instructionMap.put(ScriptOpcode.OP_PUSH_66, new OpPushInstruction(ScriptOpcode.OP_PUSH_66));
-        instructionMap.put(ScriptOpcode.OP_PUSH_67, new OpPushInstruction(ScriptOpcode.OP_PUSH_67));
-        instructionMap.put(ScriptOpcode.OP_PUSH_68, new OpPushInstruction(ScriptOpcode.OP_PUSH_68));
-        instructionMap.put(ScriptOpcode.OP_PUSH_69, new OpPushInstruction(ScriptOpcode.OP_PUSH_69));
-        instructionMap.put(ScriptOpcode.OP_PUSH_70, new OpPushInstruction(ScriptOpcode.OP_PUSH_70));
-        instructionMap.put(ScriptOpcode.OP_PUSH_71, new OpPushInstruction(ScriptOpcode.OP_PUSH_71));
-        instructionMap.put(ScriptOpcode.OP_PUSH_72, new OpPushInstruction(ScriptOpcode.OP_PUSH_72));
-        instructionMap.put(ScriptOpcode.OP_PUSH_73, new OpPushInstruction(ScriptOpcode.OP_PUSH_73));
-        instructionMap.put(ScriptOpcode.OP_PUSH_74, new OpPushInstruction(ScriptOpcode.OP_PUSH_74));
-        instructionMap.put(ScriptOpcode.OP_PUSH_75, new OpPushInstruction(ScriptOpcode.OP_PUSH_75));
+        instructionMap.put(ScriptOpcode.OP_PUSHDATA1, OpPushData1Instruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSHDATA2, OpPushData2Instruction.class);
+        instructionMap.put(ScriptOpcode.OP_PUSHDATA4, OpPushData4Instruction.class);
 
-        instructionMap.put(ScriptOpcode.OP_PUSHDATA1, new OpPushData1Insruction());
-        instructionMap.put(ScriptOpcode.OP_PUSHDATA2, new OpPushData2Insruction());
-        instructionMap.put(ScriptOpcode.OP_PUSHDATA4, new OpPushData4Insruction());
+        instructionMap.put(ScriptOpcode.OP_SHA1, OpSha256Instruction.class);
+        instructionMap.put(ScriptOpcode.OP_SHA256, OpSha256Instruction.class);
+        instructionMap.put(ScriptOpcode.OP_HASH256, OpHash256Instruction.class);
 
-        instructionMap.put(ScriptOpcode.OP_SHA1, new OpSha256Instruction());
-        instructionMap.put(ScriptOpcode.OP_SHA256, new OpSha256Instruction());
-        instructionMap.put(ScriptOpcode.OP_HASH256, new OpHash256Instruction());
+        instructionMap.put(ScriptOpcode.OP_CHECKSIG, OpCheckSigInstruction.class);
     }
 
-    public static Instruction getInstructionByOpCode(short opCode) {
+    public static Instruction newInstructionByOpCode(short opCode) throws Exception {
         if (instructionMap.containsKey(opCode)) {
-            return instructionMap.get(opCode);
+            Class<? extends Instruction> clazz = instructionMap.get(opCode);
+            Instruction instruction = clazz.getConstructor().newInstance();
+            instruction.setOpCode(opCode);
+            return instruction;
         }
         throw new ScriptException(String.format("can not find instruction for opCode:%d", opCode));
     }
 
-    private static class OpPushInstruction implements Instruction {
+    private static abstract class AbstractInstruction implements Instruction {
 
-        private short code;
+        protected short code;
+
+        protected String name;
+
+        public AbstractInstruction(short opCode, String opName) {
+            this.code = opCode;
+            this.name = opName;
+        }
+
+        public int getInstructionSize() {
+            int operCodeLength = 1;
+            int dataSizeLength = 0;
+            if (code == ScriptOpcode.OP_PUSHDATA1) {
+                dataSizeLength = 1;
+            } else if (code == ScriptOpcode.OP_PUSHDATA2) {
+                dataSizeLength = 2;
+            } else if (code == ScriptOpcode.OP_PUSHDATA4) {
+                dataSizeLength = 4;
+            }
+
+            int operandLength = 0;
+            byte[] operand = getOperand();
+            if (operand!=null) {
+                operandLength = operand.length;
+            }
+            return operCodeLength + dataSizeLength + operandLength;
+        }
+
+        public byte[] getInstructionByte() {
+            byte[] operand = getOperand();
+            int instructionSize = getInstructionSize();
+            ByteBuffer buffer = ByteBuffer.allocate(instructionSize);
+            if (code > ScriptOpcode.OP_PUSHDATA4) {
+                buffer.put((byte)code);
+            } else if (operand != null) {
+                if (code < ScriptOpcode.OP_PUSHDATA1) {
+                    checkInstruction(code == operand.length, "code and operand length do not match!");
+                    buffer.put((byte)code);
+                } else if (code == ScriptOpcode.OP_PUSHDATA1) {
+                    checkInstruction(operand.length <= 0xFF, "operand length is not correct!");
+                    buffer.put((byte) code);
+                    buffer.put((byte) operand.length);
+                } else if (code == ScriptOpcode.OP_PUSHDATA2) {
+                    checkInstruction(operand.length <= 0xFFFF, "operand length is not correct!");
+                    buffer.put((byte) code);
+                    ByteUtils.writeInt16LE(operand.length, buffer);
+                } else {
+                    checkInstruction(operand.length <= MAX_SCRIPT_ELEMENT_SIZE, "operand length is not correct!");
+                    buffer.put((byte) code);
+                    ByteUtils.writeInt32LE(operand.length, buffer);
+                }
+                buffer.put(operand);
+            }
+            return buffer.array();
+        }
+
+        private void checkInstruction(boolean condition, String message) {
+            if (!condition) {
+                throw new ScriptException(message);
+            }
+        }
+
+        public short getOpCode() {
+            return code;
+        }
+
+        public void setOpCode(short opCode) {
+            this.code = opCode;
+        }
+
+        public String getOpName() {
+            return name;
+        }
+
+        public byte[] getOperand() {
+            return null;
+        }
+
+        public void setOperand(byte[] operand) {
+        }
+    }
+
+    private static class OpPushInstruction extends AbstractInstruction {
 
         private byte[] data;
 
-        public OpPushInstruction(short code) {
-            this.code = code;
+        public OpPushInstruction() {
+            super((short)0, "OP_PUSH");
         }
 
         public void fetch(ByteBuffer scriptBuffer) {
@@ -130,20 +218,20 @@ public class InstructionTable {
             }
         }
 
-        public short getOpCode() {
-            return code;
-        }
-
-        public String getOpName() {
-            return "OP_PUSH";
-        }
-
-        public byte[] getOpData() {
+        public byte[] getOperand() {
             return data;
         }
+
+        public void setOperand(byte[] operand) {
+            this.data = operand;
+        }
     }
 
-    private static class OpPushData1Insruction implements Instruction {
+    private static class OpPushData1Instruction extends AbstractInstruction {
+
+        public OpPushData1Instruction() {
+            super(ScriptOpcode.OP_PUSHDATA1, "OP_PUSHDATA1");
+        }
 
         public void fetch(ByteBuffer scriptBuffer) {
 
@@ -152,21 +240,13 @@ public class InstructionTable {
         public void execute(OperandStack stack) {
 
         }
-
-        public short getOpCode() {
-            return ScriptOpcode.OP_PUSHDATA1;
-        }
-
-        public String getOpName() {
-            return "OP_PUSHDATA1";
-        }
-
-        public byte[] getOpData() {
-            return null;
-        }
     }
 
-    private static class OpPushData2Insruction implements Instruction {
+    private static class OpPushData2Instruction extends AbstractInstruction {
+
+        public OpPushData2Instruction() {
+            super(ScriptOpcode.OP_PUSHDATA2, "OP_PUSHDATA2");
+        }
 
         public void fetch(ByteBuffer scriptBuffer) {
 
@@ -175,21 +255,13 @@ public class InstructionTable {
         public void execute(OperandStack stack) {
 
         }
-
-        public short getOpCode() {
-            return ScriptOpcode.OP_PUSHDATA2;
-        }
-
-        public String getOpName() {
-            return "OP_PUSHDATA2";
-        }
-
-        public byte[] getOpData() {
-            return null;
-        }
     }
 
-    private static class OpPushData4Insruction implements Instruction {
+    private static class OpPushData4Instruction extends AbstractInstruction {
+
+        public OpPushData4Instruction() {
+            super(ScriptOpcode.OP_PUSHDATA4, "OP_PUSHDATA4");
+        }
 
         public void fetch(ByteBuffer scriptBuffer) {
 
@@ -198,21 +270,13 @@ public class InstructionTable {
         public void execute(OperandStack stack) {
 
         }
-
-        public short getOpCode() {
-            return ScriptOpcode.OP_PUSHDATA4;
-        }
-
-        public String getOpName() {
-            return "OP_PUSHDATA4";
-        }
-
-        public byte[] getOpData() {
-            return null;
-        }
     }
 
-    private static class OpSha256Instruction implements Instruction {
+    private static class OpSha256Instruction extends AbstractInstruction  {
+
+        public OpSha256Instruction() {
+            super(ScriptOpcode.OP_SHA256, "OP_SHA256");
+        }
 
         public void fetch(ByteBuffer scriptBuffer) {
 
@@ -231,21 +295,13 @@ public class InstructionTable {
                 throw new ScriptException(message);
             }
         }
-
-        public short getOpCode() {
-            return ScriptOpcode.OP_SHA256;
-        }
-
-        public String getOpName() {
-            return "OP_SHA256";
-        }
-
-        public byte[] getOpData() {
-            return null;
-        }
     }
 
-    private static class OpHash256Instruction implements Instruction {
+    private static class OpHash256Instruction extends AbstractInstruction {
+
+        public OpHash256Instruction() {
+            super(ScriptOpcode.OP_HASH256, "OP_HASH256");
+        }
 
         public void fetch(ByteBuffer scriptBuffer) {
 
@@ -264,21 +320,13 @@ public class InstructionTable {
                 throw new ScriptException(message);
             }
         }
-
-        public short getOpCode() {
-            return ScriptOpcode.OP_HASH256;
-        }
-
-        public String getOpName() {
-            return "OP_HASH256";
-        }
-
-        public byte[] getOpData() {
-            return null;
-        }
     }
 
-    private static class OpCheckSigInstruction implements Instruction {
+    private static class OpCheckSigInstruction extends AbstractInstruction {
+
+        public OpCheckSigInstruction() {
+            super(ScriptOpcode.OP_CHECKSIG, "OP_CHECKSIG");
+        }
 
         public void fetch(ByteBuffer scriptBuffer) {
 
@@ -286,18 +334,6 @@ public class InstructionTable {
 
         public void execute(OperandStack stack) {
 
-        }
-
-        public short getOpCode() {
-            return ScriptOpcode.OP_CHECKSIG;
-        }
-
-        public String getOpName() {
-            return "OP_CHECKSIG";
-        }
-
-        public byte[] getOpData() {
-            return null;
         }
     }
 }

@@ -4,8 +4,6 @@ import sjq.bitcoin.crypto.ECDSAKey;
 
 public class ScriptBuilder {
 
-
-
     public static byte[] createP2PKOutputScript(byte[] publicKey) {
         return null;
     }
