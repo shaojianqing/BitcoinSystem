@@ -1,11 +1,16 @@
 package sjq.bitcoin.graphics;
 
+import sjq.bitcoin.components.CustomComboBoxUI;
 import sjq.bitcoin.constant.Appearance;
 
 import javax.swing.*;
+import javax.swing.plaf.ComboBoxUI;
+import javax.swing.plaf.basic.BasicComboBoxUI;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 public class SearchBar extends JPanel {
 
@@ -21,6 +26,8 @@ public class SearchBar extends JPanel {
 
     private JComboBox blockStatusCmb;
 
+    private JLabel searchBtnLbl;
+
     private JButton searchBtn;
 
     public SearchBar() {
@@ -32,10 +39,17 @@ public class SearchBar extends JPanel {
         blockHeightLbl = new JLabel();
         blockHashLbl = new JLabel();
         blockStatusLbl = new JLabel();
+        searchBtnLbl = new JLabel();
 
         blockHeightLbl.setForeground(Appearance.INPUT_TEXT_COLOR);
         blockHashLbl.setForeground(Appearance.INPUT_TEXT_COLOR);
+        blockHashLbl.setPreferredSize(new Dimension(100, 24));
+        blockHashLbl.setHorizontalAlignment(SwingConstants.RIGHT);
         blockStatusLbl.setForeground(Appearance.INPUT_TEXT_COLOR);
+        blockStatusLbl.setPreferredSize(new Dimension(100, 24));
+        blockStatusLbl.setHorizontalAlignment(SwingConstants.RIGHT);
+        searchBtnLbl.setPreferredSize(new Dimension(20, 24));
+        searchBtnLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 
         blockHeightLbl.setText("Block Height:");
         blockHashLbl.setText("Block Hash:");
@@ -46,36 +60,63 @@ public class SearchBar extends JPanel {
         blockStatusCmb = new JComboBox();
 
         blockHeightTxt.setPreferredSize(new Dimension(120, 24));
-        blockHashTxt.setPreferredSize(new Dimension(400, 24));
-        blockStatusCmb.setPreferredSize(new Dimension(160, 24));
-
         blockHeightTxt.setBorder(BorderFactory.createLineBorder(Appearance.BORDER_COLOR));
-        blockHashTxt.setBorder(BorderFactory.createLineBorder(Appearance.BORDER_COLOR));
-
         blockHeightTxt.setBackground(Appearance.AREA_COLOR);
+        blockHeightTxt.setForeground(Color.WHITE);
         blockHeightTxt.setCaretColor(Appearance.INPUT_TEXT_COLOR);
+
+        blockHashTxt.setPreferredSize(new Dimension(420, 24));
+        blockHashTxt.setBorder(BorderFactory.createLineBorder(Appearance.BORDER_COLOR));
         blockHashTxt.setBackground(Appearance.AREA_COLOR);
         blockHashTxt.setCaretColor(Appearance.INPUT_TEXT_COLOR);
-        blockStatusCmb.setBackground(Appearance.AREA_COLOR);
-
-        blockHeightTxt.setForeground(Color.WHITE);
         blockHashTxt.setForeground(Color.WHITE);
-        blockStatusCmb.setForeground(Color.WHITE);
 
+        blockStatusCmb.setPreferredSize(new Dimension(160, 24));
+        blockStatusCmb.setOpaque(true);
         blockStatusCmb.addItem("Confirmed");
         blockStatusCmb.addItem("Unconfirmed");
+        blockStatusCmb.setUI(new CustomComboBoxUI());
         blockStatusCmb.setBorder(BorderFactory.createLineBorder(Appearance.BORDER_COLOR));
         blockStatusCmb.setForeground(Appearance.INPUT_TEXT_COLOR);
-        blockStatusCmb.setBackground(Appearance.GRID_COLOR);
+        blockStatusCmb.setBackground(Appearance.MAIN_COLOR);
 
         searchBtn = new JButton();
         searchBtn.setText("Search");
         searchBtn.setEnabled(true);
-        searchBtn.setBorder(BorderFactory.createLineBorder(Appearance.BORDER_COLOR));
-        searchBtn.setPreferredSize(new Dimension(120, 24));
-        searchBtn.setContentAreaFilled(false);
+        searchBtn.setOpaque(true);
+        searchBtn.setIconTextGap(10);
+        searchBtn.setBorder(BorderFactory.createLineBorder(Appearance.BORDER_COLOR, 1));
+        searchBtn.setPreferredSize(new Dimension(100, 24));
         searchBtn.setForeground(Appearance.INPUT_TEXT_COLOR);
-        searchBtn.setBackground(Appearance.GRID_COLOR);
+        searchBtn.setBackground(Appearance.MAIN_COLOR);
+        searchBtn.setIcon(new ImageIcon("res/images/icon_search_data.png"));
+
+        searchBtn.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                searchBtn.setBackground(Appearance.AREA_COLOR);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                searchBtn.setBackground(Appearance.MAIN_COLOR);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                searchBtn.setBackground(Appearance.MAIN_COLOR);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                searchBtn.setBackground(Appearance.AREA_COLOR);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                searchBtn.setBackground(Appearance.MAIN_COLOR);
+            }
+        });
 
         add(blockHeightLbl);
         add(blockHeightTxt);
@@ -86,6 +127,7 @@ public class SearchBar extends JPanel {
         add(blockStatusLbl);
         add(blockStatusCmb);
 
+        add(searchBtnLbl);
         add(searchBtn);
     }
 }
