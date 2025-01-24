@@ -4,7 +4,6 @@ import sjq.bitcoin.configuration.NetworkConfiguration;
 import sjq.bitcoin.hash.Hash;
 import sjq.bitcoin.message.base.Message;
 import sjq.bitcoin.message.parser.MessageParser;
-import sjq.bitcoin.network.protocol.ProtocolException;
 import sjq.bitcoin.utility.ByteUtils;
 
 import java.nio.ByteBuffer;
@@ -19,9 +18,9 @@ public class BitcoinPacket {
 
     public static final int CHECKSUM_LENGTH = 4;
 
-    private static final NetworkConfiguration Configuration = NetworkConfiguration.getConfiguration();
+    public static final int HEADER_LENGTH = MAGIC_LENGTH + COMMAND_LENGTH + MESSAGE_LENGTH + CHECKSUM_LENGTH;
 
-    private int magic;
+    private static final NetworkConfiguration Configuration = NetworkConfiguration.getConfiguration();
 
     private String command;
 
@@ -48,7 +47,6 @@ public class BitcoinPacket {
     public static BitcoinPacket parse(PacketHeader header, ByteBuffer buffer) throws Exception {
         BitcoinPacket packet = new BitcoinPacket();
 
-        packet.magic = header.getMagic();
         packet.command = header.getCommand();
         packet.size = header.getSize();
         packet.checksum = header.getChecksum();
@@ -59,7 +57,6 @@ public class BitcoinPacket {
     }
 
     private void parseHeader(ByteBuffer buffer) {
-        this.magic = ByteUtils.readInt32BE(buffer);
 
         byte[] commandBytes = new byte[COMMAND_LENGTH];
         buffer.get(commandBytes, 0, COMMAND_LENGTH);
@@ -72,10 +69,6 @@ public class BitcoinPacket {
         byte[] checksumBytes = new byte[CHECKSUM_LENGTH];
         buffer.get(checksumBytes, 0, CHECKSUM_LENGTH);
         this.checksum = checksumBytes;
-
-        if (magic != Configuration.getMagicCode()) {
-            throw new ProtocolException("message magic code is not correct!");
-        }
     }
 
     private void parseMessage(ByteBuffer buffer) throws Exception {

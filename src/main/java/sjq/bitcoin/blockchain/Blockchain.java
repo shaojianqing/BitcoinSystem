@@ -76,7 +76,7 @@ public class Blockchain {
         block.setVerifyStatus(Block.STATUS_UN_VERIFY_HEADER);
         boolean success = blockService.saveBlock(block);
         if (!success) {
-            Logger.error("fail to save block into database with header:%s", header);
+            Logger.error("fail to save block into database with block hash:%s", header.getBlockHash());
         }
     }
 }

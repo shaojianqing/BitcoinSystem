@@ -7,7 +7,7 @@ public class BlockConvertor {
 
     public static Block convertBlockFromHeader(BlockHeader header) {
         Block block = new Block(header.getVersion(), 0l, header.getBlockHash().hexValue(),
-                header.getParentHash().hexValue(), header.getMerkleRoot().hexValue(), header.getTimestamp(),
+                header.getPrevBlockHash().hexValue(), header.getMerkleRoot().hexValue(), header.getTimestamp(),
                 header.getDifficulty(), header.getNonce(), 0l);
         return block;
     }

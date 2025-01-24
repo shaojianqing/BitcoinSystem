@@ -2,7 +2,6 @@ package sjq.bitcoin.network;
 
 import sjq.bitcoin.blockchain.Blockchain;
 import sjq.bitcoin.context.Autowire;
-import sjq.bitcoin.context.Context;
 import sjq.bitcoin.logger.Logger;
 import sjq.bitcoin.message.*;
 import sjq.bitcoin.message.base.Message;
@@ -14,7 +13,7 @@ import java.util.Map;
 
 public class PeerHandler {
 
-    private Map<String, PeerProcessor> processorMap = new HashMap();
+    private final Map<String, PeerProcessor> processorMap = new HashMap();
 
     @Autowire
     private PeerManager peerManager;
@@ -93,7 +92,6 @@ public class PeerHandler {
 
     @Autowire
     private VersionReqMessageProcessor versionReqMessageProcessor;
-
 
     public void initialize() {
         processorMap.put(AddressV1Message.COMMAND, addressV1MessageProcessor);

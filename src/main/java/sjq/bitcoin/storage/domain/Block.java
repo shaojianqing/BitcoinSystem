@@ -20,7 +20,7 @@ public class Block {
 
     private String blockHash;
 
-    private String parentHash;
+    private String prevBlockHash;
 
     private String merkleRoot;
 
@@ -43,12 +43,12 @@ public class Block {
     public Block(){
     }
 
-    public Block(Long version, Long blockHeight, String blockHash, String parentHash,
+    public Block(Long version, Long blockHeight, String blockHash, String prevBlockHash,
                  String merkleRoot, Long timestamp, Long difficulty, Long nonce, Long trxCount) {
         this.version = version;
         this.blockHeight = blockHeight;
         this.blockHash = blockHash;
-        this.parentHash = parentHash;
+        this.prevBlockHash = prevBlockHash;
         this.merkleRoot = merkleRoot;
         this.timestamp = timestamp;
         this.difficulty = difficulty;
@@ -82,12 +82,12 @@ public class Block {
         this.blockHash = blockHash;
     }
 
-    public String getParentHash() {
-        return parentHash;
+    public String getPrevBlockHash() {
+        return prevBlockHash;
     }
 
-    public void setParentHash(String parentHash) {
-        this.parentHash = parentHash;
+    public void setPrevBlockHash(String prevBlockHash) {
+        this.prevBlockHash = prevBlockHash;
     }
 
     public String getMerkleRoot() {

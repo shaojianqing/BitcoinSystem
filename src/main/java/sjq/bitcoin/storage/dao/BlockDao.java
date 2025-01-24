@@ -13,14 +13,14 @@ import java.util.Date;
 public class BlockDao {
 
     private static String INSERT_BLOCK_FORMAT =
-            "insert into " +
-                    "block(block_hash, parent_hash, merkle_root, block_height, version, difficulty, nonce, " +
+                    "insert into " +
+                    "block(block_hash, prev_block_hash, merkle_root, block_height, version, difficulty, nonce, " +
                     "sync_status, verify_status, timestamp, trx_count, create_time, modify_time) " +
                     "values('%s', '%s', '%s', '%d', '%d', '%d', '%d', '%s', '%s', '%d', '%d', now(), now())";
 
     private static String QUERY_BEST_BLOCK_FORMAT =
-            "select " +
-                    "block_hash, parent_hash, merkle_root, block_height, version, " +
+                    "select " +
+                    "block_hash, prev_block_hash, merkle_root, block_height, version, " +
                     "difficulty, nonce, sync_status, verify_status, timestamp, trx_count, create_time, modify_time " +
                     "from " +
                     "block " +
@@ -28,8 +28,8 @@ public class BlockDao {
                     "limit 1";
 
     private static String QUERY_BLOCK_BY_HASH_FORMAT =
-            "select " +
-                    "block_hash, parent_hash, merkle_root, block_height, version, " +
+                    "select " +
+                    "block_hash, prev_block_hash, merkle_root, block_height, version, " +
                     "difficulty, nonce, sync_status, verify_status, timestamp, trx_count, create_time, modify_time " +
                     "from " +
                     "block " +
@@ -73,21 +73,25 @@ public class BlockDao {
 
     public boolean saveBlock(Block block) {
         try {
-            String insertSql = String.format(INSERT_BLOCK_FORMAT, block.getBlockHash(), block.getParentHash(), block.getMerkleRoot(),
+            String insertSql = String.format(INSERT_BLOCK_FORMAT, block.getBlockHash(), block.getPrevBlockHash(), block.getMerkleRoot(),
                     block.getBlockHeight(), block.getVersion(), block.getDifficulty(), block.getNonce(), block.getSyncStatus(),
                     block.getVerifyStatus(), block.getTimestamp(), block.getTrxCount());
 
             int count = databaseManager.executeUpdate(insertSql);
             return count > 0;
-        }catch (Exception e) {
+        } catch (Exception e) {
             Logger.error("can not insert block data into database, error:%s", e.getMessage());
         }
         return false;
     }
 
+    public boolean updateBlockHeight(String blockHash, Long blockHeight) {
+        return true;
+    }
+
     private Block prepareBlockData(ResultSet resultSet) throws SQLException {
         String blockHash = resultSet.getString("block_hash");
-        String parentHash = resultSet.getString("parent_hash");
+        String prevBlockHash = resultSet.getString("prev_block_hash");
         String merkleRoot = resultSet.getString("merkle_root");
         Long blockHeight = resultSet.getLong("block_height");
         Long version = resultSet.getLong("version");
@@ -101,7 +105,7 @@ public class BlockDao {
         Date modifyTime = resultSet.getDate("modify_time");
 
         Block block = new Block(version, blockHeight, blockHash,
-                parentHash, merkleRoot, timestamp, difficulty, nonce, trxCount);
+                prevBlockHash, merkleRoot, timestamp, difficulty, nonce, trxCount);
         block.setSyncStatus(syncStatus);
         block.setVerifyStatus(verifyStatus);
         block.setCreateTime(createTime);

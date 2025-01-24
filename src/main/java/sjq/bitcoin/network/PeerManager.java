@@ -1,5 +1,6 @@
 package sjq.bitcoin.network;
 
+import org.apache.commons.lang3.StringUtils;
 import sjq.bitcoin.blockchain.Blockchain;
 import sjq.bitcoin.configuration.NetworkConfiguration;
 import sjq.bitcoin.constant.Constants;
@@ -19,7 +20,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class PeerManager {
 
-    private NetworkConfiguration configuration;
+    private final NetworkConfiguration configuration;
+
+    private final Map<String, PeerNode> peerMap;
+
+    private final Services requiredServices;
+
+    private final int maxConnectionCount;
 
     @Autowire
     private PeerHandler peerHandler;
@@ -27,19 +34,13 @@ public class PeerManager {
     @Autowire
     private Blockchain blockchain;
 
-    private Map<String, PeerNode> peerMap;
-
-    private Services requiredServices;
-
     private PeerNode downloadPeerNode;
-
-    private int maxConnectionCount;
 
     public PeerManager(){
         configuration = NetworkConfiguration.getConfiguration();
         requiredServices = Services.none();
         maxConnectionCount = Constants.MAX_CONNECTION_COUNT;
-        peerMap = new ConcurrentHashMap<String, PeerNode>(maxConnectionCount);
+        peerMap = new ConcurrentHashMap<>(maxConnectionCount);
     }
 
     public PeerNode createPeerNode(String address) throws Exception {
@@ -61,7 +62,7 @@ public class PeerManager {
     public void sendAddressRequest() throws Exception{
         Collection<PeerNode> peerNodeList = peerMap.values();
         for (PeerNode node:peerNodeList) {
-            if (node.getStatus() == PeerNode.ACKNOWLEDGE) {
+            if (StringUtils.equals(node.getStatus(), PeerNode.ACKNOWLEDGE)) {
                 node.sendMessage(new GetAddressMessage());
             }
         }

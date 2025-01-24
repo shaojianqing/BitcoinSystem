@@ -15,7 +15,7 @@ public class BlockHeader {
 
     private long version;
 
-    private Hash parentHash;
+    private Hash prevBlockHash;
 
     private Hash merkleRoot;
 
@@ -29,7 +29,7 @@ public class BlockHeader {
 
     public void read(ByteBuffer buffer) throws Exception {
         this.version = ByteUtils.readUint32LE(buffer);
-        this.parentHash = Hash.read(buffer);
+        this.prevBlockHash = Hash.read(buffer);
         this.merkleRoot = Hash.read(buffer);
         this.timestamp = ByteUtils.readUint32LE(buffer);
         this.difficulty = ByteUtils.readUint32LE(buffer);
@@ -41,7 +41,7 @@ public class BlockHeader {
     public byte[] serialize() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ByteUtils.writeInt32LE(version, outputStream);
-        outputStream.write(parentHash.serialize());
+        outputStream.write(prevBlockHash.serialize());
         outputStream.write(merkleRoot.serialize());
         ByteUtils.writeInt32LE(timestamp, outputStream);
         ByteUtils.writeInt32LE(difficulty, outputStream);
@@ -54,7 +54,7 @@ public class BlockHeader {
     public Hash calculateHash() throws Exception {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream(HEADER_SIZE);
         ByteUtils.writeInt32LE(version, outputStream);
-        outputStream.write(parentHash.serialize());
+        outputStream.write(prevBlockHash.serialize());
         outputStream.write(merkleRoot.serialize());
         ByteUtils.writeInt32LE(timestamp, outputStream);
         ByteUtils.writeInt32LE(difficulty, outputStream);
@@ -78,12 +78,12 @@ public class BlockHeader {
         this.version = version;
     }
 
-    public Hash getParentHash() {
-        return parentHash;
+    public Hash getPrevBlockHash() {
+        return prevBlockHash;
     }
 
-    public void setParentHash(Hash parentHash) {
-        this.parentHash = parentHash;
+    public void setPrevBlockHash(Hash prevBlockHash) {
+        this.prevBlockHash = prevBlockHash;
     }
 
     public Hash getMerkleRoot() {
@@ -131,7 +131,7 @@ public class BlockHeader {
         return "BlockHeader[" +
                 "blockHash=" + blockHash +
                 ", version=" + version +
-                ", parentHash=" + parentHash +
+                ", prevBlockHash=" + prevBlockHash +
                 ", merkleRoot=" + merkleRoot +
                 ", timestamp=" + timestamp +
                 ", difficulty=" + difficulty +

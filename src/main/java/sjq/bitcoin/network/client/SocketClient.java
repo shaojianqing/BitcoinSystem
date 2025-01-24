@@ -10,7 +10,6 @@ import java.net.Socket;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -25,9 +24,9 @@ public class SocketClient implements Runnable {
 
     private static final int MAX_MESSAGE_SIZE = 0x02000000;
 
-    private Callback callback;
+    private final Callback callback;
 
-    private Socket socket;
+    private final Socket socket;
 
     private InputStream inputstream;
 
@@ -48,7 +47,6 @@ public class SocketClient implements Runnable {
             if (socket.isConnected()) {
                 return true;
             }
-
             socket.connect(address, CONNECTION_TIMEOUT);
             inputstream = socket.getInputStream();
             outputStream = socket.getOutputStream();
@@ -71,7 +69,6 @@ public class SocketClient implements Runnable {
     }
 
     public void run() {
-
         try {
             ByteBuffer dataBuf = ByteBuffer.allocateDirect(Math.min(Math.max(MAX_MESSAGE_SIZE, BUFFER_SIZE_LOWER_BOUND), BUFFER_SIZE_UPPER_BOUND));
             byte[] readBuff = new byte[dataBuf.capacity()];
@@ -86,7 +83,7 @@ public class SocketClient implements Runnable {
                     return;
                 }
                 dataBuf.put(readBuff, 0, read);
-                ((Buffer) dataBuf).flip();
+                dataBuf.flip();
                 int bytesConsumed = callback.receiveData(dataBuf);
 
                 if (dataBuf.position() != bytesConsumed) {
@@ -98,11 +95,28 @@ public class SocketClient implements Runnable {
             Logger.error("client receive bytes from peer error:%s, address:%s", e, address);
         } finally {
             try {
+                outputStream.close();
+                inputstream.close();
                 socket.close();
-                callback.connectionClose();
             } catch (IOException e1) {
                 Logger.error("client socket close error:%s, address:%s", e1, address);
+            } finally {
+                callback.connectionClose();
             }
+        }
+    }
+
+    public void closeConnection() {
+        try {
+            if (running.compareAndSet(true, false)) {
+                outputStream.close();
+                inputstream.close();
+                socket.close();
+            }
+        } catch (IOException e) {
+            Logger.error("client socket close error:%s, address:%s", e, address);
+        } finally {
+            callback.connectionClose();
         }
     }
 

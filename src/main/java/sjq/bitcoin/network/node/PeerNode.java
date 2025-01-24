@@ -11,7 +11,9 @@ import sjq.bitcoin.network.client.Callback;
 import sjq.bitcoin.network.client.SocketClient;
 import sjq.bitcoin.network.socket.SocketHandler;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.SocketException;
 import java.nio.ByteBuffer;
 
 public class PeerNode implements Callback {
@@ -64,10 +66,14 @@ public class PeerNode implements Callback {
         return false;
     }
 
-    public void sendMessage(Message message) throws Exception {
-        byte[] data = message.serialize();
-        client.sendData(data);
-        Logger.info("send %s message to peer address:%s", message.getCommand(), address);
+    public void sendMessage(Message message) {
+        try {
+            byte[] data = message.serialize();
+            client.sendData(data);
+            Logger.info("send %s message to peer address:%s", message.getCommand(), address);
+        } catch (IOException e) {
+            client.closeConnection();
+        }
     }
 
     public int receiveData(ByteBuffer buffer) {

@@ -29,6 +29,11 @@ public class SocketHandler {
     }
 
     public int handleSocketData(ByteBuffer buffer) {
+        boolean isNormal = buffer.position()==0 && buffer.capacity()>BitcoinPacket.HEADER_LENGTH;
+        if (!isNormal) {
+            throw new IllegalArgumentException("byte buffer from peer is not correct!");
+        }
+
         try {
             // Repeatedly try to deserialize messages until we hit a BufferUnderflowException
             boolean firstMessage = true;
@@ -65,7 +70,7 @@ public class SocketHandler {
                     // If we went through the whole buffer without a full message, we need to use the largeReadBuffer
                     if (firstMessage && buffer.limit() == buffer.capacity()) {
                         // ...so reposition the buffer to 0 and read the next message header
-                        ((Buffer) buffer).position(0);
+                        buffer.position(0);
                         try {
                             seekPastMagicPosition(buffer);
                             packetHeader = PacketHeader.parsePacketHeader(buffer);
