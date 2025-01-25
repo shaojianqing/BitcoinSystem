@@ -2,13 +2,12 @@ package sjq.bitcoin.storage.manager;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.lang3.StringUtils;
-import sjq.bitcoin.configuration.NetworkConfiguration;
+import sjq.bitcoin.context.Autowire;
 import sjq.bitcoin.logger.Logger;
+import sjq.bitcoin.orm.template.SqlMapClientTemplate;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseManager {
 
@@ -26,7 +25,23 @@ public class DatabaseManager {
 
     private BasicDataSource dataSource;
 
+    @Autowire
+    private SqlMapClientTemplate sqlMapClientTemplate;
+
+    private List<String> sqlMapConfigList;
+
     public void initialize() {
+        try {
+            initDatasource();
+            initSqlMapConfigList();
+            initSqlMapClientTemplate();
+        } catch (Exception e) {
+            Logger.fatal("database initialization fatal error:%s", e);
+            System.exit(-1);
+        }
+    }
+
+    private void initDatasource() {
         String dbUrl = System.getenv(DATABASE_URL);
         String username = System.getenv(DB_USERNAME);
         String password = System.getenv(DB_PASSWORD);
@@ -46,23 +61,24 @@ public class DatabaseManager {
         dataSource.setMinIdle(2);
     }
 
+    private void initSqlMapConfigList() {
+        sqlMapConfigList = new ArrayList<>();
+        sqlMapConfigList.add("configuration/mapper/Block.xml");
+        sqlMapConfigList.add("configuration/mapper/Transaction.xml");
+        sqlMapConfigList.add("configuration/mapper/TransactionAddressMap.xml");
+        sqlMapConfigList.add("configuration/mapper/TransactionInput.xml");
+        sqlMapConfigList.add("configuration/mapper/TransactionOutput.xml");
+    }
+
+    private void initSqlMapClientTemplate() throws Exception {
+        sqlMapClientTemplate.initTemplate(dataSource, sqlMapConfigList);
+    }
+
     private void checkDatabaseConfiguration(String dbUrl, String username, String password) {
         if (StringUtils.isAnyBlank(dbUrl, username, password)) {
             Logger.fatal("database configuration is illegal or blank, " +
                     "dbUrl:%s, username:%s, password:%s", dbUrl, username, password);
             System.exit(-1);
         }
-    }
-
-    public ResultSet executeQuery(String sql) throws SQLException {
-        Connection connection = dataSource.getConnection();
-        Statement statement = connection.createStatement();
-        return statement.executeQuery(sql);
-    }
-
-    public int executeUpdate(String sql) throws SQLException {
-        Connection connection = dataSource.getConnection();
-        Statement statement = connection.createStatement();
-        return statement.executeUpdate(sql);
     }
 }

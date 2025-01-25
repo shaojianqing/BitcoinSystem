@@ -40,7 +40,7 @@ public class BlockService {
         return GENESIS_BLOCK;
     }
 
-    public Block getBestBlock() {
+    public Block getBestBlock() throws Exception {
         Block bestBlock = blockDao.getBestBlock();
         if (bestBlock==null) {
             bestBlock = GENESIS_BLOCK;
@@ -48,7 +48,7 @@ public class BlockService {
         return bestBlock;
     }
 
-    public Block getBlockByHash(String blockHash) {
+    public Block getBlockByHash(String blockHash) throws Exception {
         // Because genesis block is not stored in the database, so we tell
         // whether the block hash is equal to genesis block, and
         // then query block from database if not equal.
@@ -58,7 +58,7 @@ public class BlockService {
         return blockDao.getBlockByHash(blockHash);
     }
 
-    public boolean saveBlock(Block block) {
+    public boolean saveBlock(Block block) throws Exception {
         // Only if the previous block has been stored in the database, the received
         // block can be saved into the database as expected. This is mainly for
         // data consistency consideration.

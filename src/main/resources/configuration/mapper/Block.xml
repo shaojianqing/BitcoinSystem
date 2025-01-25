@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sqlMapInfo namespace="sjq.bitcoin.storage.domain.Block">
+
+    <resultDataMap id="blockDataMap" class="sjq.bitcoin.storage.domain.Block">
+        <result property="blockHash" column="block_hash" javaType="java.lang.String" />
+        <result property="prevBlockHash" column="prev_block_hash" javaType="java.lang.String" />
+        <result property="merkleRoot" column="merkle_root" javaType="java.lang.String" />
+        <result property="blockHeight" column="block_height" javaType="java.lang.Long" />
+        <result property="timestamp" column="timestamp" javaType="java.lang.Long" />
+        <result property="difficulty" column="difficulty" javaType="java.lang.Long" />
+        <result property="nonce" column="nonce" javaType="java.lang.Long" />
+        <result property="version" column="version" javaType="java.lang.Long" />
+        <result property="trxCount" column="trx_count" javaType="java.lang.Short" />
+        <result property="syncStatus" column="sync_status" javaType="java.lang.Short" />
+        <result property="verifyStatus" column="verify_status" javaType="java.lang.Short" />
+        <result property="createTime" column="create_time" javaType="java.sql.Timestamp" />
+        <result property="modifyTime" column="modify_time" javaType="java.sql.Timestamp" />
+    </resultDataMap>
+
+    <select id="sjq.bitcoin.storage.domain.Block.getBestBlock" resultDataMap="blockDataMap" parameterType="java.lang.String">
+        select
+            block_hash,
+            prev_block_hash,
+            merkle_root,
+            block_height,
+            version,
+            difficulty,
+            nonce,
+            sync_status,
+            verify_status,
+            timestamp,
+            trx_count,
+            create_time,
+            modify_time
+        from
+            block
+        order by block_height desc
+        limit 1
+    </select>
+
+    <select id="sjq.bitcoin.storage.domain.Block.getBlockByHash" resultDataMap="blockDataMap" parameterType="java.lang.String">
+         select
+            block_hash,
+            prev_block_hash,
+            merkle_root,
+            block_height,
+            version,
+            difficulty,
+            nonce,
+            sync_status,
+            verify_status,
+            timestamp,
+            trx_count,
+            create_time,
+            modify_time
+         from
+            block
+         where
+            block_hash = #blockHash# +
+         limit 1
+    </select>
+
+    <insert id="sjq.bitcoin.storage.domain.Block.saveBlock" parameterType="sjq.bitcoin.storage.domain.Block" >
+         insert into
+            block(
+                block_hash,
+                prev_block_hash,
+                merkle_root,
+                block_height,
+                version,
+                difficulty,
+                nonce,
+                sync_status,
+                verify_status,
+                timestamp,
+                trx_count,
+                create_time,
+                modify_time)
+            values(
+                #blockHash#,
+                #prevBlockHash#,
+                #merkleRoot#,
+                #blockHeight#,
+                #version#,
+                #difficulty#,
+                #nonce#,
+                #syncStatus#,
+                #verifyStatus#,
+                #timestamp#,
+                #trxCount#,
+                now(),
+                now())
+    </insert>
+
+</sqlMapInfo>

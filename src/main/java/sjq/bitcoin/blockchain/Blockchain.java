@@ -44,9 +44,9 @@ public class Blockchain {
         syncTaskTimer.schedule(blockSyncTask, SYNC_TASK_DELAY, SYNC_TASK_PERIOD);
     }
 
-    public Long getBestBlockHeight() {
+    public Long getBestBlockHeight() throws Exception {
         Block bestBlock = blockService.getBestBlock();
-        if (bestBlock==null) {
+        if (bestBlock == null) {
             // if best block is null, it means there does not exist any normal block in local storage.
             // Directly take the genesis block as the best block for block height.
             bestBlock = blockService.getGenesisBlock();
@@ -71,12 +71,16 @@ public class Blockchain {
      * @param header block header data by getHeaders message from another remote peer node.
      **/
     public void persistBlockWithHeader(BlockHeader header) {
-        Block block = BlockConvertor.convertBlockFromHeader(header);
-        block.setSyncStatus(Block.STATUS_SYNC_HEADER);
-        block.setVerifyStatus(Block.STATUS_UN_VERIFY_HEADER);
-        boolean success = blockService.saveBlock(block);
-        if (!success) {
-            Logger.error("fail to save block into database with block hash:%s", header.getBlockHash());
+        try {
+            Block block = BlockConvertor.convertBlockFromHeader(header);
+            block.setSyncStatus(Block.STATUS_SYNC_HEADER);
+            block.setVerifyStatus(Block.STATUS_UN_VERIFY_HEADER);
+            boolean success = blockService.saveBlock(block);
+            if (!success) {
+                Logger.error("fail to save block into database with block hash:%s", header.getBlockHash());
+            }
+        } catch (Exception e) {
+            Logger.error("persist block with header error:%s", e.fillInStackTrace());
         }
     }
 }
