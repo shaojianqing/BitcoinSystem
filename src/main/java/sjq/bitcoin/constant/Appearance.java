@@ -18,6 +18,8 @@ public class Appearance {
 
     public static final Color INPUT_TEXT_COLOR = new Color(180, 180, 180);
 
+    public static final Color FORE_TEXT_COLOR = new Color(220, 220, 220);
+
     public static final Color SELECTION_COLOR = new Color(15, 25, 35);
 
     public static final Color CONSOLE_TEXT_COLOR = new Color(100, 140, 188);

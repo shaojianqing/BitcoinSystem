@@ -66,8 +66,7 @@ public class BlockService {
         if (prevBlock != null) {
             return blockDao.saveBlock(block);
         }
-        Logger.warn("ignore block data without previous block " +
-                "in the database, block hash:%s", block.getBlockHash());
+        Logger.warn("ignore block data without previous block in the database, block hash:%s", block.getBlockHash());
         return false;
     }
 

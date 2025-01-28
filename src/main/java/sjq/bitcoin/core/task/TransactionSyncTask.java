@@ -7,7 +7,7 @@ import sjq.bitcoin.network.PeerManager;
 
 import java.util.TimerTask;
 
-public class BlockSyncTask extends TimerTask {
+public class TransactionSyncTask extends TimerTask {
 
     @Autowire
     private Blockchain blockchain;
@@ -17,7 +17,6 @@ public class BlockSyncTask extends TimerTask {
 
     @Override
     public void run() {
-        Logger.info("start to execute block sync task to download all block data!");
-        //peerManager.startSyncBlockData();
+        Logger.info("start to execute transaction sync task for block!");
     }
 }

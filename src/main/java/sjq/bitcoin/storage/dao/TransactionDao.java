@@ -14,7 +14,7 @@ public class TransactionDao {
         return null;
     }
 
-    public Page<Transaction> queryTransactionPageByBlockhash(String blockHash) {
+    public Page<Transaction> queryTransactionPageByBlockHash(String blockHash) {
         return null;
     }
 

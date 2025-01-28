@@ -1,8 +1,10 @@
 package sjq.bitcoin.graphics;
 
 
+import sjq.bitcoin.blockchain.Blockchain;
 import sjq.bitcoin.components.VerticalScrollBar;
 import sjq.bitcoin.constant.Appearance;
+import sjq.bitcoin.context.Autowire;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -10,17 +12,20 @@ import java.awt.*;
 
 public class BlockTable extends JPanel {
 
-    private static final int BLOCK_TABLE_WIDTH = 1200;
+    private static final int BLOCK_TABLE_WIDTH = 1180;
 
-    private static final int BLOCK_TABLE_HEIGHT = 640;
+    private static final int BLOCK_TABLE_HEIGHT = 590;
 
-    private JTable table;
+    private final JTable table;
 
-    private JScrollPane panel;
+    private final JScrollPane panel;
 
-    private SearchBar searchBar;
+    private final SearchBar searchBar;
 
-    private VerticalScrollBar vScrollBar;
+    private final VerticalScrollBar vScrollBar;
+
+    @Autowire
+    private Blockchain blockchain;
 
     public BlockTable() {
 
@@ -94,23 +99,23 @@ public class BlockTable extends JPanel {
         table.getColumnModel().getColumn(4).setPreferredWidth(100);
         table.getColumnModel().getColumn(5).setPreferredWidth(200);
 
-        table.setBounds(0,0, 1180, 590);
+        table.setBounds(0,0, BLOCK_TABLE_WIDTH, BLOCK_TABLE_HEIGHT);
         table.setRowHeight(36);
-        table.setPreferredSize(new Dimension(1180, 590));
+        table.setPreferredSize(new Dimension(BLOCK_TABLE_WIDTH, BLOCK_TABLE_HEIGHT));
         table.setVisible(true);
         table.setGridColor(Appearance.GRID_COLOR);
         table.setBackground(Appearance.MAIN_COLOR);
         table.setRowSelectionAllowed(false);
         table.setColumnSelectionAllowed(false);
         table.setFocusable(false);
-        table.setForeground(new Color(220,220,220));
+        table.setForeground(Appearance.FORE_TEXT_COLOR);
         table.setAutoscrolls(true);
 
         vScrollBar = new VerticalScrollBar(JScrollBar.VERTICAL);
         vScrollBar.setUnitIncrement(8);
         panel = new JScrollPane(table);
         panel.setBackground(Appearance.MAIN_COLOR);
-        panel.setBounds(10,0, 1180, 590);
+        panel.setBounds(10,0, BLOCK_TABLE_WIDTH, BLOCK_TABLE_HEIGHT);
         panel.setVerticalScrollBar(vScrollBar);
         panel.setFocusable(false);
         panel.setPreferredSize(new Dimension(1180, 590));
@@ -118,5 +123,9 @@ public class BlockTable extends JPanel {
 
         add(searchBar);
         add(panel);
+    }
+
+    public void initDataView() {
+
     }
 }

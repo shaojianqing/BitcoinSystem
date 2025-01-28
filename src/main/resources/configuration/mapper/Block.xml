@@ -56,7 +56,7 @@
          from
             block
          where
-            block_hash = #blockHash# +
+            block_hash = #blockHash#
          limit 1
     </select>
 

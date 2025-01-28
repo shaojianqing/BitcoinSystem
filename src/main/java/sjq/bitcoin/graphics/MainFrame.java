@@ -2,6 +2,7 @@ package sjq.bitcoin.graphics;
 
 import sjq.bitcoin.constant.Appearance;
 import sjq.bitcoin.constant.Constants;
+import sjq.bitcoin.context.Autowire;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,45 +13,36 @@ public class MainFrame extends JFrame {
 
     private static final int FRAME_HEIGHT = 900;
 
+    @Autowire
     private GuiSystem guiSystem;
 
-    private MainLayout layout;
+    @Autowire
+    private BorderLayout layout;
 
+    @Autowire
     private Toolbar toolbar;
 
+    @Autowire
     private BlockTable blockTable;
 
+    @Autowire
     private PeerTable peerTable;
 
+    @Autowire
     private Console console;
 
-    public MainFrame(GuiSystem guiSystem) {
-
-        this.guiSystem = guiSystem;
-
-        this.initMainView();
-        this.initDataView();
-    }
-
     public void start() {
-        JFrame.setDefaultLookAndFeelDecorated(true);
+        initMainView();
         setVisible(true);
     }
 
-    private void initMainView() {
+    public void initMainView() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         setTitle(Constants.SYSTEM_NAME);
         setBackground(Appearance.MAIN_COLOR);
         setSize(FRAME_WIDTH, FRAME_HEIGHT);
         setResizable(false);
-
-
-        layout = new MainLayout();
-        toolbar = new Toolbar();
-        blockTable = new BlockTable();
-        peerTable = new PeerTable();
-        console = new Console();
 
         getContentPane().setLayout(layout);
         getContentPane().setBackground(Appearance.MAIN_COLOR);
@@ -60,7 +52,7 @@ public class MainFrame extends JFrame {
         getContentPane().add(console, BorderLayout.SOUTH);
     }
 
-    private void initDataView() {
+    public void initDataView() {
 
     }
 }

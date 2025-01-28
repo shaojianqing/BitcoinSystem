@@ -8,16 +8,16 @@ import sjq.bitcoin.storage.domain.Block;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class BlockDao {
 
-    private static String GET_BEST_BLOCK = "sjq.bitcoin.storage.domain.Block.getBestBlock";
+    private final static String GET_BEST_BLOCK = "sjq.bitcoin.storage.domain.Block.getBestBlock";
 
-    private static String GET_BLOCK_BY_HASH = "sjq.bitcoin.storage.domain.Block.getBlockByHash";
+    private final static String GET_BLOCK_BY_HASH = "sjq.bitcoin.storage.domain.Block.getBlockByHash";
 
-    private static String SAVE_BLOCK = "sjq.bitcoin.storage.domain.Block.saveBlock";
+    private final static String SAVE_BLOCK = "sjq.bitcoin.storage.domain.Block.saveBlock";
 
-    private static String UPDATE_BLOCK_HEIGHT = "sjq.bitcoin.storage.domain.Block.updateBlockHeight";
-
+    private final static String UPDATE_BLOCK_HEIGHT = "sjq.bitcoin.storage.domain.Block.updateBlockHeight";
 
     @Autowire
     private SqlMapClientTemplate sqlMapClientTemplate;

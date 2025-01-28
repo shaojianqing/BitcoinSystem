@@ -1,7 +1,9 @@
 package sjq.bitcoin.blockchain;
 
 import sjq.bitcoin.context.Autowire;
+import sjq.bitcoin.core.task.BlockRefreshTask;
 import sjq.bitcoin.core.task.BlockSyncTask;
+import sjq.bitcoin.core.task.TransactionSyncTask;
 import sjq.bitcoin.logger.Logger;
 import sjq.bitcoin.message.TransactionMessage;
 import sjq.bitcoin.message.convertor.BlockConvertor;
@@ -11,7 +13,6 @@ import sjq.bitcoin.network.PeerManager;
 import sjq.bitcoin.service.BlockService;
 import sjq.bitcoin.service.TransactionService;
 import sjq.bitcoin.service.data.TransactionData;
-import sjq.bitcoin.storage.dao.TransactionDao;
 import sjq.bitcoin.storage.domain.Block;
 
 import java.util.Timer;
@@ -22,11 +23,14 @@ public class Blockchain {
 
     private static final long SYNC_TASK_PERIOD = 5000;
 
-    @Autowire
-    private PeerManager peerManager;
+    private final Timer blockSyncTaskTimer;
+
+    private final Timer blockRefreshTaskTimer;
+
+    private final Timer transactionSyncTaskTimer;
 
     @Autowire
-    private BlockSyncTask blockSyncTask;
+    private PeerManager peerManager;
 
     @Autowire
     private BlockService blockService;
@@ -34,14 +38,25 @@ public class Blockchain {
     @Autowire
     private TransactionService transactionService;
 
-    private Timer syncTaskTimer;
+    @Autowire
+    private BlockSyncTask blockSyncTask;
+
+    @Autowire
+    private BlockRefreshTask blockRefreshTask;
+
+    @Autowire
+    private TransactionSyncTask transactionSyncTask;
 
     public Blockchain() {
-        syncTaskTimer = new Timer();
+        blockSyncTaskTimer = new Timer();
+        blockRefreshTaskTimer = new Timer();
+        transactionSyncTaskTimer = new Timer();
     }
 
     public void start() {
-        syncTaskTimer.schedule(blockSyncTask, SYNC_TASK_DELAY, SYNC_TASK_PERIOD);
+        blockSyncTaskTimer.schedule(blockSyncTask, SYNC_TASK_DELAY, SYNC_TASK_PERIOD);
+        blockRefreshTaskTimer.schedule(blockRefreshTask, SYNC_TASK_DELAY, SYNC_TASK_PERIOD);
+        transactionSyncTaskTimer.schedule(transactionSyncTask, SYNC_TASK_DELAY, SYNC_TASK_PERIOD);
     }
 
     public Long getBestBlockHeight() throws Exception {

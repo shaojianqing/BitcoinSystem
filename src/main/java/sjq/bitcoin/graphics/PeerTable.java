@@ -2,6 +2,8 @@ package sjq.bitcoin.graphics;
 
 import sjq.bitcoin.components.VerticalScrollBar;
 import sjq.bitcoin.constant.Appearance;
+import sjq.bitcoin.context.Autowire;
+import sjq.bitcoin.network.PeerManager;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -9,15 +11,18 @@ import java.awt.*;
 
 public class PeerTable extends JPanel {
 
-    private static final int PEER_TABLE_WIDTH = 400;
+    private static final int PEER_TABLE_WIDTH = 380;
 
-    private static final int PEERTABLE_HEIGHT = 600;
+    private static final int PEER_TABLE_HEIGHT = 630;
 
-    private JTable table;
+    private final JTable table;
 
-    private JScrollPane panel;
+    private final JScrollPane panel;
 
-    private VerticalScrollBar vScrollBar;
+    private final VerticalScrollBar vScrollBar;
+
+    @Autowire
+    private PeerManager peerManager;
 
     public PeerTable() {
         String[] columns = new String[]{"Peer Address", "Peer Status", "Connection Time"};
@@ -59,7 +64,7 @@ public class PeerTable extends JPanel {
         table.getColumnModel().getColumn(1).setPreferredWidth(100);
         table.getColumnModel().getColumn(2).setPreferredWidth(160);
 
-        table.setBounds(0,0, 380, 630);
+        table.setBounds(0,0, PEER_TABLE_WIDTH, PEER_TABLE_HEIGHT);
         table.setRowHeight(36);
         table.setPreferredSize(new Dimension(380, 630));
         table.setVisible(true);
