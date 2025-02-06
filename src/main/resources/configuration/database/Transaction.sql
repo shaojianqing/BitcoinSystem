@@ -1,0 +1,1 @@
+-- BitcoinDB.transaction definition

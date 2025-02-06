@@ -17,6 +17,6 @@ public class TransactionSyncTask extends TimerTask {
 
     @Override
     public void run() {
-        Logger.info("start to execute transaction sync task for block!");
+        Logger.info("start to execute transaction sync task!");
     }
 }

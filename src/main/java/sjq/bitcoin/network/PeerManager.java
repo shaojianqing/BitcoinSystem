@@ -34,8 +34,6 @@ public class PeerManager {
     @Autowire
     private Blockchain blockchain;
 
-    private PeerNode downloadPeerNode;
-
     public PeerManager(){
         configuration = NetworkConfiguration.getConfiguration();
         requiredServices = Services.none();
@@ -59,7 +57,7 @@ public class PeerManager {
 
     }
 
-    public void sendAddressRequest() throws Exception{
+    public void sendAddressRequest() {
         Collection<PeerNode> peerNodeList = peerMap.values();
         for (PeerNode node:peerNodeList) {
             if (StringUtils.equals(node.getStatus(), PeerNode.ACKNOWLEDGE)) {
@@ -68,37 +66,15 @@ public class PeerManager {
         }
     }
 
-    public void startSyncBlockData() {
-        selectDownloadNode();
-        if (downloadPeerNode != null) {
-            GetHeadersMessage getHeadersMessage = new GetHeadersMessage();
-            getHeadersMessage.setVersion(Constants.VERSION_CURRENT);
-            byte[] hash = HexUtils.parseHex("00000000000000000000eadb324b65cc49e68c0f24cfe6b0b20dd76bdf4563f9");
-            getHeadersMessage.addHash(Hash.wrap(hash));
-            byte[] stopHash = HexUtils.parseHex("00000000000000000002676e1db371c5bd13a34bc1e41cc6b5166e064bdc2a0a");
-            getHeadersMessage.setStopHash(Hash.wrap(stopHash));
-
-            try {
-                //downloadPeerNode.sendMessage(getHeadersMessage);
-            } catch (Exception e) {
-                downloadPeerNode.connectionClose();
-                Logger.error("peer sends getHeadersMessage error:%s", e);
+    public PeerNode selectBlockSyncNode() {
+        Collection<PeerNode> peerNodeList = peerMap.values();
+        for (PeerNode node:peerNodeList) {
+            if (PeerNode.ACKNOWLEDGE.equals(node.getStatus())) {
+                return node;
             }
         }
+        return null;
     }
-
-    private void selectDownloadNode() {
-        if (downloadPeerNode==null) {
-            Collection<PeerNode> peerNodeList = peerMap.values();
-            for (PeerNode node:peerNodeList) {
-                if (node.getStatus() == PeerNode.ACKNOWLEDGE) {
-                    downloadPeerNode = node;
-                    break;
-                }
-            }
-        }
-    }
-
 
     public void processPeerData(PeerNode node, Message message) {
         this.peerHandler.handlePeerData(node, message);

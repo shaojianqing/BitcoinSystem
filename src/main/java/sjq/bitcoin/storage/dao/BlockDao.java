@@ -36,7 +36,7 @@ public class BlockDao {
 
     public boolean saveBlock(Block block) throws Exception {
         int count = sqlMapClientTemplate.execute(SAVE_BLOCK, block);
-        return count==1;
+        return count == 1;
     }
 
     public boolean updateBlockHeight(String blockHash, Long blockHeight) throws Exception {

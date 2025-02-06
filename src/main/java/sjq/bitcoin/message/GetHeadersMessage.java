@@ -21,7 +21,7 @@ public class GetHeadersMessage extends BaseMessage implements Message {
 
     private long version;
 
-    private List<Hash> hashList = new ArrayList<Hash>();
+    private List<Hash> hashList = new ArrayList<>();
 
     private Hash stopHash;
 

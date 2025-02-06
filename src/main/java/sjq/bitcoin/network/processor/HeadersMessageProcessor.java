@@ -21,12 +21,15 @@ public class HeadersMessageProcessor implements PeerProcessor {
             HeadersMessage headersMessage = (HeadersMessage)message;
             Logger.info("received block headers message, headerCount:%d", headersMessage.getHeaderCount());
             List<BlockHeader> blockHeaderList = headersMessage.getHeaderList();
-            for (int i=0; i< blockHeaderList.size(); ++i) {
-                // Here we take header first strategy, so block data is persisted with block header directly.
-                // The related transaction data would be persisted in later async thread or task.
-                BlockHeader header = blockHeaderList.get(i);
-                blockchain.persistBlockWithHeader(header);
-                Logger.info("persist block data with block header, block hash:%s", header.getBlockHash());
+            for (BlockHeader header:blockHeaderList) {
+                try {
+                    // Here we take header first strategy, so block data is persisted with block header directly.
+                    // The related transaction data would be persisted in later async thread or task.
+                    Logger.info("persist block data with block header, block hash:%s", header.getBlockHash());
+                    blockchain.persistBlockWithHeader(header);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

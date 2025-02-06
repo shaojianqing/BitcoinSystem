@@ -1,7 +1,6 @@
 package sjq.bitcoin.blockchain;
 
 import sjq.bitcoin.context.Autowire;
-import sjq.bitcoin.core.task.BlockRefreshTask;
 import sjq.bitcoin.core.task.BlockSyncTask;
 import sjq.bitcoin.core.task.TransactionSyncTask;
 import sjq.bitcoin.logger.Logger;
@@ -19,13 +18,11 @@ import java.util.Timer;
 
 public class Blockchain {
 
-    private static final long SYNC_TASK_DELAY = 20000;
+    private static final long SYNC_TASK_DELAY = 10000;
 
     private static final long SYNC_TASK_PERIOD = 5000;
 
     private final Timer blockSyncTaskTimer;
-
-    private final Timer blockRefreshTaskTimer;
 
     private final Timer transactionSyncTaskTimer;
 
@@ -42,31 +39,25 @@ public class Blockchain {
     private BlockSyncTask blockSyncTask;
 
     @Autowire
-    private BlockRefreshTask blockRefreshTask;
-
-    @Autowire
     private TransactionSyncTask transactionSyncTask;
 
     public Blockchain() {
         blockSyncTaskTimer = new Timer();
-        blockRefreshTaskTimer = new Timer();
         transactionSyncTaskTimer = new Timer();
     }
 
     public void start() {
         blockSyncTaskTimer.schedule(blockSyncTask, SYNC_TASK_DELAY, SYNC_TASK_PERIOD);
-        blockRefreshTaskTimer.schedule(blockRefreshTask, SYNC_TASK_DELAY, SYNC_TASK_PERIOD);
         transactionSyncTaskTimer.schedule(transactionSyncTask, SYNC_TASK_DELAY, SYNC_TASK_PERIOD);
     }
 
     public Long getBestBlockHeight() throws Exception {
         Block bestBlock = blockService.getBestBlock();
-        if (bestBlock == null) {
-            // if best block is null, it means there does not exist any normal block in local storage.
-            // Directly take the genesis block as the best block for block height.
-            bestBlock = blockService.getGenesisBlock();
-        }
         return bestBlock.getBlockHeight();
+    }
+
+    public Block getBestBlock() throws Exception {
+        return blockService.getBestBlock();
     }
 
     public void processTransaction(TransactionMessage transactionMessage) {

@@ -21,7 +21,7 @@ public class HeadersMessage extends BaseMessage implements Message {
 
     public HeadersMessage() {
         super(COMMAND);
-        this.headerList = new ArrayList<BlockHeader>();
+        this.headerList = new ArrayList<>();
     }
 
     @Override

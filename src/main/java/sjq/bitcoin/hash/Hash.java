@@ -32,6 +32,11 @@ public class Hash {
         return new Hash(rawBytes);
     }
 
+    public static Hash wrap(String hashString) {
+        byte[] hashValue = HexUtils.parseHex(hashString);
+        return new Hash(hashValue);
+    }
+
     public static Hash wrapReversed(byte[] rawBytes) {
         return wrap(ByteUtils.reverseBytes(rawBytes));
     }

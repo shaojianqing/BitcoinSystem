@@ -42,7 +42,7 @@ public class BlockService {
 
     public Block getBestBlock() throws Exception {
         Block bestBlock = blockDao.getBestBlock();
-        if (bestBlock==null) {
+        if (bestBlock == null) {
             bestBlock = GENESIS_BLOCK;
         }
         return bestBlock;
@@ -64,23 +64,11 @@ public class BlockService {
         // data consistency consideration.
         Block prevBlock = getBlockByHash(block.getPrevBlockHash());
         if (prevBlock != null) {
+            Long blockHeight = prevBlock.getBlockHeight() + 1;
+            block.setBlockHeight(blockHeight);
             return blockDao.saveBlock(block);
         }
         Logger.warn("ignore block data without previous block in the database, block hash:%s", block.getBlockHash());
         return false;
-    }
-
-    private String calculateBlockHash(Block block) throws Exception {
-        BlockHeader blockHeader = new BlockHeader();
-        blockHeader.setVersion(block.getVersion());
-        String prevBlockHash = block.getPrevBlockHash();
-        blockHeader.setPrevBlockHash(Hash.wrap(HexUtils.parseHex(prevBlockHash)));
-        String merkelRoot = block.getMerkleRoot();
-        blockHeader.setMerkleRoot(Hash.wrap(HexUtils.parseHex(merkelRoot)));
-        blockHeader.setTimestamp(block.getTimestamp());
-        blockHeader.setDifficulty(block.getDifficulty());
-        blockHeader.setNonce(block.getNonce());
-        Hash blockHash = blockHeader.calculateHash();
-        return blockHash.hexValue();
     }
 }

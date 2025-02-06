@@ -10,9 +10,9 @@
         <result property="difficulty" column="difficulty" javaType="java.lang.Long" />
         <result property="nonce" column="nonce" javaType="java.lang.Long" />
         <result property="version" column="version" javaType="java.lang.Long" />
-        <result property="trxCount" column="trx_count" javaType="java.lang.Short" />
-        <result property="syncStatus" column="sync_status" javaType="java.lang.Short" />
-        <result property="verifyStatus" column="verify_status" javaType="java.lang.Short" />
+        <result property="trxCount" column="trx_count" javaType="java.lang.Integer" />
+        <result property="syncStatus" column="sync_status" javaType="java.lang.String" />
+        <result property="verifyStatus" column="verify_status" javaType="java.lang.String" />
         <result property="createTime" column="create_time" javaType="java.sql.Timestamp" />
         <result property="modifyTime" column="modify_time" javaType="java.sql.Timestamp" />
     </resultDataMap>
@@ -34,7 +34,7 @@
             modify_time
         from
             block
-        order by block_height desc
+        order by timestamp desc
         limit 1
     </select>
 

@@ -30,7 +30,7 @@ public class Block {
 
     private Long nonce;
 
-    private Long trxCount;
+    private Integer trxCount;
 
     private String syncStatus;
 
@@ -44,7 +44,7 @@ public class Block {
     }
 
     public Block(Long version, Long blockHeight, String blockHash, String prevBlockHash,
-                 String merkleRoot, Long timestamp, Long difficulty, Long nonce, Long trxCount) {
+                 String merkleRoot, Long timestamp, Long difficulty, Long nonce, Integer trxCount) {
         this.version = version;
         this.blockHeight = blockHeight;
         this.blockHash = blockHash;
@@ -122,11 +122,11 @@ public class Block {
         this.nonce = nonce;
     }
 
-    public Long getTrxCount() {
+    public Integer getTrxCount() {
         return trxCount;
     }
 
-    public void setTrxCount(Long trxCount) {
+    public void setTrxCount(Integer trxCount) {
         this.trxCount = trxCount;
     }
 

@@ -73,6 +73,7 @@ public class PeerDiscovery {
                 }
             } catch (Exception e) {
                 Logger.error("prepare peer task error:%s!", e);
+                e.printStackTrace();
             }
         }
     }
@@ -103,7 +104,7 @@ public class PeerDiscovery {
             try {
                 if (addressList != null && addressList.size()>0) {
                     int limit = peerManager.getNeedConnectionCount();
-                    limit = (limit <= addressList.size()?limit:addressList.size());
+                    limit = Math.min(limit, addressList.size());
 
                     int peerCount = 0;
                     for (NetworkAddress address:addressList) {

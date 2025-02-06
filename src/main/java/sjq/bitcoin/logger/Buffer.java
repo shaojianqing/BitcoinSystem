@@ -10,26 +10,21 @@ public class Buffer {
 
     private Queue<String> queue;
 
-    private int capacity = DEFAULT_CAPACITY;
+    private int capacity;
 
     public Buffer() {
         this.capacity = DEFAULT_CAPACITY;
-        this.queue = new LinkedList<String>();
+        this.queue = new LinkedList<>();
     }
 
-    public Buffer(int capacity) {
-        this.capacity = capacity;
-        this.queue = new LinkedList<String>();
-    }
-
-    public void log(String content) {
+    public synchronized void log(String content) {
         queue.offer(content);
         if (queue.size() > capacity) {
             queue.poll();
         }
     }
 
-    public String build() {
+    public synchronized String build() {
         Iterator<String> iterator = queue.iterator();
         StringBuilder builder = new StringBuilder();
         while(iterator.hasNext()) {

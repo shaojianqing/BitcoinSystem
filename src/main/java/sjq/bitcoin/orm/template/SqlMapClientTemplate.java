@@ -99,29 +99,26 @@ public class SqlMapClientTemplate {
 		if (statementMap.containsKey(statementName)) {
 			final SqlStatement sqlStatement = statementMap.get(statementName);
 			
-			Object data = sqlStatement.executeQuerySql(parameter, new SqlQueryCallback() {
+			Object data = sqlStatement.executeQuerySql(parameter, resultSet -> {
+				ResultDataMap resultDataMap = sqlStatement.getResultDataMap();
+				String className = resultDataMap.getClassName();
 
-				public Object onExecuteResult(ResultSet resultSet) throws Exception {
-					ResultDataMap resultDataMap = sqlStatement.getResultDataMap();
-					String className = resultDataMap.getClassName();
-					
-					if (StringUtils.isNotBlank(className)) {
-						Class<?> clazz = Class.forName(className);
-						Object data = clazz.newInstance();
-						Map<String, Method> methodMap = ClassUtil.prepareMethodMap(clazz);
-						List<PropertyMap> propertyMapList = resultDataMap.getPropertyList();
-						if (resultSet.next()) {
-							for (PropertyMap propertyMap:propertyMapList) {
-								prepareDataValue(resultSet, data, methodMap, propertyMap);
-							}
-							return data;
+				if (StringUtils.isNotBlank(className)) {
+					Class<?> clazz = Class.forName(className);
+					Object data1 = clazz.newInstance();
+					Map<String, Method> methodMap = ClassUtil.prepareMethodMap(clazz);
+					List<PropertyMap> propertyMapList = resultDataMap.getPropertyList();
+					if (resultSet.next()) {
+						for (PropertyMap propertyMap:propertyMapList) {
+							prepareDataValue(resultSet, data1, methodMap, propertyMap);
 						}
-					} else {
-						throw new SqlTemplateException("Can not find Bean Class Name Definition!");
+						return data1;
 					}
-					
-					return null;
+				} else {
+					throw new SqlTemplateException("Can not find Bean Class Name Definition!");
 				}
+
+				return null;
 			});
 			
 			return data;

@@ -1,0 +1,1 @@
+-- BitcoinDB.transaction_address_map definition

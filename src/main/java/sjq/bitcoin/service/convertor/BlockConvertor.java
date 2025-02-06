@@ -15,7 +15,7 @@ public class BlockConvertor {
         block.setBlockHash(blockMessage.getBlockHash().hexValue());
         block.setPrevBlockHash(blockMessage.getPrevBlockHash().hexValue());
         block.setMerkleRoot(blockMessage.getMerkleRoot().hexValue());
-        block.setTrxCount((long) blockMessage.getTransactions().size());
+        block.setTrxCount(blockMessage.getTransactions().size());
         return block;
     }
 }
