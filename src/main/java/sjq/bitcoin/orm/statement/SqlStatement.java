@@ -9,12 +9,11 @@ import sjq.bitcoin.orm.utility.SqlTemplateUtil;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
 
 public class SqlStatement {
-	
-	private DataSource dataSource;
 	
 	private String sqlTemplateString;
 	
@@ -23,24 +22,25 @@ public class SqlStatement {
 	private String parameterType;
 	
 	private String resultType;
+
+	private Connection connection;
+
+	private Statement statement;
 	
-	public SqlStatement(String sqlTemplateString, DataSource dataSource) {
+	public SqlStatement(String sqlTemplateString, Connection connection) throws SQLException {
 		this.sqlTemplateString = sqlTemplateString;
-		this.dataSource = dataSource;
+		this.connection = connection;
+		this.statement = connection.createStatement();
 	}
 	
 	public Object executeQuerySql(Object parameter, SqlQueryCallback callback) throws Exception {
 		String realSqlString = parseQuerySql(parameter);
-		Connection connection = dataSource.getConnection();
-		Statement statement = connection.createStatement();
 		ResultSet resultSet = statement.executeQuery(realSqlString);
 		return callback.onExecuteResult(resultSet);
 	}
 	
 	public int executeUpdateSql(Object parameter) throws Exception {
 		String realSqlString = parseUpdateSql(parameter);
-		Connection connection = dataSource.getConnection();
-		Statement statement = connection.createStatement();
 		return statement.executeUpdate(realSqlString);
 	}
 
@@ -156,14 +156,6 @@ public class SqlStatement {
 			}
 		}
 		return false;
-	}
-
-	public DataSource getDataSource() {
-		return dataSource;
-	}
-
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
 	}
 
 	public String getSqlTemplateString() {

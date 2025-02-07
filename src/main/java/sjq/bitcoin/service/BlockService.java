@@ -3,14 +3,11 @@ package sjq.bitcoin.service;
 import org.apache.commons.lang3.StringUtils;
 import sjq.bitcoin.configuration.NetworkConfiguration;
 import sjq.bitcoin.context.Autowire;
-import sjq.bitcoin.hash.Hash;
 import sjq.bitcoin.logger.Logger;
 import sjq.bitcoin.message.BlockMessage;
-import sjq.bitcoin.message.data.BlockHeader;
 import sjq.bitcoin.service.convertor.BlockConvertor;
 import sjq.bitcoin.storage.dao.BlockDao;
 import sjq.bitcoin.storage.domain.Block;
-import sjq.bitcoin.utility.HexUtils;
 
 public class BlockService {
 
@@ -59,6 +56,14 @@ public class BlockService {
     }
 
     public boolean saveBlock(Block block) throws Exception {
+        // If the block does exist in the database, directly ignore the block data. This may
+        // happen when receiving repeated block header message from other p2p node.
+        Block existBlock = getBlockByHash(block.getBlockHash());
+        if (existBlock != null) {
+            Logger.info("ignore exist block data in the database, block hash:%s", block.getBlockHash());
+            return false;
+        }
+
         // Only if the previous block has been stored in the database, the received
         // block can be saved into the database as expected. This is mainly for
         // data consistency consideration.

@@ -18,6 +18,7 @@ import javax.sql.DataSource;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -45,8 +46,10 @@ public class SqlMapClientTemplate {
 		        
 		        Document document = xmlReader.read(inputStream);
 		        Element root = document.getRootElement();
+
+				Connection connection = dataSource.getConnection();
 		        
-		        parser.buildSqlMapConfig(statementMap, root, dataSource);     
+		        parser.buildSqlMapConfig(statementMap, root, connection);
 			}
 		}
 		Logger.info("initialize sql map client template successfully!");
@@ -98,8 +101,8 @@ public class SqlMapClientTemplate {
 	public Object queryForObject(String statementName, Object parameter) throws Exception {
 		if (statementMap.containsKey(statementName)) {
 			final SqlStatement sqlStatement = statementMap.get(statementName);
-			
-			Object data = sqlStatement.executeQuerySql(parameter, resultSet -> {
+
+			return sqlStatement.executeQuerySql(parameter, resultSet -> {
 				ResultDataMap resultDataMap = sqlStatement.getResultDataMap();
 				String className = resultDataMap.getClassName();
 
@@ -120,17 +123,10 @@ public class SqlMapClientTemplate {
 
 				return null;
 			});
-			
-			return data;
 		} else {
 			String message = String.format("%s statement does not exist!", statementName);
 			throw new SqlTemplateException(message);
 		}
-	}
-	
-	public int countForObject(String statementName, Object parameter) {
-		
-		return 0;
 	}
 	
 	public int execute(String statementName, Object parameter) throws Exception {

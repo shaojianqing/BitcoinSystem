@@ -1,33 +1,31 @@
 package sjq.bitcoin.orm.parser;
 
-import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.dom4j.Element;
-
 import org.apache.commons.lang3.StringUtils;
+import org.dom4j.Element;
 import sjq.bitcoin.orm.datamap.PropertyMap;
 import sjq.bitcoin.orm.datamap.ResultDataMap;
 import sjq.bitcoin.orm.exception.SqlTemplateException;
 import sjq.bitcoin.orm.statement.SqlStatement;
+
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class SqlMapConfigParser {
 	
 	private Map<String, ResultDataMap> resultDataMapTable = new HashMap<>();
 	
-	public void buildSqlMapConfig(Map<String, SqlStatement> statementMap, Element root, DataSource dataSource) throws Exception {
+	public void buildSqlMapConfig(Map<String, SqlStatement> statementMap, Element root, Connection connection) throws Exception {
 		
 		if (statementMap!=null && root!=null) {
-			
 			this.buildResultDataMap(statementMap, root);
-			this.buildSelectSqlList(statementMap, root, dataSource);
-			this.buildInsertSqlList(statementMap, root, dataSource);
-			this.buildUpdateSqlList(statementMap, root, dataSource);
-			this.buildDeleteSqlList(statementMap, root, dataSource);
+			this.buildSelectSqlList(statementMap, root, connection);
+			this.buildInsertSqlList(statementMap, root, connection);
+			this.buildUpdateSqlList(statementMap, root, connection);
+			this.buildDeleteSqlList(statementMap, root, connection);
 		}
 	}
 	
@@ -97,7 +95,7 @@ public class SqlMapConfigParser {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void buildSelectSqlList(Map<String, SqlStatement> statementMap, Element root, DataSource dataSource) throws Exception {
+	private void buildSelectSqlList(Map<String, SqlStatement> statementMap, Element root, Connection connection) throws Exception {
 		List<Element> selectSqlList = root.elements("select");
 		
 		if (selectSqlList!=null && selectSqlList.size()>0) {
@@ -122,7 +120,7 @@ public class SqlMapConfigParser {
 					throw new SqlTemplateException(message);
 				}
 				
-				SqlStatement sqlStatement = new SqlStatement(sql, dataSource);
+				SqlStatement sqlStatement = new SqlStatement(sql, connection);
 				if (StringUtils.isNotBlank(resultDataMapKey)) {
 					if (resultDataMapTable.containsKey(resultDataMapKey)) {
 						ResultDataMap resultDataMap = resultDataMapTable.get(resultDataMapKey);
@@ -142,7 +140,7 @@ public class SqlMapConfigParser {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void buildInsertSqlList(Map<String, SqlStatement> statementMap, Element root, DataSource dataSource) throws Exception {
+	private void buildInsertSqlList(Map<String, SqlStatement> statementMap, Element root, Connection connection) throws Exception {
 		List<Element> updateDataMapList = root.elements("insert");
 		
 		if (updateDataMapList!=null && updateDataMapList.size()>0) {
@@ -165,7 +163,7 @@ public class SqlMapConfigParser {
 					throw new SqlTemplateException(message);
 				}
 				
-				SqlStatement sqlStatement = new SqlStatement(sql, dataSource);				
+				SqlStatement sqlStatement = new SqlStatement(sql, connection);
 				sqlStatement.setParameterType(parameterType);
 				statementMap.put(id, sqlStatement);
 			}
@@ -173,7 +171,7 @@ public class SqlMapConfigParser {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void buildUpdateSqlList(Map<String, SqlStatement> statementMap, Element root, DataSource dataSource) throws Exception {
+	private void buildUpdateSqlList(Map<String, SqlStatement> statementMap, Element root, Connection connection) throws Exception {
 		List<Element> updateDataMapList = root.elements("update");
 		
 		if (updateDataMapList!=null && updateDataMapList.size()>0) {
@@ -196,7 +194,7 @@ public class SqlMapConfigParser {
 					throw new SqlTemplateException(message);
 				}
 				
-				SqlStatement sqlStatement = new SqlStatement(sql, dataSource);				
+				SqlStatement sqlStatement = new SqlStatement(sql, connection);
 				sqlStatement.setParameterType(parameterType);
 				statementMap.put(id, sqlStatement);
 			}
@@ -204,7 +202,7 @@ public class SqlMapConfigParser {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void buildDeleteSqlList(Map<String, SqlStatement> statementMap, Element root, DataSource dataSource) throws Exception {
+	private void buildDeleteSqlList(Map<String, SqlStatement> statementMap, Element root, Connection connection) throws Exception {
 		List<Element> deleteDataMapList = root.elements("delete");
 		
 		if (deleteDataMapList!=null && deleteDataMapList.size()>0) {
@@ -227,7 +225,7 @@ public class SqlMapConfigParser {
 					throw new SqlTemplateException(message);
 				}
 				
-				SqlStatement sqlStatement = new SqlStatement(sql, dataSource);				
+				SqlStatement sqlStatement = new SqlStatement(sql, connection);
 				sqlStatement.setParameterType(parameterType);
 				statementMap.put(id, sqlStatement);
 			}

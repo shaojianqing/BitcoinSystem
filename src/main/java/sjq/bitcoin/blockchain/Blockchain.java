@@ -14,16 +14,20 @@ import sjq.bitcoin.service.TransactionService;
 import sjq.bitcoin.service.data.TransactionData;
 import sjq.bitcoin.storage.domain.Block;
 
+import java.util.List;
 import java.util.Timer;
 
 public class Blockchain {
 
-    private static final long SYNC_TASK_DELAY = 10000;
+    private static final long SYNC_TASK_DELAY = 20000;
 
-    private static final long SYNC_TASK_PERIOD = 5000;
+    private static final long SYNC_TASK_PERIOD = 20000;
+
+    private static final String BLOCK_SYNC_TIMER = "BlockSyncTimer";
+
+    private static final String TRANSACTION_SYNC_TIMER = "TransactionSyncTimer";
 
     private final Timer blockSyncTaskTimer;
-
     private final Timer transactionSyncTaskTimer;
 
     @Autowire
@@ -42,8 +46,8 @@ public class Blockchain {
     private TransactionSyncTask transactionSyncTask;
 
     public Blockchain() {
-        blockSyncTaskTimer = new Timer();
-        transactionSyncTaskTimer = new Timer();
+        blockSyncTaskTimer = new Timer(BLOCK_SYNC_TIMER);
+        transactionSyncTaskTimer = new Timer(TRANSACTION_SYNC_TIMER);
     }
 
     public void start() {
@@ -74,19 +78,23 @@ public class Blockchain {
      * In header first strategy, the block data is persisted into database with block header directly, and
      * the corresponding status is set to be initial value, so that the block data could be completed later.
      * 
-     * @param header block header data by getHeaders message from another remote peer node.
+     * @param headers block header data by getHeaders message from another remote peer node.
      **/
-    public void persistBlockWithHeader(BlockHeader header) {
+    public void persistBlockData(List<BlockHeader> headers) {
         try {
-            Block block = BlockConvertor.convertBlockFromHeader(header);
-            block.setSyncStatus(Block.STATUS_SYNC_HEADER);
-            block.setVerifyStatus(Block.STATUS_UN_VERIFY_HEADER);
-            boolean success = blockService.saveBlock(block);
-            if (!success) {
-                Logger.error("fail to save block into database with block hash:%s", header.getBlockHash());
+            for (BlockHeader header:headers) {
+                Block block = BlockConvertor.convertBlockFromHeader(header);
+                block.setSyncStatus(Block.STATUS_SYNC_HEADER);
+                block.setVerifyStatus(Block.STATUS_UN_VERIFY_HEADER);
+                boolean success = blockService.saveBlock(block);
+                if (success) {
+                    Logger.info("save block into database successfully with block hash:%s", header.getBlockHash());
+                } else {
+                    Logger.warn("fail to save block into database with block hash:%s", header.getBlockHash());
+                }
             }
         } catch (Exception e) {
-            Logger.error("persist block with header error:%s", e.fillInStackTrace());
+            Logger.error("save block into database encounter error:%s", e.fillInStackTrace());
         }
     }
 }
