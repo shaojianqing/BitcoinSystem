@@ -1,6 +1,5 @@
 package sjq.bitcoin.network.node;
 
-import sjq.bitcoin.configuration.NetworkConfiguration;
 import sjq.bitcoin.constant.Constants;
 import sjq.bitcoin.logger.Logger;
 import sjq.bitcoin.message.VersionReqMessage;
@@ -13,44 +12,40 @@ import sjq.bitcoin.network.socket.SocketHandler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.SocketException;
 import java.nio.ByteBuffer;
+import java.util.Date;
 
 public class PeerNode implements Callback {
 
-    public static final String ACTIVE = "active";
+    public static final String CONNECTED = "Connected";
 
-    public static final String INACTIVE = "inactive";
+    public static final String ACKNOWLEDGE = "Acknowledge";
 
-    public static final String ACKNOWLEDGE = "acknowledge";
+    private final PeerManager manager;
 
-    private PeerManager manager;
+    private final VersionReqMessage versionReqMessage;
 
-    private NetworkConfiguration configuration;
+    private final SocketHandler socketHandler;
 
-    private VersionReqMessage versionReqMessage;
+    private final Services requiredServices;
+
+    private final InetSocketAddress address;
+
+    private final SocketClient client;
 
     private VersionReqMessage peerVersionReqMessage;
 
-    private SocketHandler socketHandler;
-
-    private Services requiredServices;
-
-    private InetSocketAddress address;
+    private Date connectionTime;
 
     private String status;
 
-    private SocketClient client;
-
-    public PeerNode(PeerManager manager, String url, Services requiredServices, Long bestBlockHeight) throws Exception {
+    public PeerNode(PeerManager manager, InetSocketAddress address, Services requiredServices, Long bestBlockHeight) throws Exception {
         this.manager = manager;
+        this.address = address;
         this.requiredServices = requiredServices;
-        this.configuration = NetworkConfiguration.getConfiguration();
-        this.address = new InetSocketAddress(url, configuration.getPort());
         this.socketHandler = new SocketHandler(this);
         this.versionReqMessage = prepareVersionReqMessage(bestBlockHeight);
 
-        this.status = INACTIVE;
         this.client = new SocketClient(address, this);
     }
 
@@ -74,6 +69,10 @@ public class PeerNode implements Callback {
         } catch (IOException e) {
             client.closeConnection();
         }
+    }
+
+    public void sendVersionReqMessage() {
+        sendMessage(versionReqMessage);
     }
 
     public int receiveData(ByteBuffer buffer) {
@@ -111,10 +110,6 @@ public class PeerNode implements Callback {
         return versionReqMessage;
     }
 
-    public String getIPAddress() {
-        return address.getAddress().getHostAddress();
-    }
-
     public VersionReqMessage getVersionReqMessage() {
         return versionReqMessage;
     }
@@ -141,5 +136,13 @@ public class PeerNode implements Callback {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Date getConnectionTime() {
+        return connectionTime;
+    }
+
+    public void setConnectionTime(Date connectionTime) {
+        this.connectionTime = connectionTime;
     }
 }

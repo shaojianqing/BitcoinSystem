@@ -22,42 +22,47 @@ public class SqlStatement {
 	private String parameterType;
 	
 	private String resultType;
-
-	private Connection connection;
-
-	private Statement statement;
 	
-	public SqlStatement(String sqlTemplateString, Connection connection) throws SQLException {
+	public SqlStatement(String sqlTemplateString) throws SQLException {
 		this.sqlTemplateString = sqlTemplateString;
-		this.connection = connection;
-		this.statement = connection.createStatement();
 	}
 	
-	public Object executeQuerySql(Object parameter, SqlQueryCallback callback) throws Exception {
+	public Object executeQuerySql(DataSource datasource, Object parameter, SqlQueryCallback callback) throws Exception {
 		String realSqlString = parseQuerySql(parameter);
+		Connection connection = datasource.getConnection();
+		Statement statement = connection.createStatement();
 		ResultSet resultSet = statement.executeQuery(realSqlString);
-		return callback.onExecuteResult(resultSet);
+		Object result = callback.onExecuteResult(resultSet);
+		resultSet.close();
+		statement.close();
+		connection.close();
+		return result;
 	}
 	
-	public int executeUpdateSql(Object parameter) throws Exception {
+	public int executeUpdateSql(DataSource datasource, Object parameter) throws Exception {
 		String realSqlString = parseUpdateSql(parameter);
-		return statement.executeUpdate(realSqlString);
+		Connection connection = datasource.getConnection();
+		Statement statement = connection.createStatement();
+		int result = statement.executeUpdate(realSqlString);
+		statement.close();
+		connection.close();
+		return result;
 	}
 
 	@SuppressWarnings("unchecked")
 	private String parseQuerySql(Object parameter) throws Exception {
 		if (parameter!=null) {
-			Map<String, Object> paramMap = null;
+			Map<String, Object> paramMap;
 			if ((!(parameter instanceof Map)) && (!(parameter instanceof String)) ) {
 				paramMap = BeanUtil.objectToMap(parameter);
 			} else if (parameter instanceof Map) {
 				paramMap = (Map<String, Object>)parameter;
 			} else if (parameter instanceof String) {
 				String key = SqlTemplateUtil.retriveFirstKey(sqlTemplateString);
-				paramMap = new HashMap<String, Object>();
+				paramMap = new HashMap<>();
 				paramMap.put(key, parameter);
 			} else {
-				paramMap = new HashMap<String, Object>();
+				paramMap = new HashMap<>();
 			}
 			
 			Map<String, Object> replaceParamMap = new HashMap<String, Object>();
@@ -97,13 +102,13 @@ public class SqlStatement {
 				paramMap = (Map<String, Object>)parameter;
 			} else if (parameter instanceof String) {
 				String key = SqlTemplateUtil.retriveFirstKey(sqlTemplateString);
-				paramMap = new HashMap<String, Object>();
+				paramMap = new HashMap<>();
 				paramMap.put(key, parameter);
 			} else {
-				paramMap = new HashMap<String, Object>();
+				paramMap = new HashMap<>();
 			}
 			
-			Map<String, Object> replaceParamMap = new HashMap<String, Object>();
+			Map<String, Object> replaceParamMap = new HashMap<>();
 			Set<String> keySet = paramMap.keySet();
 			for (String key:keySet) {
 				String newKey = String.format("#%s#", key);
@@ -188,17 +193,5 @@ public class SqlStatement {
 
 	public void setResultDataMap(ResultDataMap resultDataMap) {
 		this.resultDataMap = resultDataMap;
-	}
-
-	public static void main(String args[]) throws Exception {
-		String sql = "SELECT * FROM CL_LOAN_REPAY WHERE user_id = #userId# and out_order_no = #outOrderNo# and username = #name#";
-		
-		Map<String, String> param = new HashMap<String, String>();
-		param.put("userId", "208080908230932");
-		param.put("outOrderNo", "2222228888877777");
-		param.put("name", "shaojianqing");
-		
-		SqlStatement statement = new SqlStatement(sql, null);
-		statement.executeQuerySql(param, null);		
 	}
 }

@@ -1,7 +1,6 @@
 package sjq.bitcoin.components;
 
 import sjq.bitcoin.constant.Appearance;
-import sun.swing.DefaultLookup;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicArrowButton;
@@ -58,15 +57,8 @@ public class CustomComboBoxUI extends BasicComboBoxUI {
                 c.setForeground(comboBox.getForeground());
                 c.setBackground(comboBox.getBackground());
             }
-            else {
-                c.setForeground(DefaultLookup.getColor(
-                        comboBox, this, "ComboBox.disabledForeground", null));
-                c.setBackground(DefaultLookup.getColor(
-                        comboBox, this, "ComboBox.disabledBackground", null));
-            }
         }
 
-        // Fix for 4238829: should lay out the JPanel.
         boolean shouldValidate = false;
         if (c instanceof JPanel)  {
             shouldValidate = true;

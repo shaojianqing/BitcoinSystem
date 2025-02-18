@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class PeerHandler {
 
-    private final Map<String, PeerProcessor> processorMap = new HashMap();
+    private final Map<String, PeerProcessor> processorMap;
 
     @Autowire
     private PeerManager peerManager;
@@ -92,6 +92,10 @@ public class PeerHandler {
 
     @Autowire
     private VersionReqMessageProcessor versionReqMessageProcessor;
+
+    public PeerHandler() {
+        processorMap = new HashMap<>();
+    }
 
     public void initialize() {
         processorMap.put(AddressV1Message.COMMAND, addressV1MessageProcessor);

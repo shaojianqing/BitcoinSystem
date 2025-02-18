@@ -1,4 +1,4 @@
-package sjq.bitcoin.graphics;
+package sjq.bitcoin.gui;
 
 import sjq.bitcoin.components.HorizontalScrollBar;
 import sjq.bitcoin.components.VerticalScrollBar;
@@ -18,7 +18,7 @@ public class Console extends JPanel {
 
     private static final long TIME_TASK_DELAY = 1000;
 
-    private static final long TIME_TASK_PEROID = 200;
+    private static final long TIME_TASK_PERIOD = 200;
 
     private JTextArea output;
 
@@ -28,11 +28,10 @@ public class Console extends JPanel {
 
     private HorizontalScrollBar hScrollBar;
 
-    private Timer logTasktimer;
+    private Timer logTaskTimer;
 
     public Console() {
         initMainView();
-        initDataView();
     }
 
     private void initMainView() {
@@ -63,13 +62,13 @@ public class Console extends JPanel {
         add(panel);
     }
 
-    private void initDataView() {
-        logTasktimer = new Timer();
-        logTasktimer.schedule(new TimerTask() {
+    public void initDataView() {
+        logTaskTimer = new Timer();
+        logTaskTimer.schedule(new TimerTask() {
             @Override
             public void run() {
                 output.setText(Logger.getContent());
             }
-        }, TIME_TASK_DELAY, TIME_TASK_PEROID);
+        }, TIME_TASK_DELAY, TIME_TASK_PERIOD);
     }
 }

@@ -1,11 +1,12 @@
 package sjq.bitcoin.storage.manager;
 
-import org.apache.commons.dbcp2.BasicDataSource;
+import com.mysql.cj.jdbc.MysqlDataSource;
 import org.apache.commons.lang3.StringUtils;
 import sjq.bitcoin.context.Autowire;
 import sjq.bitcoin.logger.Logger;
 import sjq.bitcoin.orm.template.SqlMapClientTemplate;
 
+import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,18 +18,16 @@ public class DatabaseManager {
 
     private static final String DB_PASSWORD = "BITCOIN_PASSWORD";
 
-    private static final String DATABASE_NAME = "BitcoinDB";
+    private static final String DATABASE_NAME = "bitcoin";
 
     private static final String CONN_FORMAT = "jdbc:mysql://%s:3306/%s";
-
-    private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-
-    private BasicDataSource dataSource;
 
     @Autowire
     private SqlMapClientTemplate sqlMapClientTemplate;
 
     private List<String> sqlMapConfigList;
+
+    private DataSource dataSource;
 
     public void initialize() {
         try {
@@ -41,24 +40,21 @@ public class DatabaseManager {
         }
     }
 
-    private void initDatasource() {
+    private void initDatasource() throws Exception {
         String dbUrl = System.getenv(DATABASE_URL);
         String username = System.getenv(DB_USERNAME);
         String password = System.getenv(DB_PASSWORD);
 
         checkDatabaseConfiguration(dbUrl, username, password);
 
-        String connectionString = String.format(CONN_FORMAT, dbUrl, DATABASE_NAME);
+        String connectionUrl = String.format(CONN_FORMAT, dbUrl, DATABASE_NAME);
 
-        dataSource = new BasicDataSource();
-        dataSource.setDriverClassName(JDBC_DRIVER);
-        dataSource.setUrl(connectionString);
-        dataSource.setUsername(username);
-        dataSource.setPassword(password);
-        dataSource.setInitialSize(5);
-        dataSource.setMaxTotal(10);
-        dataSource.setMaxIdle(10);
-        dataSource.setMinIdle(2);
+        MysqlDataSource mysqlDataSource = new MysqlDataSource();
+        mysqlDataSource.setURL(connectionUrl);
+        mysqlDataSource.setUser(username);
+        mysqlDataSource.setPassword(password);
+
+        dataSource = mysqlDataSource;
     }
 
     private void initSqlMapConfigList() {

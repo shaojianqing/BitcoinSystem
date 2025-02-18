@@ -11,8 +11,11 @@ import sjq.bitcoin.network.node.PeerNode;
 import sjq.bitcoin.storage.domain.Block;
 
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class BlockSyncTask extends TimerTask {
+
+    private final AtomicLong peerSelector;
 
     @Autowire
     private Blockchain blockchain;
@@ -20,11 +23,15 @@ public class BlockSyncTask extends TimerTask {
     @Autowire
     private PeerManager peerManager;
 
+    public BlockSyncTask() {
+        peerSelector = new AtomicLong(0);
+    }
+
     @Override
     public void run() {
         try {
             Logger.info("start to execute block sync task!");
-            PeerNode blockSyncNode = peerManager.selectBlockSyncNode();
+            PeerNode blockSyncNode = peerManager.selectSyncNode(peerSelector.getAndIncrement());
             if (blockSyncNode != null) {
                 GetHeadersMessage getHeadersMessage = new GetHeadersMessage();
                 getHeadersMessage.setVersion(Constants.VERSION_CURRENT);
@@ -34,7 +41,8 @@ public class BlockSyncTask extends TimerTask {
                 getHeadersMessage.addHash(blockHash);
                 getHeadersMessage.setStopHash(Hash.ZERO_HASH);
                 blockSyncNode.sendMessage(getHeadersMessage);
-                Logger.info("send getheaders message to node:%s, successfully", blockSyncNode.getIPAddress());
+                Logger.info("send getheaders message to node:%s, successfully, with block hash:%s",
+                        blockSyncNode.getAddress(), block.getBlockHash());
             }
         } catch (Exception e) {
             Logger.error("sync block data raise error:%s", e);

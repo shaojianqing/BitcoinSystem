@@ -21,14 +21,12 @@ public class BitcoinCore {
     private Blockchain blockchain;
 
     public void initialize() {
-        peerManager.initialize();
         peerHandler.initialize();
         peerDiscovery.initialize();
     }
 
     public void start() {
         blockchain.start();
-        peerManager.start();
         peerDiscovery.start();
     }
 }

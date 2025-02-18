@@ -1,4 +1,4 @@
-package sjq.bitcoin.graphics;
+package sjq.bitcoin.gui;
 
 import sjq.bitcoin.constant.Appearance;
 import sjq.bitcoin.constant.Constants;
@@ -31,11 +31,6 @@ public class MainFrame extends JFrame {
     @Autowire
     private Console console;
 
-    public void start() {
-        initMainView();
-        setVisible(true);
-    }
-
     public void initMainView() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -50,9 +45,12 @@ public class MainFrame extends JFrame {
         getContentPane().add(blockTable, BorderLayout.CENTER);
         getContentPane().add(peerTable, BorderLayout.EAST);
         getContentPane().add(console, BorderLayout.SOUTH);
+
+        setVisible(true);
     }
 
     public void initDataView() {
-
+        peerTable.initDataView();
+        console.initDataView();
     }
 }

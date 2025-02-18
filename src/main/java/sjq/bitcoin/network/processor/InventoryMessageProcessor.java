@@ -11,8 +11,6 @@ public class InventoryMessageProcessor implements PeerProcessor {
     public void processMessage(PeerNode peerNode, Message message) {
         if (message instanceof InventoryMessage) {
             InventoryMessage inventoryMessage = (InventoryMessage)message;
-
-            Logger.info("receiving inventoryMessage:%s", inventoryMessage);
         }
     }
 }

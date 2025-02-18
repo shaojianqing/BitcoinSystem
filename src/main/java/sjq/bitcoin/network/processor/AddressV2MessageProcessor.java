@@ -20,7 +20,7 @@ public class AddressV2MessageProcessor implements PeerProcessor {
     public void processMessage(PeerNode peerNode, Message message) {
         if (message instanceof AddressV2Message) {
             AddressV2Message addressMessage = (AddressV2Message)message;
-            Logger.info("received AddressV2Message:%d", addressMessage.getAddressList().size());
+            Logger.info("received AddressV2Message, with address count:%d", addressMessage.getAddressList().size());
             List<NetworkAddress> addressList = addressMessage.getAddressList();
             peerDiscovery.sync(addressList);
         }

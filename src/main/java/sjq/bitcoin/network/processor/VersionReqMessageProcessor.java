@@ -14,16 +14,16 @@ public class VersionReqMessageProcessor implements PeerProcessor {
 
     public void processMessage(PeerNode peerNode, Message message) {
         if (message instanceof VersionReqMessage) {
-            VersionReqMessage peerVersionReqMessage = (VersionReqMessage)message;
+            VersionReqMessage versionReqMessage = (VersionReqMessage)message;
             if (peerNode.getPeerVersionReqMessage() != null) {
                 Logger.error("versionReqMessage has been received already!");
                 return;
             }
 
-            peerNode.setPeerVersionReqMessage(peerVersionReqMessage);
-            Services peerServices = peerVersionReqMessage.getLocalServices();
+            peerNode.setPeerVersionReqMessage(versionReqMessage);
+            Services peerServices = versionReqMessage.getLocalServices();
             if (!peerServices.any(Services.NODE_NETWORK | Services.NODE_NETWORK_LIMITED) ||
-                    peerVersionReqMessage.getBestBlockHeight() == 0) {
+                    versionReqMessage.getBestBlockHeight() == 0) {
                 peerNode.connectionClose();
                 Logger.warn("peer node is not the expected peer service type! peer services:%d", peerServices.getDefinition());
                 return;
@@ -42,8 +42,8 @@ public class VersionReqMessageProcessor implements PeerProcessor {
                 return;
             }
 
-            if (peerVersionReqMessage.getBestBlockHeight() < 0) {
-                Logger.error("best block height is not correct in peer node, best block height:%d!", peerVersionReqMessage.getBestBlockHeight());
+            if (versionReqMessage.getBestBlockHeight() < 0) {
+                Logger.error("best block height is not correct in peer node, best block height:%d!", versionReqMessage.getBestBlockHeight());
                 return;
             }
 

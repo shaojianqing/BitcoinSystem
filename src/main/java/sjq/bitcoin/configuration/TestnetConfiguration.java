@@ -19,9 +19,7 @@ public class TestnetConfiguration extends NetworkConfiguration {
 
     private void initDnsSeedList() {
         DNS_SEED_LIST.add("dnsseed.emzy.de");
-        DNS_SEED_LIST.add("dnsseed.bluematt.me");
         DNS_SEED_LIST.add("seed.bitcoin.sipa.be");
-        DNS_SEED_LIST.add("seed.bitcoin.wiz.biz");
         DNS_SEED_LIST.add("dnsseed.bitcoin.dashjr.org");
     }
 

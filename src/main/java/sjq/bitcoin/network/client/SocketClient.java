@@ -52,7 +52,7 @@ public class SocketClient implements Runnable {
             outputStream = socket.getOutputStream();
             running.compareAndSet(false, true);
             callback.connectionOpened();
-            String threadName = String.format("Peer node client thread(%s:%d)", address.getHostName(), address.getPort());
+            String threadName = String.format("Peer node client thread(%s:%d)", address.getAddress(), address.getPort());
             ThreadUtils.run(this, threadName);
             Logger.info("connect to peer successfully, remote peer address:%s, port:%d", address.getAddress(), address.getPort());
         } catch (Exception e) {

@@ -1,4 +1,4 @@
-package sjq.bitcoin.graphics;
+package sjq.bitcoin.gui;
 
 import sjq.bitcoin.components.HorizontalLine;
 import sjq.bitcoin.constant.Appearance;

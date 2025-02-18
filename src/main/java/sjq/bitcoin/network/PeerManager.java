@@ -2,27 +2,25 @@ package sjq.bitcoin.network;
 
 import org.apache.commons.lang3.StringUtils;
 import sjq.bitcoin.blockchain.Blockchain;
-import sjq.bitcoin.configuration.NetworkConfiguration;
 import sjq.bitcoin.constant.Constants;
 import sjq.bitcoin.context.Autowire;
-import sjq.bitcoin.context.Context;
-import sjq.bitcoin.hash.Hash;
 import sjq.bitcoin.logger.Logger;
 import sjq.bitcoin.message.GetAddressMessage;
-import sjq.bitcoin.message.GetHeadersMessage;
-import sjq.bitcoin.message.SendHeadersMessage;
 import sjq.bitcoin.message.base.Message;
+import sjq.bitcoin.network.event.PeerChangeListener;
 import sjq.bitcoin.network.node.PeerNode;
-import sjq.bitcoin.utility.HexUtils;
 
-import java.util.*;
+import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class PeerManager {
 
-    private final NetworkConfiguration configuration;
-
-    private final Map<String, PeerNode> peerMap;
+    private final Map<InetSocketAddress, PeerNode> peerMap;
 
     private final Services requiredServices;
 
@@ -34,27 +32,22 @@ public class PeerManager {
     @Autowire
     private Blockchain blockchain;
 
-    public PeerManager(){
-        configuration = NetworkConfiguration.getConfiguration();
+    private List<PeerChangeListener> peerChangeListeners;
+
+    public PeerManager() {
         requiredServices = Services.none();
         maxConnectionCount = Constants.MAX_CONNECTION_COUNT;
         peerMap = new ConcurrentHashMap<>(maxConnectionCount);
+        peerChangeListeners = new ArrayList<>();
     }
 
-    public PeerNode createPeerNode(String address) throws Exception {
+    public PeerNode createPeerNode(InetSocketAddress address) throws Exception {
         return new PeerNode(this, address, requiredServices, blockchain.getBestBlockHeight());
     }
 
     public void injectPeerNode(PeerNode peerNode) {
-        this.peerMap.put(peerNode.getIPAddress(), peerNode);
-    }
-
-    public void initialize() {
-
-    }
-
-    public void start() {
-
+        this.peerMap.put(peerNode.getAddress(), peerNode);
+        this.notifyPeerChangeEvent(peerNode);
     }
 
     public void sendAddressRequest() {
@@ -62,26 +55,43 @@ public class PeerManager {
         for (PeerNode node:peerNodeList) {
             if (StringUtils.equals(node.getStatus(), PeerNode.ACKNOWLEDGE)) {
                 node.sendMessage(new GetAddressMessage());
+                Logger.info("send address request to peer:%s!", node.getAddress());
             }
         }
     }
 
-    public PeerNode selectBlockSyncNode() {
-        Collection<PeerNode> peerNodeList = peerMap.values();
-        for (PeerNode node:peerNodeList) {
-            if (PeerNode.ACKNOWLEDGE.equals(node.getStatus())) {
-                return node;
-            }
+    public PeerNode selectSyncNode(long peerSelectIndex) {
+        Collection<PeerNode> activePeerNodeList = peerMap.values().
+                stream().filter((peer) -> PeerNode.ACKNOWLEDGE.equals(peer.getStatus())).collect(Collectors.toList());
+        if (activePeerNodeList.size()>0) {
+            Object[] activePeerNodes = activePeerNodeList.toArray();
+            int position = (int)peerSelectIndex%activePeerNodeList.size();
+            return (PeerNode)activePeerNodes[position];
         }
         return null;
+    }
+
+    public void notifyPeerChangeEvent(PeerNode peerNode) {
+        for (PeerChangeListener listener:peerChangeListeners) {
+            listener.onPeerChange(this, peerNode);
+        }
+    }
+
+    public void registerPeerChangeListener(PeerChangeListener listener) {
+        this.peerChangeListeners.add(listener);
     }
 
     public void processPeerData(PeerNode node, Message message) {
         this.peerHandler.handlePeerData(node, message);
     }
 
-    public void disconnectPeerNode(PeerNode node) {
-        peerMap.remove(node.getIPAddress());
+    public void disconnectPeerNode(PeerNode peerNode) {
+        this.peerMap.remove(peerNode.getAddress());
+        this.notifyPeerChangeEvent(peerNode);
+    }
+
+    public boolean containPeerAddress(InetSocketAddress address) {
+        return peerMap.containsKey(address);
     }
 
     public int getMaxConnectionCount() {
@@ -97,5 +107,14 @@ public class PeerManager {
 
     public int getPeerNodeSize() {
         return peerMap.size();
+    }
+
+    public List<PeerNode> getPeerNodeList() {
+        return new ArrayList<>(peerMap.values());
+    }
+
+    public List<PeerNode> getConnectedPeerNodeList() {
+        return peerMap.values().stream().filter(peer->
+                PeerNode.CONNECTED.equals(peer.getStatus())).collect(Collectors.toList());
     }
 }

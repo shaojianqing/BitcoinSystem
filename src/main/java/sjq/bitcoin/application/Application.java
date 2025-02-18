@@ -3,7 +3,7 @@ package sjq.bitcoin.application;
 import sjq.bitcoin.context.Autowire;
 import sjq.bitcoin.context.Context;
 import sjq.bitcoin.core.BitcoinCore;
-import sjq.bitcoin.graphics.GuiSystem;
+import sjq.bitcoin.gui.GuiSystem;
 import sjq.bitcoin.server.APIServer;
 import sjq.bitcoin.storage.manager.DatabaseManager;
 import sjq.bitcoin.wallet.WalletCore;
@@ -26,8 +26,9 @@ public class Application {
     private DatabaseManager databaseManager;
 
     public void initialize() {
-        bitcoinCore.initialize();
-        databaseManager.initialize();
+        this.bitcoinCore.initialize();
+        this.databaseManager.initialize();
+        this.guiSystem.initialize();
     }
 
     public void start() {

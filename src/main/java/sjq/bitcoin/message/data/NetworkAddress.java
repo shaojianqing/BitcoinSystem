@@ -1,13 +1,13 @@
 package sjq.bitcoin.message.data;
 
+import sjq.bitcoin.configuration.NetworkConfiguration;
 import sjq.bitcoin.network.Services;
 import sjq.bitcoin.utility.ByteUtils;
-import sjq.bitcoin.utility.HexUtils;
 
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.ProtocolException;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 public class NetworkAddress {
 
@@ -23,7 +23,7 @@ public class NetworkAddress {
 
     private Services services;
 
-    private InetAddress address;
+    private InetSocketAddress address;
 
     private String hostname;
 
@@ -33,39 +33,45 @@ public class NetworkAddress {
         if (protocolVersion < PROTOCOL_VERSION_1 || protocolVersion > PROTOCOL_VERSION_2) {
             throw new IllegalStateException("invalid protocolVariant: " + protocolVersion);
         }
-        NetworkAddress address = new NetworkAddress();
-        address.timestamp = ByteUtils.readUint32LE(buffer);
+
+        NetworkConfiguration configuration = NetworkConfiguration.getConfiguration();
+        NetworkAddress networkAddress = new NetworkAddress();
+        networkAddress.timestamp = ByteUtils.readUint32LE(buffer);
         if (protocolVersion == PROTOCOL_VERSION_1) {
-            address.services = Services.read(buffer);
+            networkAddress.services = Services.read(buffer);
 
             byte[] addressBytes = new byte[16];
             buffer.get(addressBytes);
-            address.address = InetAddress.getByAddress(addressBytes);
-            address.hostname = null;
+            InetAddress inetAddress = InetAddress.getByAddress(addressBytes);
+            networkAddress.port = ByteUtils.readUint16BE(buffer);
+            networkAddress.address = new InetSocketAddress(inetAddress, networkAddress.port);
+            networkAddress.hostname = null;
         } else if (protocolVersion == PROTOCOL_VERSION_2) {
-            address.services = Services.wrap(VariableInteger.read(buffer).longValue());
+            networkAddress.services = Services.wrap(VariableInteger.read(buffer).longValue());
             int networkId = buffer.get();
             byte[] addressBytes = ByteUtils.readLengthPrefixedBytes(buffer);
             if (networkId == NETWORK_IPV4) {
                 if (addressBytes.length != 4) {
                     throw new ProtocolException("network address is not ipv4!");
                 }
-                address.address = InetAddress.getByAddress(addressBytes);
-                address.hostname = null;
+                InetAddress inetAddress = InetAddress.getByAddress(addressBytes);
+                networkAddress.port = ByteUtils.readUint16BE(buffer);
+                networkAddress.address = new InetSocketAddress(inetAddress, networkAddress.port);
+                networkAddress.hostname = null;
             } else if (networkId == NETWORK_IPV6) {
                 if (addressBytes.length != 16) {
                     throw new ProtocolException("network address is not ipv6!");
                 }
-                address.address = InetAddress.getByAddress(addressBytes);
-                address.hostname = null;
+                InetAddress inetAddress = InetAddress.getByAddress(addressBytes);
+                networkAddress.port = ByteUtils.readUint16BE(buffer);
+                networkAddress.address = new InetSocketAddress(inetAddress, networkAddress.port);
+                networkAddress.hostname = null;
             } else {
-                address.address = null;
-                address.hostname = null;
+                networkAddress.address = null;
+                networkAddress.hostname = null;
             }
         }
-
-        address.port = ByteUtils.readUint16BE(buffer);
-        return address;
+        return networkAddress;
     }
 
     public static ByteBuffer write(ByteBuffer buffer, int protocolVersion) {
@@ -80,7 +86,7 @@ public class NetworkAddress {
         return services;
     }
 
-    public InetAddress getAddress() {
+    public InetSocketAddress getAddress() {
         return address;
     }
 

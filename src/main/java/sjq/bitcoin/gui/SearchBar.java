@@ -1,16 +1,12 @@
-package sjq.bitcoin.graphics;
+package sjq.bitcoin.gui;
 
 import sjq.bitcoin.components.CustomComboBoxUI;
 import sjq.bitcoin.constant.Appearance;
 
 import javax.swing.*;
-import javax.swing.plaf.ComboBoxUI;
-import javax.swing.plaf.basic.BasicComboBoxUI;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 
 public class SearchBar extends JPanel {
 

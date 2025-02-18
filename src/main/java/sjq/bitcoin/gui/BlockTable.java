@@ -1,4 +1,4 @@
-package sjq.bitcoin.graphics;
+package sjq.bitcoin.gui;
 
 
 import sjq.bitcoin.blockchain.Blockchain;

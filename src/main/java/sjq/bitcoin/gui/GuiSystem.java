@@ -1,7 +1,6 @@
-package sjq.bitcoin.graphics;
+package sjq.bitcoin.gui;
 
 import sjq.bitcoin.context.Autowire;
-import sjq.bitcoin.context.Context;
 import sjq.bitcoin.core.BitcoinCore;
 
 
@@ -13,8 +12,11 @@ public class GuiSystem {
     @Autowire
     private BitcoinCore bitcoinCore;
 
-    public void start() {
-        mainFrame.start();
+    public void initialize() {
+        mainFrame.initMainView();
+    }
 
+    public void start() {
+        mainFrame.initDataView();
     }
 }
