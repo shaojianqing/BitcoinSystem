@@ -4,13 +4,13 @@ import java.util.Date;
 
 public class Transaction {
 
+    private String transactionHash;
+
     private Long messageVersion;
 
     private Long blockHeight;
 
     private String blockHash;
-
-    private String transactionHash;
 
     private Long transactionLockTime;
 

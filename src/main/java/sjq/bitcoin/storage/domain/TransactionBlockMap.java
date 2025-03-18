@@ -4,15 +4,27 @@ import java.util.Date;
 
 public class TransactionBlockMap {
 
+    private Long id;
+
     private String blockHash;
 
     private Long blockHeight;
 
     private String transactionHash;
 
+    private Long transactionIndex;
+
     private Date createTime;
 
     private Date modifyTime;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getBlockHash() {
         return blockHash;
@@ -36,6 +48,14 @@ public class TransactionBlockMap {
 
     public void setTransactionHash(String transactionHash) {
         this.transactionHash = transactionHash;
+    }
+
+    public Long getTransactionIndex() {
+        return transactionIndex;
+    }
+
+    public void setTransactionIndex(Long transactionIndex) {
+        this.transactionIndex = transactionIndex;
     }
 
     public Date getCreateTime() {
