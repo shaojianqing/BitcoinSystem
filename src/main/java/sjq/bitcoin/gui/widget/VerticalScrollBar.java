@@ -1,4 +1,4 @@
-package sjq.bitcoin.components;
+package sjq.bitcoin.gui.widget;
 
 import javax.swing.*;
 

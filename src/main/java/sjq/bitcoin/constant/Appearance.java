@@ -24,4 +24,7 @@ public class Appearance {
 
     public static final Color CONSOLE_TEXT_COLOR = new Color(100, 140, 188);
 
+    public static final Color PEER_ACKNOWLEDGE_COLOR = new Color(20, 230, 128);
+
+    public static final Color PEER_CONNECTION_COLOR = new Color(220, 220, 80);
 }

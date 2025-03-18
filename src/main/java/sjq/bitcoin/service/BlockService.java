@@ -9,11 +9,15 @@ import sjq.bitcoin.service.convertor.BlockConvertor;
 import sjq.bitcoin.storage.dao.BlockDao;
 import sjq.bitcoin.storage.domain.Block;
 
+import java.util.List;
+
 public class BlockService {
 
     private static final NetworkConfiguration configuration = NetworkConfiguration.getConfiguration();
 
     private Long GENESIS_BLOCK_HEIGHT = 0l;
+
+    private Integer BLOCK_BATCH_LIMIT = 10;
 
     @Autowire
     private BlockDao blockDao;
@@ -43,6 +47,10 @@ public class BlockService {
             bestBlock = GENESIS_BLOCK;
         }
         return bestBlock;
+    }
+
+    public List<Block> queryBlockWithHeaderSynced() throws Exception {
+        return blockDao.queryBlockBatchBySyncStatus(Block.STATUS_SYNC_HEADER, BLOCK_BATCH_LIMIT);
     }
 
     public Block getBlockByHash(String blockHash) throws Exception {

@@ -17,14 +17,13 @@ public class HeadersMessageProcessor implements PeerProcessor {
     private Blockchain blockchain;
 
     public void processMessage(PeerNode peerNode, Message message) {
-        if (message instanceof HeadersMessage) {
-            HeadersMessage headersMessage = (HeadersMessage)message;
+        if (message instanceof HeadersMessage headersMessage) {
             Logger.info("received block headers message with headerCount:%d", headersMessage.getHeaderCount());
             List<BlockHeader> blockHeaderList = headersMessage.getHeaderList();
 
             // Here we take header first strategy, so block data is persisted with block header directly.
             // The related transaction data would be persisted in later async thread or task.
-            blockchain.persistBlockData(blockHeaderList);
+            blockchain.persistBlockHeader(blockHeaderList);
         }
     }
 }

@@ -1,6 +1,6 @@
 package sjq.bitcoin.gui;
 
-import sjq.bitcoin.components.HorizontalLine;
+import sjq.bitcoin.gui.widget.HorizontalLine;
 import sjq.bitcoin.constant.Appearance;
 
 import javax.swing.*;

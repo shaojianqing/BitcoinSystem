@@ -1,7 +1,7 @@
 package sjq.bitcoin.gui;
 
-import sjq.bitcoin.components.HorizontalScrollBar;
-import sjq.bitcoin.components.VerticalScrollBar;
+import sjq.bitcoin.gui.widget.HorizontalScrollBar;
+import sjq.bitcoin.gui.widget.VerticalScrollBar;
 import sjq.bitcoin.constant.Appearance;
 import sjq.bitcoin.logger.Logger;
 

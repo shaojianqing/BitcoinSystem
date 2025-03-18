@@ -1,6 +1,6 @@
 package sjq.bitcoin.gui;
 
-import sjq.bitcoin.components.CustomComboBoxUI;
+import sjq.bitcoin.gui.widget.CustomComboBoxUI;
 import sjq.bitcoin.constant.Appearance;
 
 import javax.swing.*;

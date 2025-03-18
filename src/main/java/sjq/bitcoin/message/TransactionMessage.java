@@ -1,6 +1,5 @@
 package sjq.bitcoin.message;
 
-import sjq.bitcoin.configuration.MainnetConfiguration;
 import sjq.bitcoin.constant.Constants;
 import sjq.bitcoin.hash.Hash;
 import sjq.bitcoin.message.base.BaseMessage;

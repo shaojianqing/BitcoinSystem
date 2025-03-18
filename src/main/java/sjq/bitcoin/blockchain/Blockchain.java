@@ -4,6 +4,7 @@ import sjq.bitcoin.context.Autowire;
 import sjq.bitcoin.core.task.BlockSyncTask;
 import sjq.bitcoin.core.task.TransactionSyncTask;
 import sjq.bitcoin.logger.Logger;
+import sjq.bitcoin.message.BlockMessage;
 import sjq.bitcoin.message.TransactionMessage;
 import sjq.bitcoin.message.convertor.BlockConvertor;
 import sjq.bitcoin.message.convertor.TransactionConvertor;
@@ -28,6 +29,7 @@ public class Blockchain {
     private static final String TRANSACTION_SYNC_TIMER = "TransactionSyncTimer";
 
     private final Timer blockSyncTaskTimer;
+
     private final Timer transactionSyncTaskTimer;
 
     @Autowire
@@ -64,6 +66,10 @@ public class Blockchain {
         return blockService.getBestBlock();
     }
 
+    public List<Block> queryBlockWithHeaderSynced() throws Exception {
+        return blockService.queryBlockWithHeaderSynced();
+    }
+
     public void processTransaction(TransactionMessage transactionMessage) {
         TransactionData transactionData = TransactionConvertor.convertTransactionDataFromMessage(transactionMessage);
         boolean success = transactionService.acceptTransaction(transactionData);
@@ -80,7 +86,7 @@ public class Blockchain {
      * 
      * @param headers block header data by getHeaders message from another remote peer node.
      **/
-    public void persistBlockData(List<BlockHeader> headers) {
+    public void persistBlockHeader(List<BlockHeader> headers) {
         try {
             for (BlockHeader header:headers) {
                 Block block = BlockConvertor.convertBlockFromHeader(header);
@@ -96,5 +102,9 @@ public class Blockchain {
         } catch (Exception e) {
             Logger.error("save block into database encounter error:%s", e.fillInStackTrace());
         }
+    }
+
+    public void persistBlockBody(BlockMessage blockMessage) {
+        Logger.info("persist block body with transaction:%s", blockMessage);
     }
 }

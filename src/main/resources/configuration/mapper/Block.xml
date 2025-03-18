@@ -60,6 +60,29 @@
          limit 1
     </select>
 
+    <select id="sjq.bitcoin.storage.domain.Block.queryBlockBySyncStatus" resultDataMap="blockDataMap" parameterType="java.util.Map">
+        select
+            block_hash,
+            prev_block_hash,
+            merkle_root,
+            block_height,
+            version,
+            difficulty,
+            nonce,
+            sync_status,
+            verify_status,
+            timestamp,
+            trx_count,
+            create_time,
+            modify_time
+        from
+            block
+        where
+            sync_status = #syncStatus#
+        order by block_height asc
+        limit 10
+    </select>
+
     <insert id="sjq.bitcoin.storage.domain.Block.saveBlock" parameterType="sjq.bitcoin.storage.domain.Block" >
          insert into
             block(

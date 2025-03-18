@@ -1,13 +1,15 @@
 package sjq.bitcoin.message;
 
+import sjq.bitcoin.constant.Constants;
 import sjq.bitcoin.hash.Hash;
 import sjq.bitcoin.message.base.BaseMessage;
 import sjq.bitcoin.message.base.Message;
-import sjq.bitcoin.message.data.NetworkAddress;
+import sjq.bitcoin.message.data.VariableInteger;
 import sjq.bitcoin.utility.ByteUtils;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BlockMessage extends BaseMessage implements Message {
@@ -34,6 +36,7 @@ public class BlockMessage extends BaseMessage implements Message {
 
     public BlockMessage() {
         super(COMMAND);
+        transactions = new ArrayList<>();
     }
 
     public void calculateBlockHash() {
@@ -58,20 +61,31 @@ public class BlockMessage extends BaseMessage implements Message {
     @Override
     public void deserializeMessage(byte[] data) throws Exception {
         ByteBuffer buffer = ByteBuffer.wrap(data);
-        this.version = ByteUtils.readInt32LE(buffer);
+        buffer.mark();
 
+        this.version = ByteUtils.readInt32LE(buffer);
         this.prevBlockHash = Hash.read(buffer);
         this.merkleRoot = Hash.read(buffer);
-
         this.timestamp = ByteUtils.readInt32LE(buffer);
         this.difficulty = ByteUtils.readInt32LE(buffer);
         this.nonce = ByteUtils.readInt32LE(buffer);
 
-        buffer.rewind();
+        buffer.reset();
 
-        byte[] headerBytes = new byte[HEADER_LENGTH];
+        byte[] headerBytes = ByteUtils.readBytesByLength(buffer, HEADER_LENGTH);
         byte[] blockHashBytes = Hash.calculateTwice(headerBytes);
         this.blockHash = Hash.wrapReversed(blockHashBytes);
+
+        this.readTransactions(buffer);
+    }
+
+    private void readTransactions(ByteBuffer buffer) {
+        if (buffer.hasRemaining()) {
+            VariableInteger transactionCount = VariableInteger.read(buffer);
+            for (int i=0;i<transactionCount.intValue();++i) {
+                transactions.add(TransactionMessage.read(buffer, Constants.VERSION_CURRENT));
+            }
+        }
     }
 
     public long getVersion() {

@@ -15,7 +15,7 @@ public abstract class BaseMessage implements Message {
 
     private static final int magicCode = NetworkConfiguration.getConfiguration().getMagicCode();
 
-    private final String command;
+    protected final String command;
 
     protected final int protocolVersion;
 

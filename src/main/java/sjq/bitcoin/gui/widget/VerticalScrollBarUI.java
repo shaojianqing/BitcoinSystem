@@ -1,4 +1,4 @@
-package sjq.bitcoin.components;
+package sjq.bitcoin.gui.widget;
 
 import sjq.bitcoin.constant.Appearance;
 
@@ -6,7 +6,7 @@ import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
 
-public class HorizontalScrollBarUI  extends BasicScrollBarUI {
+public class VerticalScrollBarUI extends BasicScrollBarUI {
 
     @Override
     protected JButton createDecreaseButton(int orientation)  {

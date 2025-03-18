@@ -36,7 +36,7 @@ public class SqlTemplateUtil {
 	}
 	
 	public static List<String> split2List(String sqlStringTemplate) throws Exception {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		char string[] = sqlStringTemplate.toCharArray();
 		
 		int i=0, start=0, end=0;

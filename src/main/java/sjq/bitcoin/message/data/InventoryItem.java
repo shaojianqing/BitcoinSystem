@@ -14,6 +14,8 @@ public class InventoryItem {
 
     public static final int TYPE_CMPCT_BLOCK = 4;
 
+    public static final int INVENTORY_ITEM_LENGTH = 36;
+
     public static final int TYPE_WITNESS_TRANSACTION = 0x40000001;
 
     public static final int TYPE_WITNESS_BLOCK = 0x40000002;
@@ -24,9 +26,18 @@ public class InventoryItem {
 
     private Hash hash;
 
-    public InventoryItem(int type, Hash hash) {
+    private InventoryItem(int type, Hash hash) {
         this.type = type;
         this.hash = hash;
+    }
+
+    public static InventoryItem createItem(int type, Hash hash) {
+        return new InventoryItem(type, hash);
+    }
+
+    public static InventoryItem createBlockItem(String hash) {
+        Hash blockHash = Hash.wrap(hash);
+        return new InventoryItem(TYPE_BLOCK, blockHash);
     }
 
     public int getType() {

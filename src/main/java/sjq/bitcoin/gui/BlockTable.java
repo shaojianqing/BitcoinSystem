@@ -2,7 +2,7 @@ package sjq.bitcoin.gui;
 
 
 import sjq.bitcoin.blockchain.Blockchain;
-import sjq.bitcoin.components.VerticalScrollBar;
+import sjq.bitcoin.gui.widget.VerticalScrollBar;
 import sjq.bitcoin.constant.Appearance;
 import sjq.bitcoin.context.Autowire;
 

@@ -1,11 +1,8 @@
 package sjq.bitcoin.message;
 
-import sjq.bitcoin.message.base.BaseMessage;
 import sjq.bitcoin.message.base.Message;
 
-import java.io.IOException;
-
-public class GetDataMessage extends BaseMessage implements Message {
+public class GetDataMessage extends ItemListMessage implements Message {
 
     public static String COMMAND = "getdata";
 

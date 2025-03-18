@@ -6,6 +6,7 @@ import sjq.bitcoin.service.data.page.Page;
 import sjq.bitcoin.storage.domain.Block;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -14,6 +15,8 @@ public class BlockDao {
     private final static String GET_BEST_BLOCK = "sjq.bitcoin.storage.domain.Block.getBestBlock";
 
     private final static String GET_BLOCK_BY_HASH = "sjq.bitcoin.storage.domain.Block.getBlockByHash";
+
+    private final static String QUERY_BLOCK_BY_SYNC_STATUS = "sjq.bitcoin.storage.domain.Block.queryBlockBySyncStatus";
 
     private final static String SAVE_BLOCK = "sjq.bitcoin.storage.domain.Block.saveBlock";
 
@@ -28,6 +31,13 @@ public class BlockDao {
 
     public Block getBlockByHash(String blockHash) throws Exception {
         return (Block)sqlMapClientTemplate.queryForObject(GET_BLOCK_BY_HASH, blockHash);
+    }
+
+    public List<Block> queryBlockBatchBySyncStatus(String status, Integer limit) throws Exception {
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("syncStatus", status);
+        paramMap.put("limitSize", limit);
+        return sqlMapClientTemplate.queryForList(QUERY_BLOCK_BY_SYNC_STATUS, paramMap);
     }
 
     public Page<Block> searchBlockPage(Integer blockHeight, String blockHash, Integer startTimestamp, Integer endTimestamp) {
