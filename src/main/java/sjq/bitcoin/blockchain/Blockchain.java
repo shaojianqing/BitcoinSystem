@@ -83,12 +83,12 @@ public class Blockchain {
     /**
      * In header first strategy, the block data is persisted into database with block header directly, and
      * the corresponding status is set to be initial value, so that the block data could be completed later.
-     * 
+     *
      * @param headers block header data by getHeaders message from another remote peer node.
      **/
     public void persistBlockHeader(List<BlockHeader> headers) {
         try {
-            for (BlockHeader header:headers) {
+            for (BlockHeader header : headers) {
                 Block block = BlockConvertor.convertBlockFromHeader(header);
                 block.setSyncStatus(Block.STATUS_SYNC_HEADER);
                 block.setVerifyStatus(Block.STATUS_UN_VERIFY_HEADER);
@@ -105,6 +105,18 @@ public class Blockchain {
     }
 
     public void persistBlockBody(BlockMessage blockMessage) {
-        Logger.info("persist block body with transaction:%s", blockMessage);
+        try {
+            Block block = BlockConvertor.convertBlockFromMessage(blockMessage);
+            List<TransactionData> transactionList = TransactionConvertor.
+                    convertTransactionDataFromMessage(blockMessage.getTransactions());
+            boolean success = transactionService.batchSaveTransactionData(block, transactionList);
+            if (success) {
+                Logger.info("batch save transaction data list into database successfully with block hash:%s", block.getBlockHash());
+            } else {
+                Logger.warn("fail to batch save transaction data list into database with block hash:%s", block.getBlockHash());
+            }
+        } catch (Exception e) {
+            Logger.error("batch save transaction data list into database encounter error:%s", e.fillInStackTrace());
+        }
     }
 }

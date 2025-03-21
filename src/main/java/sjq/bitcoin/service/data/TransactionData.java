@@ -7,9 +7,13 @@ import sjq.bitcoin.hash.Hash;
 
 public class TransactionData {
 
-    private List<TransactionInputData> transactionInputList = new ArrayList<TransactionInputData>();
+    private Hash transactionHash;
 
-    private List<TransactionOutputData> transactionOutputList = new ArrayList<TransactionOutputData>();
+    private List<TransactionInputData> transactionInputList = new ArrayList<>();
+
+    private List<TransactionOutputData> transactionOutputList = new ArrayList<>();
+
+    private TransactionWitnessData transactionWitness;
 
     public static TransactionData buildCoinbaseTransaction(byte[] inputScript) {
         TransactionData transaction = new TransactionData();
@@ -32,6 +36,18 @@ public class TransactionData {
     }
 
     public Hash getTransactionHash() {
-        return null;
+        return transactionHash;
+    }
+
+    public List<TransactionInputData> getTransactionInputList() {
+        return transactionInputList;
+    }
+
+    public List<TransactionOutputData> getTransactionOutputList() {
+        return transactionOutputList;
+    }
+
+    public TransactionWitnessData getTransactionWitness() {
+        return transactionWitness;
     }
 }

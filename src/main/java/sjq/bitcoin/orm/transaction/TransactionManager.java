@@ -7,7 +7,11 @@ import java.sql.SQLException;
 public class TransactionManager {
 	
 	private DataSource dataSource;
-	
+
+	public void initManager(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+
 	public void beginTransaction() throws SQLException {
 		Connection connection = this.dataSource.getConnection();
 		connection.setAutoCommit(false);
@@ -18,7 +22,7 @@ public class TransactionManager {
 		connection.commit();
 	}
 	
-	public void rollbacTransaction() throws SQLException {
+	public void rollbackTransaction() throws SQLException {
 		Connection connection = this.dataSource.getConnection();
 		connection.rollback();
 	}

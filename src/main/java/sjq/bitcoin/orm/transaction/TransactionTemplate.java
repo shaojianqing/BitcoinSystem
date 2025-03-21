@@ -14,7 +14,7 @@ public class TransactionTemplate {
 			transactionManager.commitTransaction();
 		} catch (Exception e) {
 			try {
-				transactionManager.rollbacTransaction();
+				transactionManager.rollbackTransaction();
 				transactionManager.setInitialCommit();
 			} catch (SQLException e1) {
 				e1.printStackTrace();

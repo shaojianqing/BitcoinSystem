@@ -5,6 +5,8 @@ import org.apache.commons.lang3.StringUtils;
 import sjq.bitcoin.context.Autowire;
 import sjq.bitcoin.logger.Logger;
 import sjq.bitcoin.orm.template.SqlMapClientTemplate;
+import sjq.bitcoin.orm.transaction.TransactionManager;
+import sjq.bitcoin.orm.transaction.TransactionTemplate;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
@@ -24,6 +26,12 @@ public class DatabaseManager {
 
     @Autowire
     private SqlMapClientTemplate sqlMapClientTemplate;
+
+    @Autowire
+    private TransactionManager transactionManager;
+
+    @Autowire
+    private TransactionTemplate transactionTemplate;
 
     private List<String> sqlMapConfigList;
 
@@ -68,6 +76,11 @@ public class DatabaseManager {
 
     private void initSqlMapClientTemplate() throws Exception {
         sqlMapClientTemplate.initTemplate(dataSource, sqlMapConfigList);
+    }
+
+    private void initTransactionTemplate() throws Exception {
+        transactionManager.initManager(dataSource);
+        transactionTemplate.setTransactionManager(transactionManager);
     }
 
     private void checkDatabaseConfiguration(String dbUrl, String username, String password) {

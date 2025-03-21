@@ -5,6 +5,7 @@ import sjq.bitcoin.configuration.NetworkConfiguration;
 import sjq.bitcoin.context.Autowire;
 import sjq.bitcoin.logger.Logger;
 import sjq.bitcoin.message.BlockMessage;
+import sjq.bitcoin.orm.transaction.TransactionTemplate;
 import sjq.bitcoin.service.convertor.BlockConvertor;
 import sjq.bitcoin.storage.dao.BlockDao;
 import sjq.bitcoin.storage.domain.Block;
@@ -24,6 +25,9 @@ public class BlockService {
 
     @Autowire
     private TransactionService transactionService;
+
+    @Autowire
+    private TransactionTemplate transactionTemplate;
 
     private Block GENESIS_BLOCK = new Block();
 
