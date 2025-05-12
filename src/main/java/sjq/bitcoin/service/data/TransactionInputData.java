@@ -18,6 +18,8 @@ public class TransactionInputData {
 
     private Coin value;
 
+    private TransactionWitnessData transactionWitness;
+
     /**
      * coinbase transaction is made in case of new block mining. It is
      * designed by Bitcoin protocol as the only way for new bitcoin issuance.
@@ -82,5 +84,13 @@ public class TransactionInputData {
 
     public void setValue(Coin value) {
         this.value = value;
+    }
+
+    public TransactionWitnessData getTransactionWitness() {
+        return transactionWitness;
+    }
+
+    public void setTransactionWitness(TransactionWitnessData transactionWitness) {
+        this.transactionWitness = transactionWitness;
     }
 }

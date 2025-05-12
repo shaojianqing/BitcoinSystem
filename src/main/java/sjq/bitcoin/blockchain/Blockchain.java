@@ -3,7 +3,9 @@ package sjq.bitcoin.blockchain;
 import sjq.bitcoin.context.Autowire;
 import sjq.bitcoin.core.task.BlockSyncTask;
 import sjq.bitcoin.core.task.TransactionSyncTask;
+import sjq.bitcoin.hash.Hash;
 import sjq.bitcoin.logger.Logger;
+import sjq.bitcoin.merkle.MerkleTree;
 import sjq.bitcoin.message.BlockMessage;
 import sjq.bitcoin.message.TransactionMessage;
 import sjq.bitcoin.message.convertor.BlockConvertor;
@@ -15,6 +17,7 @@ import sjq.bitcoin.service.TransactionService;
 import sjq.bitcoin.service.data.TransactionData;
 import sjq.bitcoin.storage.domain.Block;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Timer;
 
@@ -71,12 +74,16 @@ public class Blockchain {
     }
 
     public void processTransaction(TransactionMessage transactionMessage) {
-        TransactionData transactionData = TransactionConvertor.convertTransactionDataFromMessage(transactionMessage);
-        boolean success = transactionService.acceptTransaction(transactionData);
-        if (success) {
-            Logger.info("verify and persist transaction successfully, transaction hash:%s", transactionData.getTransactionHash());
-        } else {
-            Logger.error("verify and persist transaction failure, transaction hash:%s", transactionData.getTransactionHash());
+        try {
+            TransactionData transactionData = TransactionConvertor.convertTransactionDataFromMessage(transactionMessage);
+            boolean success = transactionService.acceptTransaction(transactionData);
+            if (success) {
+                Logger.info("verify and persist transaction successfully, transaction hash:%s", transactionData.getTransactionHash());
+            } else {
+                Logger.error("verify and persist transaction failure, transaction hash:%s", transactionData.getTransactionHash());
+            }
+        } catch (Exception e) {
+            Logger.error("process transaction message with exception");
         }
     }
 
@@ -106,9 +113,15 @@ public class Blockchain {
 
     public void persistBlockBody(BlockMessage blockMessage) {
         try {
+            boolean consistence = checkMerkleTreeConsistence(blockMessage);
+            if (!consistence) {
+                Logger.error("fail to check merkle root consistence with transactions, block hash:%s", blockMessage.getBlockHash());
+            }
+
             Block block = BlockConvertor.convertBlockFromMessage(blockMessage);
             List<TransactionData> transactionList = TransactionConvertor.
                     convertTransactionDataFromMessage(blockMessage.getTransactions());
+
             boolean success = transactionService.batchSaveTransactionData(block, transactionList);
             if (success) {
                 Logger.info("batch save transaction data list into database successfully with block hash:%s", block.getBlockHash());
@@ -118,5 +131,14 @@ public class Blockchain {
         } catch (Exception e) {
             Logger.error("batch save transaction data list into database encounter error:%s", e.fillInStackTrace());
         }
+    }
+
+    private boolean checkMerkleTreeConsistence(BlockMessage blockMessage) throws IOException {
+        MerkleTree merkleTree = MerkleTree.build(blockMessage.getTransactions(), false);
+        Hash merkleRoot = merkleTree.getRoot().getNodeHash();
+        if (blockMessage.getMerkleRoot().equals(merkleRoot)) {
+            return true;
+        }
+        return false;
     }
 }

@@ -7,6 +7,8 @@ import sjq.bitcoin.storage.domain.Transaction;
 
 public class TransactionDao {
 
+    private final static String SAVE_TRANSACTION = "sjq.bitcoin.storage.domain.Transaction.saveTransaction";
+
     @Autowire
     private SqlMapClientTemplate sqlMapClientTemplate;
 
@@ -18,7 +20,8 @@ public class TransactionDao {
         return null;
     }
 
-    public boolean saveTransaction(Transaction transaction) {
-        return false;
+    public boolean saveTransaction(Transaction transaction) throws Exception {
+        int count = sqlMapClientTemplate.execute(SAVE_TRANSACTION, transaction);
+        return count == 1;
     }
 }

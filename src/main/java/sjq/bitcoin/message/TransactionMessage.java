@@ -169,6 +169,14 @@ public class TransactionMessage extends BaseMessage implements Message {
         this.messageVersion = messageVersion;
     }
 
+    public List<TransactionInput> getTransactionInputs() {
+        return transactionInputs;
+    }
+
+    public List<TransactionOutput> getTransactionOutputs() {
+        return transactionOutputs;
+    }
+
     public TransactionLockTime getTransactionLockTime() {
         return transactionLockTime;
     }
