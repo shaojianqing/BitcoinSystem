@@ -1,4 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sqlMapInfo namespace="sjq.bitcoin.storage.domain.TransactionInput">
 
+    <resultDataMap id="transactionInputDataMap" class="sjq.bitcoin.storage.domain.TransactionInput">
+        <result property="transactionHash" column="transaction_hash" javaType="java.lang.String" />
+        <result property="fromTransactionHash" column="from_transaction_hash" javaType="java.lang.String" />
+        <result property="sequence" column="sequence" javaType="java.lang.Long" />
+        <result property="transactionOutputIndex" column="transaction_output_index" javaType="java.lang.Long" />
+        <result property="scriptSignature" column="script_signature" javaType="java.lang.String" />
+        <result property="value" column="value" javaType="java.lang.Long" />
+        <result property="createTime" column="create_time" javaType="java.sql.Timestamp" />
+        <result property="modifyTime" column="modify_time" javaType="java.sql.Timestamp" />
+    </resultDataMap>
+
+    <insert id="sjq.bitcoin.storage.domain.Transaction.saveTransactionInput" parameterType="sjq.bitcoin.storage.domain.TransactionInput" >
+        insert into
+            transaction_input(
+                transaction_hash,
+                from_transaction_hash,
+                sequence,
+                transaction_output_index,
+                script_signature,
+                value,
+                create_time,
+                modify_time)
+            values(
+                #transactionHash#,
+                #fromTransactionHash#,
+                #sequence#,
+                #transactionOutputIndex#,
+                #scriptSignature#,
+                #value#,
+                now(),
+                now())
+    </insert>
+
 </sqlMapInfo>

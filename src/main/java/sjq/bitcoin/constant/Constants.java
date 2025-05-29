@@ -4,7 +4,7 @@ public class Constants {
 
     public static final String SYSTEM_NAME = "Bitcoin System by Smith Shao";
 
-    public static final String SYSTEM_USER_AGENT = "/Bitcoin-System(Smith Shao):1.0.0/";
+    public static final String SYSTEM_USER_AGENT = "/BitcoinSystem(Smith Shao):1.0.0/";
 
     public static final Long MAX_UNSIGNED_INTEGER = Integer.toUnsignedLong(-1);
 

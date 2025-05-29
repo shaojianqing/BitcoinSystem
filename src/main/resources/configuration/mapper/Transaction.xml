@@ -1,4 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sqlMapInfo namespace="sjq.bitcoin.storage.domain.Transaction">
 
+    <resultDataMap id="transactionDataMap" class="sjq.bitcoin.storage.domain.Transaction">
+        <result property="transactionHash" column="transaction_hash" javaType="java.lang.String" />
+        <result property="messageVersion" column="message_version" javaType="java.lang.Long" />
+        <result property="blockHeight" column="block_height" javaType="java.lang.Long" />
+        <result property="blockHash" column="block_hash" javaType="java.lang.String" />
+        <result property="transactionLockTime" column="transaction_lock_time" javaType="java.lang.Long" />
+        <result property="createTime" column="create_time" javaType="java.sql.Timestamp" />
+        <result property="modifyTime" column="modify_time" javaType="java.sql.Timestamp" />
+    </resultDataMap>
+
+    <insert id="sjq.bitcoin.storage.domain.Transaction.saveTransaction" parameterType="sjq.bitcoin.storage.domain.Transaction" >
+        insert into
+            transaction(
+                transaction_hash,
+                message_version,
+                block_height,
+                block_hash,
+                transaction_lock_time,
+                create_time,
+                modify_time)
+            values(
+                #transactionHash#,
+                #messageVersion#,
+                #blockHeight#,
+                #blockHash#,
+                #transactionLockTime#,
+                now(),
+                now())
+    </insert>
+
 </sqlMapInfo>

@@ -1,4 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sqlMapInfo namespace="sjq.bitcoin.storage.domain.TransactionOutput">
 
+    <resultDataMap id="transactionOutputDataMap" class="sjq.bitcoin.storage.domain.TransactionOutput">
+        <result property="transactionHash" column="transaction_hash" javaType="java.lang.String" />
+        <result property="scriptPubKey" column="script_pubKey" javaType="java.lang.String" />
+        <result property="value" column="value" javaType="java.lang.Long" />
+        <result property="createTime" column="create_time" javaType="java.sql.Timestamp" />
+        <result property="modifyTime" column="modify_time" javaType="java.sql.Timestamp" />
+    </resultDataMap>
+
+    <insert id="sjq.bitcoin.storage.domain.Transaction.saveTransactionOutput" parameterType="sjq.bitcoin.storage.domain.TransactionOutput" >
+        insert into
+            transaction_output(
+                transaction_hash,
+                script_pubKey,
+                value,
+                create_time,
+                modify_time)
+            values(
+                #transactionHash#,
+                #scriptPubKey#,
+                #value#,
+                now(),
+                now())
+    </insert>
+
 </sqlMapInfo>

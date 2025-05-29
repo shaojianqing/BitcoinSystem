@@ -36,6 +36,9 @@ public class TransactionService {
     @Autowire
     private TransactionBlockMapDao transactionBlockMapDao;
 
+    @Autowire
+    private TransactionAddressMapDao transactionAddressMapDao;
+
     public boolean acceptTransaction(TransactionData transaction) {
         return false;
     }
@@ -57,21 +60,27 @@ public class TransactionService {
 
                 List<TransactionInputData> transactionInputDataList = transactionData.getTransactionInputList();
                 if (CollectionUtils.isNotEmpty(transactionInputDataList)) {
-                    transactionInputDataList.forEach(transactionInputData->{
+                    for (TransactionInputData transactionInputData:transactionInputDataList) {
                         TransactionInput transactionInput = buildTransactionInput(transactionData, transactionInputData);
                         transactionInputDao.saveTransactionInput(transactionInput);
 
                         TransactionWitness transactionWitness = buildTransactionWitness(transactionData, transactionInputData.getTransactionWitness());
                         transactionWitnessDao.saveTransactionWitness(transactionWitness);
-                    });
+
+                        TransactionAddressMap transactionAddressMap = buildTransactionAddressMap(transactionData, transactionInputData);
+                        transactionAddressMapDao.saveTransactionAddressMap(transactionAddressMap);
+                    }
                 }
 
                 List<TransactionOutputData> transactionOutputDataList = transactionData.getTransactionOutputList();
                 if (CollectionUtils.isNotEmpty(transactionOutputDataList)) {
-                    transactionOutputDataList.forEach(transactionOutputData->{
+                    for (TransactionOutputData transactionOutputData:transactionOutputDataList) {
                         TransactionOutput transactionOutput = buildTransactionOutput(transactionData, transactionOutputData);
                         transactionOutputDao.saveTransactionOutput(transactionOutput);
-                    });
+
+                        TransactionAddressMap transactionAddressMap = buildTransactionAddressMap(transactionData, transactionOutputData);
+                        transactionAddressMapDao.saveTransactionAddressMap(transactionAddressMap);
+                    }
                 }
             }
         }
@@ -105,7 +114,12 @@ public class TransactionService {
         transactionInput.setScriptSignature(HexUtils.formatHex(transactionInputData.getScriptData()));
 
         Coin coinValue = transactionInputData.getValue();
-        transactionInput.setValue(coinValue.getValue());
+        if (coinValue!=null) {
+            transactionInput.setValue(coinValue.getValue());
+        } else {
+            // as for coinbase transaction, the value should be null, set it to be ZERO by default
+            transactionInput.setValue(Coin.ZERO.getValue());
+        }
 
         Date currentDateTime = new Date();
         transactionInput.setCreateTime(currentDateTime);
@@ -131,8 +145,7 @@ public class TransactionService {
         return transactionOutput;
     }
 
-    private TransactionWitness buildTransactionWitness(
-            TransactionData transactionData, TransactionWitnessData transactionWitnessData) {
+    private TransactionWitness buildTransactionWitness(TransactionData transactionData, TransactionWitnessData transactionWitnessData) {
         TransactionWitness transactionWitness = new TransactionWitness();
         return transactionWitness;
     }
@@ -149,5 +162,13 @@ public class TransactionService {
         transactionBlockMap.setModifyTime(currentDateTime);
 
         return transactionBlockMap;
+    }
+
+    private TransactionAddressMap buildTransactionAddressMap(TransactionData transactionData, TransactionInputData transactionInputData) {
+        return null;
+    }
+
+    private TransactionAddressMap buildTransactionAddressMap(TransactionData transactionData, TransactionOutputData transactionOutputData) {
+        return null;
     }
 }

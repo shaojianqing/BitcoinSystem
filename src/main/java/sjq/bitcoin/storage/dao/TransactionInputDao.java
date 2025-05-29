@@ -6,10 +6,13 @@ import sjq.bitcoin.storage.domain.TransactionInput;
 
 public class TransactionInputDao {
 
+    private final static String SAVE_TRANSACTION_INPUT = "sjq.bitcoin.storage.domain.Transaction.saveTransactionInput";
+
     @Autowire
     private SqlMapClientTemplate sqlMapClientTemplate;
 
-    public boolean saveTransactionInput(TransactionInput transactionInput) {
-        return false;
+    public boolean saveTransactionInput(TransactionInput transactionInput) throws Exception {
+        int count = sqlMapClientTemplate.execute(SAVE_TRANSACTION_INPUT, transactionInput);
+        return count == 1;
     }
 }

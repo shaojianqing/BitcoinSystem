@@ -20,7 +20,7 @@ public class DatabaseManager {
 
     private static final String DB_PASSWORD = "BITCOIN_PASSWORD";
 
-    private static final String DATABASE_NAME = "bitcoin";
+    private static final String DATABASE_NAME = "BitcoinDB";
 
     private static final String CONN_FORMAT = "jdbc:mysql://%s:3306/%s";
 
@@ -69,9 +69,11 @@ public class DatabaseManager {
         sqlMapConfigList = new ArrayList<>();
         sqlMapConfigList.add("configuration/mapper/Block.xml");
         sqlMapConfigList.add("configuration/mapper/Transaction.xml");
+        sqlMapConfigList.add("configuration/mapper/TransactionBlockMap.xml");
         sqlMapConfigList.add("configuration/mapper/TransactionAddressMap.xml");
         sqlMapConfigList.add("configuration/mapper/TransactionInput.xml");
         sqlMapConfigList.add("configuration/mapper/TransactionOutput.xml");
+        sqlMapConfigList.add("configuration/mapper/TransactionWitness.xml");
     }
 
     private void initSqlMapClientTemplate() throws Exception {

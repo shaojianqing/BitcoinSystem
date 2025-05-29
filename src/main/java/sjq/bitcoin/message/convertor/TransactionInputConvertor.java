@@ -21,8 +21,8 @@ public class TransactionInputConvertor {
         transactionInputData.setFromTransactionHash(transactionInput.getFromTransactionHash());
         transactionInputData.setTransactionOutputIndex(transactionInput.getTransactionOutputIndex());
 
-        TransactionWitnessData transactionWitnessData =
-                TransactionWitnessConvertor.convertTransactionWitnessData(transactionInput.getTransactionWitness());
+        TransactionWitnessData transactionWitnessData = TransactionWitnessConvertor.
+                convertTransactionWitnessData(transactionInput.getTransactionWitness());
         transactionInputData.setTransactionWitness(transactionWitnessData);
 
         return transactionInputData;
@@ -33,8 +33,8 @@ public class TransactionInputConvertor {
         List<TransactionInputData> transactionInputDataList = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(transactionInputList)) {
             for (TransactionInput transactionInput:transactionInputList) {
-                transactionInputDataList.
-                        add(TransactionInputConvertor.convertTransactionInputData(transactionData, transactionInput));
+                transactionInputDataList.add(TransactionInputConvertor.
+                        convertTransactionInputData(transactionData, transactionInput));
             }
         }
         return transactionInputDataList;
