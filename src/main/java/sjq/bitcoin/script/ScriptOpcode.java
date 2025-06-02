@@ -192,9 +192,10 @@ public interface ScriptOpcode {
     short OP_CHECKSIGVERIFY = 0xad;
     short OP_CHECKMULTISIG = 0xae;
     short OP_CHECKMULTISIGVERIFY = 0xaf;
+    short OP_CHECKSIGADD = 0xba;
 
     // block state
-    /** Check lock time of the block. shortroduced in BIP 65, replacing OP_NOP2 */
+    /** Check lock time of the block. shortreduced in BIP 65, replacing OP_NOP2 */
     short OP_CHECKLOCKTIMEVERIFY = 0xb1;
     short OP_CHECKSEQUENCEVERIFY = 0xb2;
 

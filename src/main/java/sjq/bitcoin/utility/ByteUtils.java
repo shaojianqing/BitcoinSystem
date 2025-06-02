@@ -320,12 +320,21 @@ public class ByteUtils {
     }
 
     /**
+     * Read 2 bytes from the buffer as unsigned 16-bit integer in little endian format.
+     * @param buf buffer to be read from
+     * @throws BufferUnderflowException if the read value extends beyond the remaining bytes of the buffer
+     */
+    public static short readUint16LE(ByteBuffer buf) throws BufferUnderflowException {
+        return buf.order(ByteOrder.LITTLE_ENDIAN).getShort();
+    }
+
+    /**
      * Read 2 bytes from the buffer as unsigned 16-bit integer in big endian format.
      * @param buf buffer to be read from
      * @throws BufferUnderflowException if the read value extends beyond the remaining bytes of the buffer
      */
-    public static int readUint16BE(ByteBuffer buf) throws BufferUnderflowException {
-        return Short.toUnsignedInt(buf.order(ByteOrder.BIG_ENDIAN).getShort());
+    public static short readUint16BE(ByteBuffer buf) throws BufferUnderflowException {
+        return buf.order(ByteOrder.BIG_ENDIAN).getShort();
     }
 
     /**
@@ -333,8 +342,8 @@ public class ByteUtils {
      * @param buf buffer to be read from
      * @throws BufferUnderflowException if the read value extends beyond the remaining bytes of the buffer
      */
-    public static long readUint32LE(ByteBuffer buf) throws BufferUnderflowException {
-        return Integer.toUnsignedLong(buf.order(ByteOrder.LITTLE_ENDIAN).getInt());
+    public static int readUint32LE(ByteBuffer buf) throws BufferUnderflowException {
+        return buf.order(ByteOrder.LITTLE_ENDIAN).getInt();
     }
 
     /**

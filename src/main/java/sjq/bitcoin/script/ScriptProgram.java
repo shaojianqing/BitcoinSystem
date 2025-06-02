@@ -1,26 +1,33 @@
 package sjq.bitcoin.script;
 
+import sjq.bitcoin.service.data.LegacyAddress;
+import sjq.bitcoin.utility.HexUtils;
+
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class ScriptProgram {
 
-    private List<Instruction> instructions = new ArrayList<Instruction>();
+    private List<Instruction> instructions = new ArrayList<>();
 
     public static ScriptProgram parse(byte[] scriptData) throws Exception {
 
         ByteBuffer scriptBuffer = ByteBuffer.wrap(scriptData);
         ScriptProgram program = new ScriptProgram();
 
+        List<Instruction> instructions = new ArrayList<>();
         while(scriptBuffer.position()<scriptBuffer.limit()) {
-            short opCode = scriptBuffer.get();
+            byte byteCode = scriptBuffer.get();
+            short opCode = (short)(byteCode & 0xFF);
             Instruction instruction = InstructionTable.newInstructionByOpCode(opCode);
             instruction.fetch(scriptBuffer);
-            program.addInstruction(instruction);
+            instructions.add(instruction);
         }
 
+        program.instructions = Collections.unmodifiableList(instructions);
         return program;
     }
 
@@ -73,7 +80,29 @@ public class ScriptProgram {
     }
 
     public boolean isP2PKH() {
-        return false;
+        if (instructions.size() != 5) {
+            return false;
+        }
+        if (instructions.get(0).getOpCode() != ScriptOpcode.OP_DUP) {
+            return false;
+        }
+        if (instructions.get(1).getOpCode() != ScriptOpcode.OP_HASH160) {
+            return false;
+        }
+        byte[] instructionData = instructions.get(2).getOperand();
+        if (instructionData==null) {
+            return false;
+        }
+        if (instructionData.length != LegacyAddress.ADDRESS_LENGTH) {
+            return false;
+        }
+        if (instructions.get(3).getOpCode() != ScriptOpcode.OP_EQUALVERIFY) {
+            return false;
+        }
+        if (instructions.get(4).getOpCode() != ScriptOpcode.OP_CHECKSIG) {
+            return false;
+        }
+        return true;
     }
 
     public boolean isP2SH() {
@@ -84,10 +113,28 @@ public class ScriptProgram {
         return false;
     }
 
-    private void addInstruction(Instruction instruction) {
-        if (instruction!=null) {
-            instructions.add(instruction);
+    public String format() {
+        StringBuilder builder = new StringBuilder();
+        for (Instruction instruction:instructions) {
+            short opCode = instruction.getOpCode();
+            String opName = instruction.getOpName();
+            if (opCode >= ScriptOpcode.OP_PUSH_1 && opCode <= ScriptOpcode.OP_PUSH_75) {
+                opName = String.format("%s(%d)", opName, opCode);
+            }
+            if (builder.length()>0) {
+                builder.append(" ");
+            }
+            builder.append(opName);
+            byte[] operand = instruction.getOperand();
+            if (operand != null && operand.length>0) {
+                if (builder.length()>0) {
+                    builder.append(" ");
+                }
+                String operandStr = String.format("[%s]", HexUtils.formatHex(operand));
+                builder.append(operandStr);
+            }
         }
+        return builder.toString();
     }
 
     public List<Instruction> getInstructions() {

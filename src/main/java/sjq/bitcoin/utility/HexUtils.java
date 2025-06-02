@@ -31,7 +31,8 @@ public class HexUtils {
     private static byte hexToByte(String hexString) {
         int firstDigit = toDigit(hexString.charAt(0));
         int secondDigit = toDigit(hexString.charAt(1));
-        return (byte) ((firstDigit << 4) + secondDigit);
+        int result = (firstDigit << 4) + secondDigit;
+        return (byte) result;
     }
 
     private static int toDigit(char hexChar) {
