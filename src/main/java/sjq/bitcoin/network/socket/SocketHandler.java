@@ -6,7 +6,7 @@ import sjq.bitcoin.message.base.Message;
 import sjq.bitcoin.network.node.PeerNode;
 import sjq.bitcoin.network.packet.BitcoinPacket;
 import sjq.bitcoin.network.packet.PacketHeader;
-import sjq.bitcoin.network.protocol.ProtocolException;
+import sjq.bitcoin.network.exception.ProtocolException;
 
 import java.nio.Buffer;
 import java.nio.BufferUnderflowException;

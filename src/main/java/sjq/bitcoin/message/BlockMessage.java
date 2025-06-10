@@ -79,7 +79,7 @@ public class BlockMessage extends BaseMessage implements Message {
         this.readTransactions(buffer);
     }
 
-    private void readTransactions(ByteBuffer buffer) {
+    private void readTransactions(ByteBuffer buffer) throws Exception {
         if (buffer.hasRemaining()) {
             VariableInteger transactionCount = VariableInteger.read(buffer);
             for (int i=0;i<transactionCount.intValue();++i) {

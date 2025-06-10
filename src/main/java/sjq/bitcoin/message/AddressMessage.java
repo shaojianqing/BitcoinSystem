@@ -4,7 +4,7 @@ import sjq.bitcoin.message.base.BaseMessage;
 import sjq.bitcoin.message.base.Message;
 import sjq.bitcoin.message.data.NetworkAddress;
 import sjq.bitcoin.message.data.VariableInteger;
-import sjq.bitcoin.network.protocol.ProtocolException;
+import sjq.bitcoin.network.exception.ProtocolException;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

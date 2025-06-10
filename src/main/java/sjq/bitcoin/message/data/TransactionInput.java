@@ -3,7 +3,7 @@ package sjq.bitcoin.message.data;
 import sjq.bitcoin.constant.Constants;
 import sjq.bitcoin.hash.Hash;
 import sjq.bitcoin.message.TransactionMessage;
-import sjq.bitcoin.network.protocol.ProtocolException;
+import sjq.bitcoin.network.exception.ProtocolException;
 import sjq.bitcoin.utility.ByteUtils;
 
 import java.nio.BufferUnderflowException;

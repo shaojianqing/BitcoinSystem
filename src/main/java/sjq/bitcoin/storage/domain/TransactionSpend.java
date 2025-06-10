@@ -2,15 +2,15 @@ package sjq.bitcoin.storage.domain;
 
 import java.sql.Timestamp;
 
-public class TransactionOutput {
+public class TransactionSpend {
 
     private Long id;
 
     private String transactionHash;
 
-    private String scriptPubKey;
+    private String fromTransactionHash;
 
-    private Long coinValue;
+    private Long transactionOutputIndex;
 
     private Timestamp createTime;
 
@@ -32,20 +32,20 @@ public class TransactionOutput {
         this.transactionHash = transactionHash;
     }
 
-    public String getScriptPubKey() {
-        return scriptPubKey;
+    public String getFromTransactionHash() {
+        return fromTransactionHash;
     }
 
-    public void setScriptPubKey(String scriptPubKey) {
-        this.scriptPubKey = scriptPubKey;
+    public void setFromTransactionHash(String fromTransactionHash) {
+        this.fromTransactionHash = fromTransactionHash;
     }
 
-    public Long getCoinValue() {
-        return coinValue;
+    public Long getTransactionOutputIndex() {
+        return transactionOutputIndex;
     }
 
-    public void setCoinValue(Long coinValue) {
-        this.coinValue = coinValue;
+    public void setTransactionOutputIndex(Long transactionOutputIndex) {
+        this.transactionOutputIndex = transactionOutputIndex;
     }
 
     public Timestamp getCreateTime() {

@@ -9,7 +9,6 @@ public class CryptoUtils {
         return digest.digest(data);
     }
 
-
     public static byte[] hash256(byte[] data) throws Exception {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         byte[] result = digest.digest(data);

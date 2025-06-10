@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sqlMapInfo namespace="sjq.bitcoin.storage.domain.TransactionAddress">
+
+    <resultDataMap id="transactionInputDataMap" class="sjq.bitcoin.storage.domain.TransactionAddress">
+        <result property="transactionHash" column="transaction_hash" javaType="java.lang.String" />
+        <result property="fromTransactionHash" column="from_transaction_hash" javaType="java.lang.String" />
+        <result property="sequence" column="sequence" javaType="java.lang.Long" />
+        <result property="transactionOutputIndex" column="transaction_output_index" javaType="java.lang.Long" />
+        <result property="scriptSignature" column="script_signature" javaType="java.lang.String" />
+        <result property="createTime" column="create_time" javaType="java.sql.Timestamp" />
+        <result property="modifyTime" column="modify_time" javaType="java.sql.Timestamp" />
+    </resultDataMap>
+
+</sqlMapInfo>

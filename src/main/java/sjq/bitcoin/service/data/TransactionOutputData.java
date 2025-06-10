@@ -11,7 +11,7 @@ public class TransactionOutputData {
 
     private byte[] scriptPubKey;
 
-    private Coin value;
+    private Coin coinValue;
 
     public TransactionData getParentTransaction() {
         return parentTransaction;
@@ -37,11 +37,11 @@ public class TransactionOutputData {
         this.scriptPubKey = scriptPubKey;
     }
 
-    public Coin getValue() {
-        return value;
+    public Coin getCoinValue() {
+        return coinValue;
     }
 
-    public void setValue(Coin value) {
-        this.value = value;
+    public void setCoinValue(Coin coinValue) {
+        this.coinValue = coinValue;
     }
 }

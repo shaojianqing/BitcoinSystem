@@ -61,6 +61,12 @@ public class Hash {
         return digest.digest(digest.digest(content));
     }
 
+    public static byte[] calculateTwice(byte[] content, int offset, int length) {
+        MessageDigest digest = newSha256Digest();
+        digest.update(content, offset, length);
+        return digest.digest(digest.digest());
+    }
+
     public static byte[] calculateTwice(byte[] content1, byte[] content2) {
         MessageDigest digest = newSha256Digest();
         digest.update(content1);

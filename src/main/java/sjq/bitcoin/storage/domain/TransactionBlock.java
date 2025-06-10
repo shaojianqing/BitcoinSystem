@@ -1,8 +1,8 @@
 package sjq.bitcoin.storage.domain;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
-public class TransactionBlockMap {
+public class TransactionBlock {
 
     private Long id;
 
@@ -14,9 +14,9 @@ public class TransactionBlockMap {
 
     private Long transactionIndex;
 
-    private Date createTime;
+    private Timestamp createTime;
 
-    private Date modifyTime;
+    private Timestamp modifyTime;
 
     public Long getId() {
         return id;
@@ -58,19 +58,19 @@ public class TransactionBlockMap {
         this.transactionIndex = transactionIndex;
     }
 
-    public Date getCreateTime() {
+    public Timestamp getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(Timestamp createTime) {
         this.createTime = createTime;
     }
 
-    public Date getModifyTime() {
+    public Timestamp getModifyTime() {
         return modifyTime;
     }
 
-    public void setModifyTime(Date modifyTime) {
+    public void setModifyTime(Timestamp modifyTime) {
         this.modifyTime = modifyTime;
     }
 }

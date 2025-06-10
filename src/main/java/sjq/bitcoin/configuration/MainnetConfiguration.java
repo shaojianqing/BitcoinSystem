@@ -9,7 +9,7 @@ import sjq.bitcoin.message.TransactionMessage;
 import sjq.bitcoin.message.data.TransactionLockTime;
 import sjq.bitcoin.message.data.TransactionOutput;
 import sjq.bitcoin.monetary.Coin;
-import sjq.bitcoin.script.ScriptOpcode;
+import sjq.bitcoin.script.ScriptConstant;
 import sjq.bitcoin.script.ScriptProgram;
 import sjq.bitcoin.utility.HexUtils;
 
@@ -118,7 +118,7 @@ public class MainnetConfiguration extends NetworkConfiguration {
 
             ScriptProgram scriptProgram = ScriptProgram.build().
                     data(GENESIS_TRANSACTION_OUTPUT_SCRIPT).
-                    opCode(ScriptOpcode.OP_CHECKSIG);
+                    opCode(ScriptConstant.OP_CHECKSIG);
 
             transactionOutput.setScriptPubKey(scriptProgram.program());
             transactionOutput.setParentTransaction(transaction);

@@ -21,7 +21,8 @@ public class ScriptProgram {
         List<Instruction> instructions = new ArrayList<>();
         while(scriptBuffer.position()<scriptBuffer.limit()) {
             byte byteCode = scriptBuffer.get();
-            short opCode = (short)(byteCode & 0xFF);
+            short operCode = (short)(byteCode & 0xFF);
+            ScriptOpCode opCode = ScriptOpCode.getScriptOpCodeByCode(operCode);
             Instruction instruction = InstructionTable.newInstructionByOpCode(opCode);
             instruction.fetch(scriptBuffer);
             instructions.add(instruction);
@@ -37,18 +38,19 @@ public class ScriptProgram {
 
     public ScriptProgram data(byte[] data) throws Exception {
         byte[] operand = Arrays.copyOf(data, data.length);
-        short operCode = ScriptOpcode.OP_0;
+        short operCode = ScriptConstant.OP_PUSH_0;
         if (operand.length==1) {
 
-        } else if (operand.length<ScriptOpcode.OP_PUSHDATA1) {
+        } else if (operand.length< ScriptConstant.OP_PUSHDATA1) {
             operCode = (short)operand.length;
         } else if (operand.length<256) {
-            operCode = ScriptOpcode.OP_PUSHDATA1;
+            operCode = ScriptConstant.OP_PUSHDATA1;
         } else if (operand.length<65536) {
-            operCode = ScriptOpcode.OP_PUSHDATA2;
+            operCode = ScriptConstant.OP_PUSHDATA2;
         }
 
-        Instruction instruction = InstructionTable.newInstructionByOpCode(operCode);
+        ScriptOpCode opCode = ScriptOpCode.getScriptOpCodeByCode(operCode);
+        Instruction instruction = InstructionTable.newInstructionByOpCode(opCode);
         instruction.setOperand(operand);
         int position = this.instructions.size();
         this.instructions.add(position, instruction);
@@ -56,10 +58,11 @@ public class ScriptProgram {
         return this;
     }
 
-    public ScriptProgram opCode(short opCode) throws Exception {
-        if (opCode <= ScriptOpcode.OP_PUSHDATA4) {
-            throw new ScriptException(String.format("opCode is not correct with value:%d", opCode));
+    public ScriptProgram opCode(short operCode) throws Exception {
+        if (operCode <= ScriptConstant.OP_PUSHDATA4) {
+            throw new ScriptException(String.format("opCode is not correct with value:%d", operCode));
         }
+        ScriptOpCode opCode = ScriptOpCode.getScriptOpCodeByCode(operCode);
         Instruction instruction = InstructionTable.newInstructionByOpCode(opCode);
         int position = this.instructions.size();
         this.instructions.add(position, instruction);
@@ -75,18 +78,53 @@ public class ScriptProgram {
         return buffer.array();
     }
 
+    public byte[] extractKeyFromP2PK() {
+        if (isP2PK()) {
+            return instructions.get(0).getOperand();
+        } else {
+            throw new ScriptException("The script is not P2PK type!");
+        }
+    }
+
+    public byte[] extractHashFromP2SH() {
+        if (isP2SH()) {
+            return instructions.get(1).getOperand();
+        } else {
+            throw new ScriptException("The script is not P2SH type!");
+        }
+    }
+
+    public byte[] extractHashFromP2PKH() {
+        if (isP2PKH()) {
+            return instructions.get(2).getOperand();
+        } else {
+            throw new ScriptException("The script is not P2PKH type!");
+        }
+    }
+
     public boolean isP2PK() {
-        return false;
+        if (instructions.size() != 2) {
+            return false;
+        }
+        if (instructions.get(1).getOpCode() != ScriptOpCode.OP_CHECKSIG) {
+            return false;
+        }
+        Instruction instruction = instructions.get(0);
+        if (instruction.isOpCode()) {
+            return false;
+        }
+        byte[] data = instruction.getOperand();
+        return data != null && data.length > 1;
     }
 
     public boolean isP2PKH() {
         if (instructions.size() != 5) {
             return false;
         }
-        if (instructions.get(0).getOpCode() != ScriptOpcode.OP_DUP) {
+        if (instructions.get(0).getOpCode() != ScriptOpCode.OP_DUP) {
             return false;
         }
-        if (instructions.get(1).getOpCode() != ScriptOpcode.OP_HASH160) {
+        if (instructions.get(1).getOpCode() != ScriptOpCode.OP_HASH160) {
             return false;
         }
         byte[] instructionData = instructions.get(2).getOperand();
@@ -96,17 +134,34 @@ public class ScriptProgram {
         if (instructionData.length != LegacyAddress.ADDRESS_LENGTH) {
             return false;
         }
-        if (instructions.get(3).getOpCode() != ScriptOpcode.OP_EQUALVERIFY) {
+        if (instructions.get(3).getOpCode() != ScriptOpCode.OP_EQUALVERIFY) {
             return false;
         }
-        if (instructions.get(4).getOpCode() != ScriptOpcode.OP_CHECKSIG) {
+        if (instructions.get(4).getOpCode() != ScriptOpCode.OP_CHECKSIG) {
             return false;
         }
         return true;
     }
 
     public boolean isP2SH() {
-        return false;
+        if (instructions.size() != 3) {
+            return false;
+        }
+        if (instructions.get(0).getOpCode() != ScriptOpCode.OP_HASH160) {
+            return false;
+        }
+        if (instructions.get(1).getOpCode() != ScriptOpCode.OP_PUSH_20) {
+            return false;
+        }
+        Instruction instruction = instructions.get(2);
+        if (instruction.getOpCode() != ScriptOpCode.OP_EQUAL) {
+            return false;
+        }
+        byte[] data = instruction.getOperand();
+        if (data == null || data.length != LegacyAddress.ADDRESS_LENGTH) {
+            return false;
+        }
+        return true;
     }
 
     public boolean isP2WPKH() {
@@ -116,15 +171,11 @@ public class ScriptProgram {
     public String format() {
         StringBuilder builder = new StringBuilder();
         for (Instruction instruction:instructions) {
-            short opCode = instruction.getOpCode();
-            String opName = instruction.getOpName();
-            if (opCode >= ScriptOpcode.OP_PUSH_1 && opCode <= ScriptOpcode.OP_PUSH_75) {
-                opName = String.format("%s(%d)", opName, opCode);
-            }
+            ScriptOpCode opCode = instruction.getOpCode();
             if (builder.length()>0) {
                 builder.append(" ");
             }
-            builder.append(opName);
+            builder.append(opCode.getName());
             byte[] operand = instruction.getOperand();
             if (operand != null && operand.length>0) {
                 if (builder.length()>0) {

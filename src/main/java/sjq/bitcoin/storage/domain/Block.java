@@ -1,6 +1,6 @@
 package sjq.bitcoin.storage.domain;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 public class Block {
 
@@ -36,9 +36,9 @@ public class Block {
 
     private String verifyStatus;
 
-    private Date createTime;
+    private Timestamp createTime;
 
-    private Date modifyTime;
+    private Timestamp modifyTime;
 
     public Block(){
     }
@@ -54,8 +54,6 @@ public class Block {
         this.difficulty = difficulty;
         this.nonce = nonce;
         this.trxCount = trxCount;
-        this.createTime = new Date();
-        this.modifyTime = new Date();
     }
 
     public Long getVersion() {
@@ -146,19 +144,19 @@ public class Block {
         this.verifyStatus = verifyStatus;
     }
 
-    public Date getCreateTime() {
+    public Timestamp getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(Timestamp createTime) {
         this.createTime = createTime;
     }
 
-    public Date getModifyTime() {
+    public Timestamp getModifyTime() {
         return modifyTime;
     }
 
-    public void setModifyTime(Date modifyTime) {
+    public void setModifyTime(Timestamp modifyTime) {
         this.modifyTime = modifyTime;
     }
 }

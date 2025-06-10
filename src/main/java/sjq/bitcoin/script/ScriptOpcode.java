@@ -1,218 +1,220 @@
 package sjq.bitcoin.script;
 
-public interface ScriptOpcode {
+public enum ScriptOpCode {
 
-    short OP_0 = 0x00; // push empty vector
-    short OP_FALSE = OP_0;
-    short OP_PUSH_1 = 0x01;
-    short OP_PUSH_2 = 0x02;
-    short OP_PUSH_3 = 0x03;
-    short OP_PUSH_4 = 0x04;
-    short OP_PUSH_5 = 0x05;
-    short OP_PUSH_6 = 0x06;
-    short OP_PUSH_7 = 0x07;
-    short OP_PUSH_8 = 0x08;
-    short OP_PUSH_9 = 0x09;
-    short OP_PUSH_10 = 0x0a;
-    short OP_PUSH_11 = 0x0b;
-    short OP_PUSH_12 = 0x0c;
-    short OP_PUSH_13 = 0x0d;
-    short OP_PUSH_14 = 0x0e;
-    short OP_PUSH_15 = 0x0f;
-    short OP_PUSH_16 = 0x10;
-    short OP_PUSH_17 = 0x11;
-    short OP_PUSH_18 = 0x12;
-    short OP_PUSH_19 = 0x13;
-    short OP_PUSH_20 = 0x14;
-    short OP_PUSH_21 = 0x15;
-    short OP_PUSH_22 = 0x16;
-    short OP_PUSH_23 = 0x17;
-    short OP_PUSH_24 = 0x18;
-    short OP_PUSH_25 = 0x19;
-    short OP_PUSH_26 = 0x1a;
-    short OP_PUSH_27 = 0x1b;
-    short OP_PUSH_28 = 0x1c;
-    short OP_PUSH_29 = 0x1d;
-    short OP_PUSH_30 = 0x1e;
-    short OP_PUSH_31 = 0x1f;
-    short OP_PUSH_32 = 0x20;
-    short OP_PUSH_33 = 0x21;
-    short OP_PUSH_34 = 0x22;
-    short OP_PUSH_35 = 0x23;
-    short OP_PUSH_36 = 0x24;
-    short OP_PUSH_37 = 0x25;
-    short OP_PUSH_38 = 0x26;
-    short OP_PUSH_39 = 0x27;
-    short OP_PUSH_40 = 0x28;
-    short OP_PUSH_41 = 0x29;
-    short OP_PUSH_42 = 0x2a;
-    short OP_PUSH_43 = 0x2b;
-    short OP_PUSH_44 = 0x2c;
-    short OP_PUSH_45 = 0x2d;
-    short OP_PUSH_46 = 0x2e;
-    short OP_PUSH_47 = 0x2f;
-    short OP_PUSH_48 = 0x30;
-    short OP_PUSH_49 = 0x31;
-    short OP_PUSH_50 = 0x32;
-    short OP_PUSH_51 = 0x33;
-    short OP_PUSH_52 = 0x34;
-    short OP_PUSH_53 = 0x35;
-    short OP_PUSH_54 = 0x36;
-    short OP_PUSH_55 = 0x37;
-    short OP_PUSH_56 = 0x38;
-    short OP_PUSH_57 = 0x39;
-    short OP_PUSH_58 = 0x3a;
-    short OP_PUSH_59 = 0x3b;
-    short OP_PUSH_60 = 0x3c;
-    short OP_PUSH_61 = 0x3d;
-    short OP_PUSH_62 = 0x3e;
-    short OP_PUSH_63 = 0x3f;
-    short OP_PUSH_64 = 0x40;
-    short OP_PUSH_65 = 0x41;
-    short OP_PUSH_66 = 0x42;
-    short OP_PUSH_67 = 0x43;
-    short OP_PUSH_68 = 0x44;
-    short OP_PUSH_69 = 0x45;
-    short OP_PUSH_70 = 0x46;
-    short OP_PUSH_71 = 0x47;
-    short OP_PUSH_72 = 0x48;
-    short OP_PUSH_73 = 0x49;
-    short OP_PUSH_74 = 0x4a;
-    short OP_PUSH_75 = 0x4b;
-    short OP_PUSHDATA1 = 0x4c;
-    short OP_PUSHDATA2 = 0x4d;
-    short OP_PUSHDATA4 = 0x4e;
-    short OP_1NEGATE = 0x4f;
-    short OP_RESERVED = 0x50;
-    short OP_1 = 0x51;
-    short OP_TRUE = OP_1;
-    short OP_2 = 0x52;
-    short OP_3 = 0x53;
-    short OP_4 = 0x54;
-    short OP_5 = 0x55;
-    short OP_6 = 0x56;
-    short OP_7 = 0x57;
-    short OP_8 = 0x58;
-    short OP_9 = 0x59;
-    short OP_10 = 0x5a;
-    short OP_11 = 0x5b;
-    short OP_12 = 0x5c;
-    short OP_13 = 0x5d;
-    short OP_14 = 0x5e;
-    short OP_15 = 0x5f;
-    short OP_16 = 0x60;
+    OP_PUSH_0(ScriptConstant.OP_PUSH_0, "PUSH(0)"),
+    OP_PUSH_1(ScriptConstant.OP_PUSH_0, "PUSH(1)"),
+    OP_PUSH_2(ScriptConstant.OP_PUSH_2, "PUSH(2)"),
+    OP_PUSH_3(ScriptConstant.OP_PUSH_3, "PUSH(3)"),
+    OP_PUSH_4(ScriptConstant.OP_PUSH_4, "PUSH(4)"),
+    OP_PUSH_5(ScriptConstant.OP_PUSH_5, "PUSH(5)"),
+    OP_PUSH_6(ScriptConstant.OP_PUSH_6, "PUSH(6)"),
+    OP_PUSH_7(ScriptConstant.OP_PUSH_7, "PUSH(7)"),
+    OP_PUSH_8(ScriptConstant.OP_PUSH_8, "PUSH(8)"),
+    OP_PUSH_9(ScriptConstant.OP_PUSH_9, "PUSH(9)"),
+    OP_PUSH_10(ScriptConstant.OP_PUSH_10, "PUSH(10)"),
+    OP_PUSH_11(ScriptConstant.OP_PUSH_11, "PUSH(11)"),
+    OP_PUSH_12(ScriptConstant.OP_PUSH_12, "PUSH(12)"),
+    OP_PUSH_13(ScriptConstant.OP_PUSH_13, "PUSH(13)"),
+    OP_PUSH_14(ScriptConstant.OP_PUSH_14, "PUSH(14)"),
+    OP_PUSH_15(ScriptConstant.OP_PUSH_15, "PUSH(15)"),
+    OP_PUSH_16(ScriptConstant.OP_PUSH_16, "PUSH(16)"),
+    OP_PUSH_17(ScriptConstant.OP_PUSH_17, "PUSH(17)"),
+    OP_PUSH_18(ScriptConstant.OP_PUSH_18, "PUSH(18)"),
+    OP_PUSH_19(ScriptConstant.OP_PUSH_19, "PUSH(19)"),
+    OP_PUSH_20(ScriptConstant.OP_PUSH_20, "PUSH(20)"),
+    OP_PUSH_21(ScriptConstant.OP_PUSH_21, "PUSH(21)"),
+    OP_PUSH_22(ScriptConstant.OP_PUSH_22, "PUSH(22)"),
+    OP_PUSH_23(ScriptConstant.OP_PUSH_23, "PUSH(23)"),
+    OP_PUSH_24(ScriptConstant.OP_PUSH_24, "PUSH(24)"),
+    OP_PUSH_25(ScriptConstant.OP_PUSH_25, "PUSH(25)"),
+    OP_PUSH_26(ScriptConstant.OP_PUSH_26, "PUSH(26)"),
+    OP_PUSH_27(ScriptConstant.OP_PUSH_27, "PUSH(27)"),
+    OP_PUSH_28(ScriptConstant.OP_PUSH_28, "PUSH(28)"),
+    OP_PUSH_29(ScriptConstant.OP_PUSH_29, "PUSH(29)"),
+    OP_PUSH_30(ScriptConstant.OP_PUSH_30, "PUSH(30)"),
+    OP_PUSH_31(ScriptConstant.OP_PUSH_31, "PUSH(31)"),
+    OP_PUSH_32(ScriptConstant.OP_PUSH_32, "PUSH(32)"),
+    OP_PUSH_33(ScriptConstant.OP_PUSH_33, "PUSH(33)"),
+    OP_PUSH_34(ScriptConstant.OP_PUSH_34, "PUSH(34)"),
+    OP_PUSH_35(ScriptConstant.OP_PUSH_35, "PUSH(35)"),
+    OP_PUSH_36(ScriptConstant.OP_PUSH_36, "PUSH(36)"),
+    OP_PUSH_37(ScriptConstant.OP_PUSH_37, "PUSH(37)"),
+    OP_PUSH_38(ScriptConstant.OP_PUSH_38, "PUSH(38)"),
+    OP_PUSH_39(ScriptConstant.OP_PUSH_39, "PUSH(39)"),
+    OP_PUSH_40(ScriptConstant.OP_PUSH_40, "PUSH(40)"),
+    OP_PUSH_41(ScriptConstant.OP_PUSH_41, "PUSH(41)"),
+    OP_PUSH_42(ScriptConstant.OP_PUSH_42, "PUSH(42)"),
+    OP_PUSH_43(ScriptConstant.OP_PUSH_43, "PUSH(43)"),
+    OP_PUSH_44(ScriptConstant.OP_PUSH_44, "PUSH(44)"),
+    OP_PUSH_45(ScriptConstant.OP_PUSH_45, "PUSH(45)"),
+    OP_PUSH_46(ScriptConstant.OP_PUSH_46, "PUSH(46)"),
+    OP_PUSH_47(ScriptConstant.OP_PUSH_47, "PUSH(47)"),
+    OP_PUSH_48(ScriptConstant.OP_PUSH_48, "PUSH(48)"),
+    OP_PUSH_49(ScriptConstant.OP_PUSH_49, "PUSH(49)"),
+    OP_PUSH_50(ScriptConstant.OP_PUSH_50, "PUSH(50)"),
+    OP_PUSH_51(ScriptConstant.OP_PUSH_51, "PUSH(51)"),
+    OP_PUSH_52(ScriptConstant.OP_PUSH_52, "PUSH(52)"),
+    OP_PUSH_53(ScriptConstant.OP_PUSH_53, "PUSH(53)"),
+    OP_PUSH_54(ScriptConstant.OP_PUSH_54, "PUSH(54)"),
+    OP_PUSH_55(ScriptConstant.OP_PUSH_55, "PUSH(55)"),
+    OP_PUSH_56(ScriptConstant.OP_PUSH_56, "PUSH(56)"),
+    OP_PUSH_57(ScriptConstant.OP_PUSH_57, "PUSH(57)"),
+    OP_PUSH_58(ScriptConstant.OP_PUSH_58, "PUSH(58)"),
+    OP_PUSH_59(ScriptConstant.OP_PUSH_59, "PUSH(59)"),
+    OP_PUSH_60(ScriptConstant.OP_PUSH_60, "PUSH(60)"),
+    OP_PUSH_61(ScriptConstant.OP_PUSH_61, "PUSH(61)"),
+    OP_PUSH_62(ScriptConstant.OP_PUSH_62, "PUSH(62)"),
+    OP_PUSH_63(ScriptConstant.OP_PUSH_63, "PUSH(63)"),
+    OP_PUSH_64(ScriptConstant.OP_PUSH_64, "PUSH(64)"),
+    OP_PUSH_65(ScriptConstant.OP_PUSH_65, "PUSH(65)"),
+    OP_PUSH_66(ScriptConstant.OP_PUSH_66, "PUSH(66)"),
+    OP_PUSH_67(ScriptConstant.OP_PUSH_67, "PUSH(67)"),
+    OP_PUSH_68(ScriptConstant.OP_PUSH_68, "PUSH(68)"),
+    OP_PUSH_69(ScriptConstant.OP_PUSH_69, "PUSH(69)"),
+    OP_PUSH_70(ScriptConstant.OP_PUSH_70, "PUSH(70)"),
+    OP_PUSH_71(ScriptConstant.OP_PUSH_71, "PUSH(71)"),
+    OP_PUSH_72(ScriptConstant.OP_PUSH_72, "PUSH(72)"),
+    OP_PUSH_73(ScriptConstant.OP_PUSH_73, "PUSH(73)"),
+    OP_PUSH_74(ScriptConstant.OP_PUSH_74, "PUSH(74)"),
+    OP_PUSH_75(ScriptConstant.OP_PUSH_75, "PUSH(75)"),
 
-    // control
-    short OP_NOP = 0x61;
-    short OP_VER = 0x62;
-    short OP_IF = 0x63;
-    short OP_NOTIF = 0x64;
-    short OP_VERIF = 0x65;
-    short OP_VERNOTIF = 0x66;
-    short OP_ELSE = 0x67;
-    short OP_ENDIF = 0x68;
-    short OP_VERIFY = 0x69;
-    short OP_RETURN = 0x6a;
+    OP_PUSHDATA1(ScriptConstant.OP_PUSHDATA1, "PUSHDATA1"),
+    OP_PUSHDATA2(ScriptConstant.OP_PUSHDATA2, "PUSHDATA2"),
+    OP_PUSHDATA4(ScriptConstant.OP_PUSHDATA4, "PUSHDATA4"),
+    OP_NEGATE1(ScriptConstant.OP_NEGATE1, "NEGATE1"),
 
-    // stack ops
-    short OP_TOALTSTACK = 0x6b;
-    short OP_FROMALTSTACK = 0x6c;
-    short OP_2DROP = 0x6d;
-    short OP_2DUP = 0x6e;
-    short OP_3DUP = 0x6f;
-    short OP_2OVER = 0x70;
-    short OP_2ROT = 0x71;
-    short OP_2SWAP = 0x72;
-    short OP_IFDUP = 0x73;
-    short OP_DEPTH = 0x74;
-    short OP_DROP = 0x75;
-    short OP_DUP = 0x76;
-    short OP_NIP = 0x77;
-    short OP_OVER = 0x78;
-    short OP_PICK = 0x79;
-    short OP_ROLL = 0x7a;
-    short OP_ROT = 0x7b;
-    short OP_SWAP = 0x7c;
-    short OP_TUCK = 0x7d;
+    OP_IF(ScriptConstant.OP_IF, "IF"),
+    OP_NOTIF(ScriptConstant.OP_NOTIF, "NOTIF"),
+    OP_ELSE(ScriptConstant.OP_ELSE, "ELSE"),
+    OP_ENDIF(ScriptConstant.OP_ENDIF, "ENDIF"),
+    OP_VERIFY(ScriptConstant.OP_VERIFY, "VERIFY"),
+    OP_RETURN(ScriptConstant.OP_RETURN, "RETURN"),
 
-    // splice ops
-    short OP_CAT = 0x7e;
-    short OP_SUBSTR = 0x7f;
-    short OP_LEFT = 0x80;
-    short OP_RIGHT = 0x81;
-    short OP_SIZE = 0x82;
+    OP_TOALTSTACK(ScriptConstant.OP_TOALTSTACK, "TOALTSTACK"),
+    OP_FROMALTSTACK(ScriptConstant.OP_FROMALTSTACK, "FROMALTSTACK"),
+    OP_IFDUP(ScriptConstant.OP_IFDUP, "IFDUP"),
+    OP_DEPTH(ScriptConstant.OP_DEPTH, "DEPTH"),
+    OP_DROP(ScriptConstant.OP_DROP, "DROP"),
+    OP_DUP(ScriptConstant.OP_DUP, "DUP"),
+    OP_NIP(ScriptConstant.OP_NIP, "NIP"),
+    OP_OVER(ScriptConstant.OP_OVER, "OVER"),
+    OP_PICK(ScriptConstant.OP_PICK, "PICK"),
+    OP_ROLL(ScriptConstant.OP_ROLL, "ROLL"),
+    OP_ROT(ScriptConstant.OP_ROT, "ROT"),
+    OP_SWAP(ScriptConstant.OP_SWAP, "SWAP"),
+    OP_TUCK(ScriptConstant.OP_TUCK, "TUCK"),
+    OP_DROP2(ScriptConstant.OP_DROP2, "DROP2"),
+    OP_DUP2(ScriptConstant.OP_DUP2, "DUP2"),
+    OP_DUP3(ScriptConstant.OP_DUP3, "DUP3"),
+    OP_OVER2(ScriptConstant.OP_OVER2, "OVER2"),
+    OP_ROT2(ScriptConstant.OP_ROT2, "ROT2"),
+    OP_SWAP2(ScriptConstant.OP_SWAP2, "SWAP2"),
 
-    // bit logic
-    short OP_INVERT = 0x83;
-    short OP_AND = 0x84;
-    short OP_OR = 0x85;
-    short OP_XOR = 0x86;
-    short OP_EQUAL = 0x87;
-    short OP_EQUALVERIFY = 0x88;
-    short OP_RESERVED1 = 0x89;
-    short OP_RESERVED2 = 0x8a;
+    OP_CAT(ScriptConstant.OP_CAT, "CAT"),
+    OP_SUBSTR(ScriptConstant.OP_SUBSTR, "SUBSTR"),
+    OP_LEFT(ScriptConstant.OP_LEFT, "LEFT"),
+    OP_RIGHT(ScriptConstant.OP_RIGHT, "RIGHT"),
+    OP_SIZE(ScriptConstant.OP_SIZE, "SIZE"),
 
-    // numeric
-    short OP_1ADD = 0x8b;
-    short OP_1SUB = 0x8c;
-    short OP_2MUL = 0x8d;
-    short OP_2DIV = 0x8e;
-    short OP_NEGATE = 0x8f;
-    short OP_ABS = 0x90;
-    short OP_NOT = 0x91;
-    short OP_0NOTEQUAL = 0x92;
-    short OP_ADD = 0x93;
-    short OP_SUB = 0x94;
-    short OP_MUL = 0x95;
-    short OP_DIV = 0x96;
-    short OP_MOD = 0x97;
-    short OP_LSHIFT = 0x98;
-    short OP_RSHIFT = 0x99;
-    short OP_BOOLAND = 0x9a;
-    short OP_BOOLOR = 0x9b;
-    short OP_NUMEQUAL = 0x9c;
-    short OP_NUMEQUALVERIFY = 0x9d;
-    short OP_NUMNOTEQUAL = 0x9e;
-    short OP_LESSTHAN = 0x9f;
-    short OP_GREATERTHAN = 0xa0;
-    short OP_LESSTHANOREQUAL = 0xa1;
-    short OP_GREATERTHANOREQUAL = 0xa2;
-    short OP_MIN = 0xa3;
-    short OP_MAX = 0xa4;
-    short OP_WITHIN = 0xa5;
+    OP_ADD1(ScriptConstant.OP_ADD1, "ADD1"),
+    OP_SUB1(ScriptConstant.OP_SUB1, "SUB1"),
+    OP_MUL2(ScriptConstant.OP_MUL2, "MUL2"),
+    OP_DIV2(ScriptConstant.OP_DIV2, "DIV2"),
 
-    // EccKey
-    short OP_RIPEMD160 = 0xa6;
-    short OP_SHA1 = 0xa7;
-    short OP_SHA256 = 0xa8;
-    short OP_HASH160 = 0xa9;
-    short OP_HASH256 = 0xaa;
-    short OP_CODESEPARATOR = 0xab;
-    short OP_CHECKSIG = 0xac;
-    short OP_CHECKSIGVERIFY = 0xad;
-    short OP_CHECKMULTISIG = 0xae;
-    short OP_CHECKMULTISIGVERIFY = 0xaf;
-    short OP_CHECKSIGADD = 0xba;
+    OP_NEGATE(ScriptConstant.OP_NEGATE, "NEGATE"),
+    OP_ABS(ScriptConstant.OP_ABS, "ABS"),
+    OP_NOT(ScriptConstant.OP_NOT, "NOT"),
+    OP_NOTEQUAL0(ScriptConstant.OP_NOTEQUAL0, "NOTEQUAL0"),
+    OP_ADD(ScriptConstant.OP_ADD, "ADD"),
+    OP_SUB(ScriptConstant.OP_SUB, "SUB"),
+    OP_MUL(ScriptConstant.OP_MUL, "MUL"),
+    OP_DIV(ScriptConstant.OP_DIV, "OP_DIV"),
+    OP_MOD(ScriptConstant.OP_MOD, "OP_MOD"),
 
-    // block state
-    /** Check lock time of the block. shortreduced in BIP 65, replacing OP_NOP2 */
-    short OP_CHECKLOCKTIMEVERIFY = 0xb1;
-    short OP_CHECKSEQUENCEVERIFY = 0xb2;
+    OP_LSHIFT(ScriptConstant.OP_LSHIFT, "LSHIFT"),
+    OP_RSHIFT(ScriptConstant.OP_RSHIFT, "RSHIFT"),
+    OP_BOOLAND(ScriptConstant.OP_BOOLAND, "BOOLAND"),
+    OP_BOOLOR(ScriptConstant.OP_BOOLOR, "BOOLOR"),
+    OP_NUMEQUAL(ScriptConstant.OP_NUMEQUAL, "NUMEQUAL"),
+    OP_NUMEQUALVERIFY(ScriptConstant.OP_NUMEQUALVERIFY, "NUMEQUALVERIFY"),
+    OP_NUMNOTEQUAL(ScriptConstant.OP_NUMNOTEQUAL, "NUMNOTEQUAL"),
+    OP_LESSTHAN(ScriptConstant.OP_LESSTHAN, "LESSTHAN"),
+    OP_GREATERTHAN(ScriptConstant.OP_GREATERTHAN, "GREATERTHAN"),
+    OP_LESSTHANOREQUAL(ScriptConstant.OP_LESSTHANOREQUAL, "LESSTHANOREQUAL"),
+    OP_GREATERTHANOREQUAL(ScriptConstant.OP_GREATERTHANOREQUAL, "GREATERTHANOREQUAL"),
+    OP_MIN(ScriptConstant.OP_MIN, "MIN"),
+    OP_MAX(ScriptConstant.OP_MAX, "MAX"),
+    OP_WITHIN(ScriptConstant.OP_WITHIN, "WITHIN"),
 
-    // expansion
-    short OP_NOP1 = 0xb0;
-    /** Deprecated by BIP 65 */
-    @Deprecated
-    short OP_NOP2 = OP_CHECKLOCKTIMEVERIFY;
-    /** Deprecated by BIP 112 */
-    @Deprecated
-    short OP_NOP3 = OP_CHECKSEQUENCEVERIFY;
-    short OP_NOP4 = 0xb3;
-    short OP_NOP5 = 0xb4;
-    short OP_NOP6 = 0xb5;
-    short OP_NOP7 = 0xb6;
-    short OP_NOP8 = 0xb7;
-    short OP_NOP9 = 0xb8;
-    short OP_NOP10 = 0xb9;
-    short OP_INVALIDOPCODE = 0xff;
+    OP_INVERT(ScriptConstant.OP_INVERT, "INVERT"),
+    OP_AND(ScriptConstant.OP_AND, "AND"),
+    OP_OR(ScriptConstant.OP_OR, "OR"),
+    OP_XOR(ScriptConstant.OP_XOR, "XOR"),
+    OP_EQUAL(ScriptConstant.OP_EQUAL, "EQUAL"),
+    OP_EQUALVERIFY(ScriptConstant.OP_EQUALVERIFY, "EQUALVERIFY"),
+
+    OP_RIPEMD160(ScriptConstant.OP_RIPEMD160, "RIPEMD160"),
+    OP_SHA1(ScriptConstant.OP_SHA1, "SHA1"),
+    OP_SHA256(ScriptConstant.OP_SHA256, "SHA256"),
+    OP_HASH160(ScriptConstant.OP_HASH160, "HASH160"),
+    OP_HASH256(ScriptConstant.OP_HASH256, "HASH256"),
+    OP_CODESEPARATOR(ScriptConstant.OP_CODESEPARATOR, "CODESEPARATOR"),
+    OP_CHECKSIG(ScriptConstant.OP_CHECKSIG, "CHECKSIG"),
+    OP_CHECKSIGVERIFY(ScriptConstant.OP_CHECKSIGVERIFY, "CHECKSIGVERIFY"),
+    OP_CHECKMULTISIG(ScriptConstant.OP_CHECKMULTISIG, "CHECKMULTISIG"),
+    OP_CHECKMULTISIGVERIFY(ScriptConstant.OP_CHECKMULTISIGVERIFY, "CHECKMULTISIGVERIFY"),
+    OP_CHECKSIGADD(ScriptConstant.OP_CHECKSIGADD, "CHECKSIGADD"),
+
+    OP_CHECKLOCKTIMEVERIFY(ScriptConstant.OP_CHECKLOCKTIMEVERIFY, "CHECKLOCKTIMEVERIFY"),
+    OP_CHECKSEQUENCEVERIFY(ScriptConstant.OP_CHECKSEQUENCEVERIFY, "CHECKSEQUENCEVERIFY"),
+
+    OP_NOP(ScriptConstant.OP_NOP, "EQUAL"),
+    OP_NOP1(ScriptConstant.OP_NOP1, "EQUAL"),
+    OP_NOP4(ScriptConstant.OP_NOP4, "EQUAL"),
+    OP_NOP5(ScriptConstant.OP_NOP5, "EQUAL"),
+    OP_NOP6(ScriptConstant.OP_NOP6, "EQUAL"),
+    OP_NOP7(ScriptConstant.OP_NOP7, "EQUAL"),
+    OP_NOP8(ScriptConstant.OP_NOP8, "EQUAL"),
+    OP_NOP9(ScriptConstant.OP_NOP9, "EQUAL"),
+    OP_NOP10(ScriptConstant.OP_NOP10, "EQUAL"),
+
+    OP_RESERVED(ScriptConstant.OP_RESERVED, "RESERVED"),
+    OP_RESERVED1(ScriptConstant.OP_RESERVED1, "RESERVED1"),
+    OP_RESERVED2(ScriptConstant.OP_RESERVED2, "RESERVED2"),
+    OP_VER(ScriptConstant.OP_VER, "VER"),
+    OP_VERIF(ScriptConstant.OP_VERIF, "VERIF"),
+    OP_VERNOTIF(ScriptConstant.OP_VERNOTIF, "VERNOTIF"),
+    OP_INVALIDOPCODE(ScriptConstant.OP_INVALIDOPCODE, "INVALIDOPCODE");
+
+    private final short code;
+
+    private final String name;
+
+    ScriptOpCode(short code, String name) {
+        this.code = code;
+        this.name = name;
+    }
+
+    public static ScriptOpCode getScriptOpCodeByCode(short code) {
+        for(ScriptOpCode opCode:values()) {
+            if (opCode.getCode() == code) {
+                return opCode;
+            }
+        }
+        throw new ScriptException(String.format("script opCode does not exist with code:%d", code));
+    }
+
+    public short getCode() {
+        return code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("OpCode[code='%d',name='%s']", code, name);
+    }
 }

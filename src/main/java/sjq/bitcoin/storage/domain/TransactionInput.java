@@ -1,6 +1,6 @@
 package sjq.bitcoin.storage.domain;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 public class TransactionInput {
 
@@ -16,11 +16,9 @@ public class TransactionInput {
 
     private String scriptSignature;
 
-    private Long value;
+    private Timestamp createTime;
 
-    private Date createTime;
-
-    private Date modifyTime;
+    private Timestamp modifyTime;
 
     public Long getId() {
         return id;
@@ -70,27 +68,19 @@ public class TransactionInput {
         this.scriptSignature = scriptSignature;
     }
 
-    public Long getValue() {
-        return value;
-    }
-
-    public void setValue(Long value) {
-        this.value = value;
-    }
-
-    public Date getCreateTime() {
+    public Timestamp getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(Timestamp createTime) {
         this.createTime = createTime;
     }
 
-    public Date getModifyTime() {
+    public Timestamp getModifyTime() {
         return modifyTime;
     }
 
-    public void setModifyTime(Date modifyTime) {
+    public void setModifyTime(Timestamp modifyTime) {
         this.modifyTime = modifyTime;
     }
 }
