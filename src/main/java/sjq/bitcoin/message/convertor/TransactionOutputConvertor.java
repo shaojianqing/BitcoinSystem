@@ -15,7 +15,7 @@ public class TransactionOutputConvertor {
             TransactionData transactionData, TransactionOutput transactionOutput) throws Exception {
         TransactionOutputData transactionOutputData = new TransactionOutputData();
         transactionOutputData.setParentTransaction(transactionData);
-        transactionOutputData.setValue(transactionOutput.getValue());
+        transactionOutputData.setCoinValue(transactionOutput.getCoinValue());
         transactionOutputData.setScriptPubKey(transactionOutput.getScriptPubKey());
         transactionOutputData.setProgram(ScriptProgram.parse(transactionOutput.getScriptPubKey()));
 

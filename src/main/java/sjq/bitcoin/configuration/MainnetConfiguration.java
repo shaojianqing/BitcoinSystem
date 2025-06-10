@@ -114,7 +114,7 @@ public class MainnetConfiguration extends NetworkConfiguration {
             TransactionMessage transaction = TransactionMessage.coinbaseTransaction(GENESIS_TRANSACTION_INPUT_SCRIPT);
             transaction.setMessageVersion(GENESIS_MESSAGE_VERSION);
             TransactionOutput transactionOutput = new TransactionOutput();
-            transactionOutput.setValue(Coin.ONE.multiply(GENESIS_INITIAL_REWARD_COIN));
+            transactionOutput.setCoinValue(Coin.ONE.multiply(GENESIS_INITIAL_REWARD_COIN));
 
             ScriptProgram scriptProgram = ScriptProgram.build().
                     data(GENESIS_TRANSACTION_OUTPUT_SCRIPT).
