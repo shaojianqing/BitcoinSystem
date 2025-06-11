@@ -60,7 +60,9 @@ public class TransactionMessage extends BaseMessage implements Message {
         int capacity = Math.min(outputCount.intValue(), Constants.MAX_INITIAL_ARRAY_LENGTH);
         transactionOutputs = new ArrayList<>(capacity);
         for (int i=0;i<outputCount.intValue();++i) {
-            transactionOutputs.add(TransactionOutput.read(this, buffer));
+            TransactionOutput transactionOutput = TransactionOutput.read(this, buffer);
+            transactionOutput.setTransactionOutputIndex((long) i);
+            transactionOutputs.add(transactionOutput);
         }
     }
 

@@ -17,6 +17,7 @@ public class TransactionOutputConvertor {
         transactionOutputData.setParentTransaction(transactionData);
         transactionOutputData.setCoinValue(transactionOutput.getCoinValue());
         transactionOutputData.setScriptPubKey(transactionOutput.getScriptPubKey());
+        transactionOutputData.setTransactionOutputIndex(transactionOutput.getTransactionOutputIndex());
         transactionOutputData.setProgram(ScriptProgram.parse(transactionOutput.getScriptPubKey()));
 
         return transactionOutputData;

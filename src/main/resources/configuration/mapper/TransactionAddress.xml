@@ -1,14 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sqlMapInfo namespace="sjq.bitcoin.storage.domain.TransactionAddress">
 
-    <resultDataMap id="transactionInputDataMap" class="sjq.bitcoin.storage.domain.TransactionAddress">
+    <resultDataMap id="transactionAddressDataMap" class="sjq.bitcoin.storage.domain.TransactionAddress">
         <result property="transactionHash" column="transaction_hash" javaType="java.lang.String" />
-        <result property="fromTransactionHash" column="from_transaction_hash" javaType="java.lang.String" />
-        <result property="sequence" column="sequence" javaType="java.lang.Long" />
         <result property="transactionOutputIndex" column="transaction_output_index" javaType="java.lang.Long" />
-        <result property="scriptSignature" column="script_signature" javaType="java.lang.String" />
+        <result property="address" column="address" javaType="java.lang.String" />
+        <result property="addressType" column="address_type" javaType="java.lang.String" />
+        <result property="coinValue" column="coin_value" javaType="java.lang.Long" />
+        <result property="spendStatus" column="spend_status" javaType="java.lang.Boolean" />
         <result property="createTime" column="create_time" javaType="java.sql.Timestamp" />
         <result property="modifyTime" column="modify_time" javaType="java.sql.Timestamp" />
     </resultDataMap>
+
+    <insert id="sjq.bitcoin.storage.domain.Transaction.saveTransactionAddressMap"
+            parameterType="sjq.bitcoin.storage.domain.TransactionAddress" >
+        insert into
+            transaction_address(
+                transaction_hash,
+                transaction_output_index,
+                address,
+                address_type,
+                coin_value,
+                spend_status,
+                create_time,
+                modify_time)
+            values(
+                #transactionHash#,
+                #transactionOutputIndex#,
+                #address#,
+                #addressType#,
+                #coinValue#,
+                #spendStatus#,
+                now(),
+                now())
+    </insert>
 
 </sqlMapInfo>

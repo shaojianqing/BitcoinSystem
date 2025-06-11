@@ -71,10 +71,11 @@ public class DatabaseManager {
         sqlMapConfigList.add("configuration/mapper/Block.xml");
         sqlMapConfigList.add("configuration/mapper/Transaction.xml");
         sqlMapConfigList.add("configuration/mapper/TransactionBlock.xml");
-        sqlMapConfigList.add("configuration/mapper/TransactionAddress.xml");
         sqlMapConfigList.add("configuration/mapper/TransactionInput.xml");
         sqlMapConfigList.add("configuration/mapper/TransactionOutput.xml");
         sqlMapConfigList.add("configuration/mapper/TransactionWitness.xml");
+        sqlMapConfigList.add("configuration/mapper/TransactionAddress.xml");
+        sqlMapConfigList.add("configuration/mapper/TransactionSpend.xml");
     }
 
     private void initSqlMapClientTemplate() throws Exception {

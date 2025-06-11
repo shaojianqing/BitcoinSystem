@@ -1,12 +1,16 @@
 package sjq.bitcoin.service;
 
 import org.apache.commons.collections4.CollectionUtils;
+import sjq.bitcoin.constant.Constants;
 import sjq.bitcoin.context.Autowire;
+import sjq.bitcoin.hash.Hash;
 import sjq.bitcoin.logger.Logger;
 import sjq.bitcoin.message.data.TransactionLockTime;
 import sjq.bitcoin.monetary.Coin;
 import sjq.bitcoin.script.BitcoinNetwork;
+import sjq.bitcoin.script.ScriptException;
 import sjq.bitcoin.script.ScriptProgram;
+import sjq.bitcoin.script.ScriptType;
 import sjq.bitcoin.service.data.*;
 import sjq.bitcoin.storage.dao.*;
 import sjq.bitcoin.storage.domain.*;
@@ -32,7 +36,7 @@ public class TransactionService {
     private TransactionWitnessDao transactionWitnessDao;
 
     @Autowire
-    private TransactionBlockDao transactionBlockMapDao;
+    private TransactionBlockDao transactionBlockDao;
 
     @Autowire
     private TransactionAddressDao transactionAddressDao;
@@ -57,7 +61,7 @@ public class TransactionService {
                 transactionDao.saveTransaction(transaction);
 
                 TransactionBlock transactionBlock = buildTransactionBlockMap(blockInDB, transactionData);
-                transactionBlockMapDao.saveTransactionBlockMap(transactionBlock);
+                transactionBlockDao.saveTransactionBlockMap(transactionBlock);
 
                 List<TransactionInputData> transactionInputDataList = transactionData.getTransactionInputList();
                 if (CollectionUtils.isNotEmpty(transactionInputDataList)) {
@@ -79,7 +83,7 @@ public class TransactionService {
                         TransactionOutput transactionOutput = buildTransactionOutput(transactionData, transactionOutputData);
                         transactionOutputDao.saveTransactionOutput(transactionOutput);
 
-                        TransactionAddress transactionAddress = buildTransactionAddressMap(transactionData, transactionOutputData);
+                        TransactionAddress transactionAddress = buildTransactionAddress(transactionData, transactionOutputData);
                         transactionAddressDao.saveTransactionAddressMap(transactionAddress);
                     }
                 }
@@ -143,26 +147,51 @@ public class TransactionService {
     }
 
     private TransactionSpend buildTransactionSpend(TransactionData transactionData, TransactionInputData transactionInputData) {
-        TransactionSpend transactionSpend = new TransactionSpend();
-        transactionSpend.setTransactionHash(transactionData.getTransactionHash().hexValue());
-        transactionSpend.setFromTransactionHash(transactionInputData.getFromTransactionHash().hexValue());
-        transactionSpend.setTransactionOutputIndex(transactionInputData.getTransactionOutputIndex());
-
-        return transactionSpend;
+        Hash fromTransactionHash = transactionInputData.getFromTransactionHash();
+        if (Hash.ZERO_HASH.equals(fromTransactionHash) &&
+                Constants.MAX_UNSIGNED_INTEGER.equals(transactionInputData.getTransactionOutputIndex())) {
+            // If it is coinbase transaction input, directly return
+            // null instead of generating transaction spend record
+            return null;
+        } else {
+            TransactionSpend transactionSpend = new TransactionSpend();
+            transactionSpend.setTransactionHash(transactionData.getTransactionHash().hexValue());
+            transactionSpend.setFromTransactionHash(transactionInputData.getFromTransactionHash().hexValue());
+            transactionSpend.setTransactionOutputIndex(transactionInputData.getTransactionOutputIndex());
+            return transactionSpend;
+        }
     }
 
-    private TransactionAddress buildTransactionAddressMap(TransactionData transactionData,
+    private TransactionAddress buildTransactionAddress(TransactionData transactionData,
                                                           TransactionOutputData transactionOutputData) throws Exception {
+
+        ScriptProgram scriptProgram = ScriptProgram.parse(transactionOutputData.getScriptPubKey());
+
         TransactionAddress transactionAddress = new TransactionAddress();
         transactionAddress.setTransactionHash(transactionData.getTransactionHash().hexValue());
-        transactionAddress.setTransactionIndex(transactionData.getTransactionIndex());
-        transactionAddress.setAddress(extractCoinAddress(transactionOutputData.getScriptPubKey()));
+        transactionAddress.setTransactionOutputIndex(transactionOutputData.getTransactionOutputIndex());
+        transactionAddress.setAddress(extractCoinAddress(scriptProgram));
+        transactionAddress.setAddressType(determineScriptType(scriptProgram));
         transactionAddress.setCoinValue(transactionOutputData.getCoinValue().getValue());
+        transactionAddress.setSpendStatus(Boolean.FALSE);
         return transactionAddress;
     }
 
-    private String extractCoinAddress(byte[] scriptPubKey) throws Exception {
-        ScriptProgram scriptProgram = ScriptProgram.parse(scriptPubKey);
+    private String determineScriptType(ScriptProgram scriptProgram) {
+        if (scriptProgram.isP2PKH()) {
+            return ScriptType.P2PKH.getName();
+        } else if (scriptProgram.isP2PK()) {
+            return ScriptType.P2PK.getName();
+        } else if (scriptProgram.isP2SH()) {
+            return ScriptType.P2SH.getName();
+        } else if (scriptProgram.isP2WPKH()) {
+            return ScriptType.P2WSH.getName();
+        } else {
+            throw new ScriptException("script type is not valid or legal!");
+        }
+    }
+
+    private String extractCoinAddress(ScriptProgram scriptProgram) throws Exception {
         if (scriptProgram.isP2PKH()) {
             byte[] addressBytes = scriptProgram.extractHashFromP2PKH();
             LegacyAddress legacyAddress = LegacyAddress.fromPubKeyHash(BitcoinNetwork.MAINNET, addressBytes);

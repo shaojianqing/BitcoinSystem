@@ -8,11 +8,15 @@ public class TransactionAddress {
 
     private String transactionHash;
 
-    private Long transactionIndex;
+    private Long transactionOutputIndex;
 
     private String address;
 
+    private String addressType;
+
     private Long coinValue;
+
+    private Boolean spendStatus;
 
     private Timestamp createTime;
 
@@ -34,12 +38,12 @@ public class TransactionAddress {
         this.transactionHash = transactionHash;
     }
 
-    public Long getTransactionIndex() {
-        return transactionIndex;
+    public Long getTransactionOutputIndex() {
+        return transactionOutputIndex;
     }
 
-    public void setTransactionIndex(Long transactionIndex) {
-        this.transactionIndex = transactionIndex;
+    public void setTransactionOutputIndex(Long transactionOutputIndex) {
+        this.transactionOutputIndex = transactionOutputIndex;
     }
 
     public String getAddress() {
@@ -50,12 +54,28 @@ public class TransactionAddress {
         this.address = address;
     }
 
+    public String getAddressType() {
+        return addressType;
+    }
+
+    public void setAddressType(String addressType) {
+        this.addressType = addressType;
+    }
+
     public Long getCoinValue() {
         return coinValue;
     }
 
     public void setCoinValue(Long coinValue) {
         this.coinValue = coinValue;
+    }
+
+    public Boolean getSpendStatus() {
+        return spendStatus;
+    }
+
+    public void setSpendStatus(Boolean spendStatus) {
+        this.spendStatus = spendStatus;
     }
 
     public Timestamp getCreateTime() {

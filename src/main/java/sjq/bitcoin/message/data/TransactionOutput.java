@@ -17,6 +17,8 @@ public class TransactionOutput {
 
     private byte[] scriptPubKey;
 
+    private Long transactionOutputIndex;
+
     public static TransactionOutput read(TransactionMessage parentTransaction,
                                          ByteBuffer buffer) throws BufferUnderflowException, ProtocolException {
         TransactionOutput transactionOutput = new TransactionOutput();
@@ -67,5 +69,13 @@ public class TransactionOutput {
 
     public void setScriptPubKey(byte[] scriptPubKey) {
         this.scriptPubKey = scriptPubKey;
+    }
+
+    public Long getTransactionOutputIndex() {
+        return transactionOutputIndex;
+    }
+
+    public void setTransactionOutputIndex(Long transactionOutputIndex) {
+        this.transactionOutputIndex = transactionOutputIndex;
     }
 }

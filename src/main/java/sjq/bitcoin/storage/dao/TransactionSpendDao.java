@@ -12,7 +12,10 @@ public class TransactionSpendDao {
     private SqlMapClientTemplate sqlMapClientTemplate;
 
     public boolean saveTransactionSpend(TransactionSpend transactionSpend) throws Exception {
-        int count = sqlMapClientTemplate.execute(SAVE_TRANSACTION_SPEND_MAP, transactionSpend);
-        return count == 1;
+        if (transactionSpend != null) {
+            int count = sqlMapClientTemplate.execute(SAVE_TRANSACTION_SPEND_MAP, transactionSpend);
+            return count == 1;
+        }
+        return false;
     }
 }
