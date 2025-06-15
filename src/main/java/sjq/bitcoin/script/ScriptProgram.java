@@ -1,6 +1,8 @@
 package sjq.bitcoin.script;
 
+import sjq.bitcoin.service.data.BitcoinAddress;
 import sjq.bitcoin.service.data.LegacyAddress;
+import sjq.bitcoin.service.data.SegwitAddress;
 import sjq.bitcoin.utility.HexUtils;
 
 import java.nio.ByteBuffer;
@@ -78,11 +80,37 @@ public class ScriptProgram {
         return buffer.array();
     }
 
+    public BitcoinAddress getDestAddress(BitcoinNetwork network) {
+        if (isP2SH()) {
+            byte[] addressBytes = extractHashFromP2SH();
+            return LegacyAddress.fromScriptHash(network, addressBytes);
+        } else if (isP2PKH()) {
+            byte[] addressBytes = extractHashFromP2PKH();
+            return LegacyAddress.fromPubKeyHash(network, addressBytes);
+        } else if (isP2WH()) {
+            byte[] addressBytes = extractHashFromP2WH();
+            return SegwitAddress.fromHash(network, addressBytes);
+        } else if (isP2TR()) {
+            byte[] keyBytes = extractKeyFromP2TR();
+            return SegwitAddress.fromProgram(network, keyBytes);
+        } else {
+            throw new ScriptException("The bitcoin address is not valid script type!");
+        }
+    }
+
     public byte[] extractKeyFromP2PK() {
         if (isP2PK()) {
             return instructions.get(0).getOperand();
         } else {
             throw new ScriptException("The script is not P2PK type!");
+        }
+    }
+
+    public byte[] extractHashFromP2PKH() {
+        if (isP2PKH()) {
+            return instructions.get(2).getOperand();
+        } else {
+            throw new ScriptException("The script is not P2PKH type!");
         }
     }
 
@@ -94,11 +122,19 @@ public class ScriptProgram {
         }
     }
 
-    public byte[] extractHashFromP2PKH() {
-        if (isP2PKH()) {
-            return instructions.get(2).getOperand();
+    public byte[] extractHashFromP2WH() {
+        if (isP2WH()) {
+            return instructions.get(1).getOperand();
         } else {
-            throw new ScriptException("The script is not P2PKH type!");
+            throw new ScriptException("The script is not P2WH type!");
+        }
+    }
+
+    public byte[] extractKeyFromP2TR() {
+        if (isP2TR()) {
+            return instructions.get(1).getOperand();
+        } else {
+            throw new ScriptException("The script is not P2TR type!");
         }
     }
 
@@ -164,8 +200,65 @@ public class ScriptProgram {
         return true;
     }
 
+    public boolean isP2WH() {
+        if (instructions.size() != 2) {
+            return false;
+        }
+        ScriptOpCode opCode = instructions.get(0).getOpCode();
+        if (!opCode.equals(ScriptOpCode.OP_0)) {
+            return false;
+        }
+        byte[] data = instructions.get(1).getOperand();
+        if (data == null) {
+            return false;
+        }
+        return data.length == SegwitAddress.WITNESS_PROGRAM_LENGTH_PKH
+                || data.length == SegwitAddress.WITNESS_PROGRAM_LENGTH_SH;
+    }
+
     public boolean isP2WPKH() {
-        return false;
+        if (instructions.size() != 2) {
+            return false;
+        }
+        ScriptOpCode opCode = instructions.get(0).getOpCode();
+        if (!opCode.equals(ScriptOpCode.OP_0)) {
+            return false;
+        }
+        byte[] data = instructions.get(1).getOperand();
+        if (data == null || data.length != SegwitAddress.WITNESS_PROGRAM_LENGTH_PKH) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean isP2WSH() {
+        if (instructions.size() != 2) {
+            return false;
+        }
+        ScriptOpCode opCode = instructions.get(0).getOpCode();
+        if (!opCode.equals(ScriptOpCode.OP_0)) {
+            return false;
+        }
+        byte[] data = instructions.get(1).getOperand();
+        if (data == null || data.length != SegwitAddress.WITNESS_PROGRAM_LENGTH_SH) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean isP2TR() {
+        if (instructions.size() != 2) {
+            return false;
+        }
+        ScriptOpCode opCode = instructions.get(0).getOpCode();
+        if (!opCode.equals(ScriptOpCode.OP_1)) {
+            return false;
+        }
+        byte[] data = instructions.get(1).getOperand();
+        if (data == null || data.length != SegwitAddress.WITNESS_PROGRAM_LENGTH_TR) {
+            return false;
+        }
+        return true;
     }
 
     public String format() {

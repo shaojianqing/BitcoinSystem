@@ -3,7 +3,7 @@ package sjq.bitcoin.script;
 public enum ScriptOpCode {
 
     OP_PUSH_0(ScriptConstant.OP_PUSH_0, "PUSH(0)"),
-    OP_PUSH_1(ScriptConstant.OP_PUSH_0, "PUSH(1)"),
+    OP_PUSH_1(ScriptConstant.OP_PUSH_1, "PUSH(1)"),
     OP_PUSH_2(ScriptConstant.OP_PUSH_2, "PUSH(2)"),
     OP_PUSH_3(ScriptConstant.OP_PUSH_3, "PUSH(3)"),
     OP_PUSH_4(ScriptConstant.OP_PUSH_4, "PUSH(4)"),
@@ -78,6 +78,24 @@ public enum ScriptOpCode {
     OP_PUSH_73(ScriptConstant.OP_PUSH_73, "PUSH(73)"),
     OP_PUSH_74(ScriptConstant.OP_PUSH_74, "PUSH(74)"),
     OP_PUSH_75(ScriptConstant.OP_PUSH_75, "PUSH(75)"),
+
+    OP_0(ScriptConstant.OP_0, "0"),
+    OP_1(ScriptConstant.OP_1, "1"),
+    OP_2(ScriptConstant.OP_2, "2"),
+    OP_3(ScriptConstant.OP_3, "3"),
+    OP_4(ScriptConstant.OP_4, "4"),
+    OP_5(ScriptConstant.OP_5, "5"),
+    OP_6(ScriptConstant.OP_6, "6"),
+    OP_7(ScriptConstant.OP_7, "7"),
+    OP_8(ScriptConstant.OP_8, "8"),
+    OP_9(ScriptConstant.OP_9, "9"),
+    OP_10(ScriptConstant.OP_10, "10"),
+    OP_11(ScriptConstant.OP_11, "11"),
+    OP_12(ScriptConstant.OP_12, "12"),
+    OP_13(ScriptConstant.OP_13, "13"),
+    OP_14(ScriptConstant.OP_14, "14"),
+    OP_15(ScriptConstant.OP_15, "15"),
+    OP_16(ScriptConstant.OP_16, "16"),
 
     OP_PUSHDATA1(ScriptConstant.OP_PUSHDATA1, "PUSHDATA1"),
     OP_PUSHDATA2(ScriptConstant.OP_PUSHDATA2, "PUSHDATA2"),

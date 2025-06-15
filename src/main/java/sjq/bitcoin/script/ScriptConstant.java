@@ -84,6 +84,7 @@ public interface ScriptConstant {
     short OP_PUSHDATA4 = 0x4e;
     short OP_NEGATE1 = 0x4f;
     short OP_RESERVED = 0x50;
+    short OP_0 = 0x00;
     short OP_1 = 0x51;
     short OP_TRUE = OP_1;
     short OP_2 = 0x52;

@@ -9,6 +9,7 @@ import sjq.bitcoin.message.TransactionMessage;
 import sjq.bitcoin.message.data.TransactionLockTime;
 import sjq.bitcoin.message.data.TransactionOutput;
 import sjq.bitcoin.monetary.Coin;
+import sjq.bitcoin.script.BitcoinNetwork;
 import sjq.bitcoin.script.ScriptConstant;
 import sjq.bitcoin.script.ScriptProgram;
 import sjq.bitcoin.utility.HexUtils;
@@ -87,6 +88,7 @@ public class MainnetConfiguration extends NetworkConfiguration {
         return GENESIS_BLOCK_DIFFICULTY;
     }
 
+    @Override
     public BlockMessage getGenesisBlock() {
         BlockMessage blockMessage = new BlockMessage();
         try {
@@ -108,7 +110,12 @@ public class MainnetConfiguration extends NetworkConfiguration {
         return blockMessage;
     }
 
-    public List<TransactionMessage> getGenesisTransactions() {
+    @Override
+    public BitcoinNetwork getBitcoinNetwork() {
+        return BitcoinNetwork.MAINNET;
+    }
+
+    private List<TransactionMessage> getGenesisTransactions() {
         List<TransactionMessage> transactionList = new ArrayList<>();
         try {
             TransactionMessage transaction = TransactionMessage.coinbaseTransaction(GENESIS_TRANSACTION_INPUT_SCRIPT);
@@ -131,12 +138,5 @@ public class MainnetConfiguration extends NetworkConfiguration {
             System.exit(-1);
         }
         return transactionList;
-    }
-
-    public static void main(String[] args) {
-        NetworkConfiguration configuration = NetworkConfiguration.getConfiguration();
-        BlockMessage block = configuration.getGenesisBlock();
-        System.out.println(block.getMerkleRoot());
-        System.out.println(block.getBlockHash());
     }
 }

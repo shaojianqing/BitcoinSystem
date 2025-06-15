@@ -1,6 +1,7 @@
 package sjq.bitcoin.configuration;
 
 import sjq.bitcoin.message.BlockMessage;
+import sjq.bitcoin.script.BitcoinNetwork;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,5 +61,10 @@ public class TestnetConfiguration extends NetworkConfiguration {
 
     public BlockMessage getGenesisBlock() {
         return null;
+    }
+
+    @Override
+    public BitcoinNetwork getBitcoinNetwork() {
+        return BitcoinNetwork.TESTNET;
     }
 }

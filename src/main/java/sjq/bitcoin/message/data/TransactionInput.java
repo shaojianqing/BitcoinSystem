@@ -56,7 +56,6 @@ public class TransactionInput {
         return buffer;
     }
 
-
     public byte[] serialize() {
         ByteBuffer buffer = ByteBuffer.allocate(messageSize());
         buffer = write(buffer);

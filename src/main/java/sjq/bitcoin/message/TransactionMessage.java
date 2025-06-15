@@ -10,7 +10,6 @@ import sjq.bitcoin.utility.ByteUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,7 @@
 package sjq.bitcoin.service;
 
 import org.apache.commons.collections4.CollectionUtils;
+import sjq.bitcoin.configuration.NetworkConfiguration;
 import sjq.bitcoin.constant.Constants;
 import sjq.bitcoin.context.Autowire;
 import sjq.bitcoin.hash.Hash;
@@ -19,6 +20,8 @@ import sjq.bitcoin.utility.HexUtils;
 import java.util.List;
 
 public class TransactionService {
+
+    private NetworkConfiguration configuration;
 
     @Autowire
     private BlockDao blockDao;
@@ -43,6 +46,10 @@ public class TransactionService {
 
     @Autowire
     private TransactionSpendDao transactionSpendDao;
+
+    public TransactionService() {
+        this.configuration = NetworkConfiguration.getConfiguration();
+    }
 
     public boolean acceptTransaction(TransactionData transaction) {
         return false;
@@ -166,43 +173,16 @@ public class TransactionService {
                                                           TransactionOutputData transactionOutputData) throws Exception {
 
         ScriptProgram scriptProgram = ScriptProgram.parse(transactionOutputData.getScriptPubKey());
+        BitcoinNetwork network = configuration.getBitcoinNetwork();
+        BitcoinAddress destAddress = scriptProgram.getDestAddress(network);
 
         TransactionAddress transactionAddress = new TransactionAddress();
         transactionAddress.setTransactionHash(transactionData.getTransactionHash().hexValue());
         transactionAddress.setTransactionOutputIndex(transactionOutputData.getTransactionOutputIndex());
-        transactionAddress.setAddress(extractCoinAddress(scriptProgram));
-        transactionAddress.setAddressType(determineScriptType(scriptProgram));
+        transactionAddress.setAddress(destAddress.getStringFormat());
+        transactionAddress.setAddressType(destAddress.getScriptType().getName());
         transactionAddress.setCoinValue(transactionOutputData.getCoinValue().getValue());
         transactionAddress.setSpendStatus(Boolean.FALSE);
         return transactionAddress;
-    }
-
-    private String determineScriptType(ScriptProgram scriptProgram) {
-        if (scriptProgram.isP2PKH()) {
-            return ScriptType.P2PKH.getName();
-        } else if (scriptProgram.isP2PK()) {
-            return ScriptType.P2PK.getName();
-        } else if (scriptProgram.isP2SH()) {
-            return ScriptType.P2SH.getName();
-        } else if (scriptProgram.isP2WPKH()) {
-            return ScriptType.P2WSH.getName();
-        } else {
-            throw new ScriptException("script type is not valid or legal!");
-        }
-    }
-
-    private String extractCoinAddress(ScriptProgram scriptProgram) throws Exception {
-        if (scriptProgram.isP2PKH()) {
-            byte[] addressBytes = scriptProgram.extractHashFromP2PKH();
-            LegacyAddress legacyAddress = LegacyAddress.fromPubKeyHash(BitcoinNetwork.MAINNET, addressBytes);
-            return legacyAddress.stringFormat();
-        } else if (scriptProgram.isP2SH()) {
-            byte[] addressBytes = scriptProgram.extractHashFromP2SH();
-            LegacyAddress legacyAddress = LegacyAddress.fromScriptHash(BitcoinNetwork.MAINNET, addressBytes);
-            return legacyAddress.stringFormat();
-        } else if (scriptProgram.isP2PK()) {
-
-        }
-        return null;
     }
 }

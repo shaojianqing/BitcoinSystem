@@ -7,7 +7,7 @@ import sjq.bitcoin.utility.HexUtils;
 
 public class TestScriptProgram {
 
-    private static final String PubKey = "41047211a824f55b505228e4c3d5194c1fcfaa15a456abdf37f9b9d97a4040afc073dee6c89064984f03385237d92167c13e236446b417ab79a0fcae412ae3316b77ac";
+    private static final String PubKey = "76a91433e81a941e64cda12c6a299ed322ddbdd03f8d0e88ac";
 
     @Test
     public void parse() throws Exception {

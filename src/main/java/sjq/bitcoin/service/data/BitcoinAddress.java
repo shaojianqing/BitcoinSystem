@@ -1,6 +1,10 @@
 package sjq.bitcoin.service.data;
 
+import sjq.bitcoin.script.ScriptType;
+
 public interface BitcoinAddress {
 
-    String stringFormat();
+    ScriptType getScriptType();
+
+    String getStringFormat();
 }

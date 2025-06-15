@@ -1,6 +1,7 @@
 package sjq.bitcoin.configuration;
 
 import sjq.bitcoin.message.BlockMessage;
+import sjq.bitcoin.script.BitcoinNetwork;
 
 import java.util.List;
 
@@ -30,4 +31,6 @@ public abstract class NetworkConfiguration {
     public abstract short getPort();
 
     public abstract BlockMessage getGenesisBlock();
+
+    public abstract BitcoinNetwork getBitcoinNetwork();
 }

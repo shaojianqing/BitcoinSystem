@@ -1,8 +1,11 @@
 package sjq.bitcoin.service.data;
 
 import sjq.bitcoin.script.BitcoinNetwork;
+import sjq.bitcoin.script.ScriptType;
 import sjq.bitcoin.service.data.exception.AddressException;
 import sjq.bitcoin.utility.Base58Utils;
+
+import java.util.Arrays;
 
 public class LegacyAddress implements BitcoinAddress {
 
@@ -33,7 +36,16 @@ public class LegacyAddress implements BitcoinAddress {
     }
 
     public static LegacyAddress fromBase58Address(BitcoinNetwork network, String base58Address) {
-        return null;
+        byte[] versionAndHash = Base58Utils.decodeChecked(base58Address);
+        byte[] hashData = Arrays.copyOfRange(versionAndHash, 1, versionAndHash.length);
+        int version = versionAndHash[0] & 0xFF;
+        if (version == network.getLegacyP2PKHHeader()) {
+            return new LegacyAddress(network, hashData, LegacyAddress.TYPE_P2PKH);
+        } else if (version == network.getLegacyP2SHHeader()) {
+            return new LegacyAddress(network, hashData, LegacyAddress.TYPE_P2SH);
+        } else {
+            throw new AddressException(String.format("The base58 address is invalid with %s", base58Address));
+        }
     }
 
     public byte[] getRawAddress() {
@@ -41,7 +53,12 @@ public class LegacyAddress implements BitcoinAddress {
     }
 
     @Override
-    public String stringFormat() {
+    public ScriptType getScriptType() {
+        return null;
+    }
+
+    @Override
+    public String getStringFormat() {
         int version;
         if (type == TYPE_P2PKH) {
             version = network.getLegacyP2PKHHeader();
