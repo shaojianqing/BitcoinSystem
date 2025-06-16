@@ -92,7 +92,7 @@ public class ScriptProgram {
             return SegwitAddress.fromHash(network, addressBytes);
         } else if (isP2TR()) {
             byte[] keyBytes = extractKeyFromP2TR();
-            return SegwitAddress.fromProgram(network, keyBytes);
+            return SegwitAddress.fromProgram(network, 1, keyBytes);
         } else {
             throw new ScriptException("The bitcoin address is not valid script type!");
         }
@@ -205,7 +205,7 @@ public class ScriptProgram {
             return false;
         }
         ScriptOpCode opCode = instructions.get(0).getOpCode();
-        if (!opCode.equals(ScriptOpCode.OP_0)) {
+        if (ScriptOpCode.OP_0.getCode() != opCode.getCode()) {
             return false;
         }
         byte[] data = instructions.get(1).getOperand();
@@ -221,7 +221,7 @@ public class ScriptProgram {
             return false;
         }
         ScriptOpCode opCode = instructions.get(0).getOpCode();
-        if (!opCode.equals(ScriptOpCode.OP_0)) {
+        if (ScriptOpCode.OP_0.getCode() != opCode.getCode()) {
             return false;
         }
         byte[] data = instructions.get(1).getOperand();
@@ -236,7 +236,7 @@ public class ScriptProgram {
             return false;
         }
         ScriptOpCode opCode = instructions.get(0).getOpCode();
-        if (!opCode.equals(ScriptOpCode.OP_0)) {
+        if (ScriptOpCode.OP_0.getCode() != opCode.getCode()) {
             return false;
         }
         byte[] data = instructions.get(1).getOperand();
@@ -251,7 +251,7 @@ public class ScriptProgram {
             return false;
         }
         ScriptOpCode opCode = instructions.get(0).getOpCode();
-        if (!opCode.equals(ScriptOpCode.OP_1)) {
+        if (ScriptOpCode.OP_1.getCode() != opCode.getCode()) {
             return false;
         }
         byte[] data = instructions.get(1).getOperand();

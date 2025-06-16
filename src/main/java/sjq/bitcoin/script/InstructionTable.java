@@ -101,6 +101,23 @@ public class InstructionTable {
 
         instructionMap.put(ScriptOpCode.OP_NEGATE1, OpPushNegative1Instruction.class);
 
+        instructionMap.put(ScriptOpCode.OP_1, OpInstruction.class);
+        instructionMap.put(ScriptOpCode.OP_2, OpInstruction.class);
+        instructionMap.put(ScriptOpCode.OP_3, OpInstruction.class);
+        instructionMap.put(ScriptOpCode.OP_4, OpInstruction.class);
+        instructionMap.put(ScriptOpCode.OP_5, OpPushInstruction.class);
+        instructionMap.put(ScriptOpCode.OP_6, OpInstruction.class);
+        instructionMap.put(ScriptOpCode.OP_7, OpInstruction.class);
+        instructionMap.put(ScriptOpCode.OP_8, OpInstruction.class);
+        instructionMap.put(ScriptOpCode.OP_9, OpInstruction.class);
+        instructionMap.put(ScriptOpCode.OP_10, OpInstruction.class);
+        instructionMap.put(ScriptOpCode.OP_11, OpInstruction.class);
+        instructionMap.put(ScriptOpCode.OP_12, OpInstruction.class);
+        instructionMap.put(ScriptOpCode.OP_13, OpInstruction.class);
+        instructionMap.put(ScriptOpCode.OP_14, OpInstruction.class);
+        instructionMap.put(ScriptOpCode.OP_15, OpInstruction.class);
+        instructionMap.put(ScriptOpCode.OP_16, OpInstruction.class);
+
         instructionMap.put(ScriptOpCode.OP_IF, OpIfInstruction.class);
         instructionMap.put(ScriptOpCode.OP_NOTIF, OpNotIfInstruction.class);
         instructionMap.put(ScriptOpCode.OP_ELSE, OpElseInstruction.class);
@@ -310,6 +327,7 @@ public class InstructionTable {
             data = ByteUtils.readBytesByLength(scriptBuffer, length);
         }
 
+        @Override
         public void execute(OperandStack stack) {
             if (code== ScriptOpCode.OP_PUSH_0) {
                 stack.push(EMPTY);
@@ -339,6 +357,7 @@ public class InstructionTable {
             data = ByteUtils.readBytesByLength(scriptBuffer, length);
         }
 
+        @Override
         public void execute(OperandStack stack) {
             stack.push(data);
         }
@@ -356,6 +375,7 @@ public class InstructionTable {
             data = ByteUtils.readBytesByLength(scriptBuffer, length);
         }
 
+        @Override
         public void execute(OperandStack stack) {
             stack.push(data);
         }
@@ -373,6 +393,7 @@ public class InstructionTable {
             data = ByteUtils.readBytesByLength(scriptBuffer, length);
         }
 
+        @Override
         public void execute(OperandStack stack) {
             stack.push(data);
         }
@@ -383,6 +404,7 @@ public class InstructionTable {
         public OpPushNegative1Instruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
             byte[] items = new byte[]{-1};
             stack.push(items);
@@ -394,6 +416,7 @@ public class InstructionTable {
         public OpIfInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -404,6 +427,7 @@ public class InstructionTable {
         public OpNotIfInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -414,6 +438,7 @@ public class InstructionTable {
         public OpElseInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -424,6 +449,7 @@ public class InstructionTable {
         public OpEndIfInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -434,6 +460,7 @@ public class InstructionTable {
         public OpVerifyInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -444,6 +471,7 @@ public class InstructionTable {
         public OpReturnInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -454,6 +482,7 @@ public class InstructionTable {
         public OpToAltStackInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -464,6 +493,7 @@ public class InstructionTable {
         public OpFromAltStackInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -474,6 +504,7 @@ public class InstructionTable {
         public OpIfDupInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -484,6 +515,7 @@ public class InstructionTable {
         public OpDepthInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -494,6 +526,7 @@ public class InstructionTable {
         public OpDropInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -504,6 +537,7 @@ public class InstructionTable {
         public OpDupInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
             byte[] element = stack.peek();
             stack.push(element);
@@ -515,6 +549,7 @@ public class InstructionTable {
         public OpNipInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -525,6 +560,7 @@ public class InstructionTable {
         public OpOverInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -535,6 +571,7 @@ public class InstructionTable {
         public OpPickInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -545,6 +582,7 @@ public class InstructionTable {
         public OpRollInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -555,6 +593,7 @@ public class InstructionTable {
         public OpRotInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -565,6 +604,7 @@ public class InstructionTable {
         public OpSwapInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
             byte[] element2 = stack.pop();
             byte[] element1 = stack.pop();
@@ -579,6 +619,7 @@ public class InstructionTable {
         public OpTuckInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -589,6 +630,7 @@ public class InstructionTable {
         public OpDrop2Instruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -599,6 +641,7 @@ public class InstructionTable {
         public OpDup2Instruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -619,6 +662,7 @@ public class InstructionTable {
         public OpOver2Instruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -629,6 +673,7 @@ public class InstructionTable {
         public OpRot2Instruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -639,6 +684,7 @@ public class InstructionTable {
         public OpSwap2Instruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -649,6 +695,7 @@ public class InstructionTable {
         public OpCatInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -659,6 +706,7 @@ public class InstructionTable {
         public OpSubStrInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -669,6 +717,7 @@ public class InstructionTable {
         public OpInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -679,6 +728,7 @@ public class InstructionTable {
         public OpLeftInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -689,6 +739,7 @@ public class InstructionTable {
         public OpRightInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -699,6 +750,7 @@ public class InstructionTable {
         public OpSizeInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -709,6 +761,7 @@ public class InstructionTable {
         public OpAdd1Instruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -719,6 +772,7 @@ public class InstructionTable {
         public OpSub1Instruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -729,6 +783,7 @@ public class InstructionTable {
         public OpMul2Instruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -739,6 +794,7 @@ public class InstructionTable {
         public OpDiv2Instruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -749,6 +805,7 @@ public class InstructionTable {
         public OpNegateInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -759,6 +816,7 @@ public class InstructionTable {
         public OpAbsInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -769,6 +827,7 @@ public class InstructionTable {
         public OpNotInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -779,6 +838,7 @@ public class InstructionTable {
         public OpNotEqual0Instruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -789,6 +849,7 @@ public class InstructionTable {
         public OpAddInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -799,6 +860,7 @@ public class InstructionTable {
         public OpSubInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -809,6 +871,7 @@ public class InstructionTable {
         public OpMulInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -819,6 +882,7 @@ public class InstructionTable {
         public OpDivInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -829,6 +893,7 @@ public class InstructionTable {
         public OpModInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -839,6 +904,7 @@ public class InstructionTable {
         public OpShiftLeftInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -849,6 +915,7 @@ public class InstructionTable {
         public OpShiftRightInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -859,6 +926,7 @@ public class InstructionTable {
         public OpBoolAndInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -869,6 +937,7 @@ public class InstructionTable {
         public OpBoolOrInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -879,6 +948,7 @@ public class InstructionTable {
         public OpNumEqualInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -889,6 +959,7 @@ public class InstructionTable {
         public OpNumEqualVerifyInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -899,6 +970,7 @@ public class InstructionTable {
         public OpNumNotEqualInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -909,6 +981,7 @@ public class InstructionTable {
         public OpLessThanInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -919,6 +992,7 @@ public class InstructionTable {
         public OpGreaterThanInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -929,6 +1003,7 @@ public class InstructionTable {
         public OpLessThanOrEqualInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -939,6 +1014,7 @@ public class InstructionTable {
         public OpGreaterThanOrEqualInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -949,6 +1025,7 @@ public class InstructionTable {
         public OpMinInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -959,6 +1036,7 @@ public class InstructionTable {
         public OpMaxInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -969,6 +1047,7 @@ public class InstructionTable {
         public OpWithinInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -979,6 +1058,7 @@ public class InstructionTable {
         public OpInvertInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -989,6 +1069,7 @@ public class InstructionTable {
         public OpAndInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -1009,6 +1090,7 @@ public class InstructionTable {
         public OpXorInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -1019,6 +1101,7 @@ public class InstructionTable {
         public OpEqualInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -1029,6 +1112,7 @@ public class InstructionTable {
         public OpEqualVerifyInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -1043,6 +1127,7 @@ public class InstructionTable {
 
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -1053,6 +1138,7 @@ public class InstructionTable {
         public OpSha1Instruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -1063,6 +1149,7 @@ public class InstructionTable {
         public OpSha256Instruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
             try {
                 byte[] source = stack.pop();
@@ -1082,6 +1169,7 @@ public class InstructionTable {
         public OpHash160Instruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -1092,6 +1180,7 @@ public class InstructionTable {
         public OpCodeSeparatorInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -1102,6 +1191,7 @@ public class InstructionTable {
         public OpHash256Instruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
             try {
                 byte[] source = stack.pop();
@@ -1120,6 +1210,7 @@ public class InstructionTable {
         public OpCheckSigVerifyInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -1130,6 +1221,7 @@ public class InstructionTable {
         public OpCheckSigInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -1140,6 +1232,7 @@ public class InstructionTable {
         public OpCheckMultiSigInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -1150,6 +1243,7 @@ public class InstructionTable {
         public OpCheckMultiSigVerifyInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -1160,6 +1254,7 @@ public class InstructionTable {
         public OpCheckSigAddInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -1170,6 +1265,7 @@ public class InstructionTable {
         public OpCheckLockTimeVerifyAddInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }
@@ -1180,6 +1276,7 @@ public class InstructionTable {
         public OpCheckSequenceVerifyAddInstruction(){
         }
 
+        @Override
         public void execute(OperandStack stack) {
 
         }

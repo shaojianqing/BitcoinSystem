@@ -171,7 +171,6 @@ public class TransactionService {
 
     private TransactionAddress buildTransactionAddress(TransactionData transactionData,
                                                           TransactionOutputData transactionOutputData) throws Exception {
-
         ScriptProgram scriptProgram = ScriptProgram.parse(transactionOutputData.getScriptPubKey());
         BitcoinNetwork network = configuration.getBitcoinNetwork();
         BitcoinAddress destAddress = scriptProgram.getDestAddress(network);
