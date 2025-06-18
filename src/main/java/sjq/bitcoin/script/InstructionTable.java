@@ -371,7 +371,7 @@ public class InstructionTable {
         }
 
         public void fetch(ByteBuffer scriptBuffer) {
-            short length = ByteUtils.readUint16LE(scriptBuffer);
+            int length = ByteUtils.readUint16LE(scriptBuffer);
             data = ByteUtils.readBytesByLength(scriptBuffer, length);
         }
 
@@ -389,7 +389,7 @@ public class InstructionTable {
         }
 
         public void fetch(ByteBuffer scriptBuffer) {
-            int length = ByteUtils.readUint32LE(scriptBuffer);
+            int length = (int)ByteUtils.readUint32LE(scriptBuffer);
             data = ByteUtils.readBytesByLength(scriptBuffer, length);
         }
 
