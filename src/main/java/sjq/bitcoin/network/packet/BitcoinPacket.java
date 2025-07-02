@@ -1,6 +1,5 @@
 package sjq.bitcoin.network.packet;
 
-import sjq.bitcoin.configuration.NetworkConfiguration;
 import sjq.bitcoin.hash.Hash;
 import sjq.bitcoin.message.base.Message;
 import sjq.bitcoin.message.parser.MessageParser;
@@ -19,8 +18,6 @@ public class BitcoinPacket {
     public static final int CHECKSUM_LENGTH = 4;
 
     public static final int HEADER_LENGTH = MAGIC_LENGTH + COMMAND_LENGTH + MESSAGE_LENGTH + CHECKSUM_LENGTH;
-
-    private static final NetworkConfiguration Configuration = NetworkConfiguration.getConfiguration();
 
     private String command;
 

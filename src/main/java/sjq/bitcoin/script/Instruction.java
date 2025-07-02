@@ -4,15 +4,15 @@ import java.nio.ByteBuffer;
 
 public interface Instruction {
 
-    String getOpName();
-
     void fetch(ByteBuffer scriptBuffer);
 
     void execute(OperandStack stack);
 
-    short getOpCode();
+    ScriptOpCode getOpCode();
 
-    void setOpCode(short opCode);
+    void setOpCode(ScriptOpCode opCode);
+
+    boolean isOpCode();
 
     byte[] getOperand();
 

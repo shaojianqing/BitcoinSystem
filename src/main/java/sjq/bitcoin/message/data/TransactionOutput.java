@@ -2,7 +2,7 @@ package sjq.bitcoin.message.data;
 
 import sjq.bitcoin.message.TransactionMessage;
 import sjq.bitcoin.monetary.Coin;
-import sjq.bitcoin.network.protocol.ProtocolException;
+import sjq.bitcoin.network.exception.ProtocolException;
 import sjq.bitcoin.utility.ByteUtils;
 
 import java.nio.BufferOverflowException;

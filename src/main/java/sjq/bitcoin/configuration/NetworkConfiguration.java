@@ -1,14 +1,8 @@
 package sjq.bitcoin.configuration;
 
-import sjq.bitcoin.hash.Hash;
 import sjq.bitcoin.message.BlockMessage;
-import sjq.bitcoin.message.data.BlockHeader;
-import sjq.bitcoin.storage.domain.Block;
-import sjq.bitcoin.utility.ByteUtils;
-import sjq.bitcoin.utility.HexUtils;
+import sjq.bitcoin.script.BitcoinNetwork;
 
-import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
 import java.util.List;
 
 public abstract class NetworkConfiguration {
@@ -37,4 +31,6 @@ public abstract class NetworkConfiguration {
     public abstract short getPort();
 
     public abstract BlockMessage getGenesisBlock();
+
+    public abstract BitcoinNetwork getBitcoinNetwork();
 }

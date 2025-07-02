@@ -6,7 +6,7 @@ public class OperandStack {
 
     public static final int MAX_SCRIPT_ELEMENT_SIZE = 520;
 
-    private Stack<byte[]> stack = new Stack<byte[]>();
+    private final Stack<byte[]> stack = new Stack<>();
 
     public void push(byte[] item) {
         if (stack.size()>MAX_SCRIPT_ELEMENT_SIZE) {
@@ -24,7 +24,7 @@ public class OperandStack {
     }
 
     public boolean peekSuccess() {
-        byte[] data = stack.peek();
+        stack.peek();
         return true;
     }
 }

@@ -1,9 +1,9 @@
 package sjq.bitcoin.script;
 
-public interface ScriptOpcode {
+public interface ScriptConstant {
 
-    short OP_0 = 0x00; // push empty vector
-    short OP_FALSE = OP_0;
+    short OP_FALSE = 0x00;
+    short OP_PUSH_0 = 0x00; // push empty vector
     short OP_PUSH_1 = 0x01;
     short OP_PUSH_2 = 0x02;
     short OP_PUSH_3 = 0x03;
@@ -82,8 +82,9 @@ public interface ScriptOpcode {
     short OP_PUSHDATA1 = 0x4c;
     short OP_PUSHDATA2 = 0x4d;
     short OP_PUSHDATA4 = 0x4e;
-    short OP_1NEGATE = 0x4f;
+    short OP_NEGATE1 = 0x4f;
     short OP_RESERVED = 0x50;
+    short OP_0 = 0x00;
     short OP_1 = 0x51;
     short OP_TRUE = OP_1;
     short OP_2 = 0x52;
@@ -117,12 +118,12 @@ public interface ScriptOpcode {
     // stack ops
     short OP_TOALTSTACK = 0x6b;
     short OP_FROMALTSTACK = 0x6c;
-    short OP_2DROP = 0x6d;
-    short OP_2DUP = 0x6e;
-    short OP_3DUP = 0x6f;
-    short OP_2OVER = 0x70;
-    short OP_2ROT = 0x71;
-    short OP_2SWAP = 0x72;
+    short OP_DROP2 = 0x6d;
+    short OP_DUP2 = 0x6e;
+    short OP_DUP3 = 0x6f;
+    short OP_OVER2 = 0x70;
+    short OP_ROT2 = 0x71;
+    short OP_SWAP2 = 0x72;
     short OP_IFDUP = 0x73;
     short OP_DEPTH = 0x74;
     short OP_DROP = 0x75;
@@ -153,14 +154,14 @@ public interface ScriptOpcode {
     short OP_RESERVED2 = 0x8a;
 
     // numeric
-    short OP_1ADD = 0x8b;
-    short OP_1SUB = 0x8c;
-    short OP_2MUL = 0x8d;
-    short OP_2DIV = 0x8e;
+    short OP_ADD1 = 0x8b;
+    short OP_SUB1 = 0x8c;
+    short OP_MUL2 = 0x8d;
+    short OP_DIV2 = 0x8e;
     short OP_NEGATE = 0x8f;
     short OP_ABS = 0x90;
     short OP_NOT = 0x91;
-    short OP_0NOTEQUAL = 0x92;
+    short OP_NOTEQUAL0 = 0x92;
     short OP_ADD = 0x93;
     short OP_SUB = 0x94;
     short OP_MUL = 0x95;
@@ -192,9 +193,10 @@ public interface ScriptOpcode {
     short OP_CHECKSIGVERIFY = 0xad;
     short OP_CHECKMULTISIG = 0xae;
     short OP_CHECKMULTISIGVERIFY = 0xaf;
+    short OP_CHECKSIGADD = 0xba;
 
     // block state
-    /** Check lock time of the block. shortroduced in BIP 65, replacing OP_NOP2 */
+    /** Check lock time of the block. shortreduced in BIP 65, replacing OP_NOP2 */
     short OP_CHECKLOCKTIMEVERIFY = 0xb1;
     short OP_CHECKSEQUENCEVERIFY = 0xb2;
 

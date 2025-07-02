@@ -8,10 +8,9 @@ import sjq.bitcoin.hash.Hash;
 import sjq.bitcoin.logger.Logger;
 import sjq.bitcoin.message.data.TransactionLockTime;
 import sjq.bitcoin.monetary.Coin;
-import sjq.bitcoin.service.data.TransactionData;
-import sjq.bitcoin.service.data.TransactionInputData;
-import sjq.bitcoin.service.data.TransactionOutputData;
-import sjq.bitcoin.service.data.TransactionWitnessData;
+import sjq.bitcoin.script.BitcoinNetwork;
+import sjq.bitcoin.script.ScriptProgram;
+import sjq.bitcoin.service.data.*;
 import sjq.bitcoin.storage.dao.*;
 import sjq.bitcoin.storage.domain.*;
 import sjq.bitcoin.utility.HexUtils;
@@ -170,15 +169,15 @@ public class TransactionService {
 
     private TransactionAddress buildTransactionAddress(TransactionData transactionData,
                                                           TransactionOutputData transactionOutputData) throws Exception {
-        /*ScriptProgram scriptProgram = ScriptProgram.parse(transactionOutputData.getScriptPubKey());
+        ScriptProgram scriptProgram = ScriptProgram.parse(transactionOutputData.getScriptPubKey());
         BitcoinNetwork network = configuration.getBitcoinNetwork();
-        BitcoinAddress destAddress = scriptProgram.getDestAddress(network);*/
+        BitcoinAddress destAddress = scriptProgram.getDestAddress(network);
 
         TransactionAddress transactionAddress = new TransactionAddress();
         transactionAddress.setTransactionHash(transactionData.getTransactionHash().hexValue());
         transactionAddress.setTransactionOutputIndex(transactionOutputData.getTransactionOutputIndex());
-        //transactionAddress.setAddress(destAddress.getStringFormat());
-        //transactionAddress.setAddressType(destAddress.getScriptType().getName());
+        transactionAddress.setAddress(destAddress.getStringFormat());
+        transactionAddress.setAddressType(destAddress.getScriptType().getName());
         transactionAddress.setCoinValue(transactionOutputData.getCoinValue().getValue());
         transactionAddress.setSpendStatus(Boolean.FALSE);
         return transactionAddress;

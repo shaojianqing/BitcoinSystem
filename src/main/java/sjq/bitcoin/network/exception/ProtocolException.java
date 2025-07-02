@@ -1,4 +1,4 @@
-package sjq.bitcoin.network.protocol;
+package sjq.bitcoin.network.exception;
 
 public class ProtocolException extends RuntimeException {
 

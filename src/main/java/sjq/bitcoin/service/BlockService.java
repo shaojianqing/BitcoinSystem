@@ -88,4 +88,8 @@ public class BlockService {
         Logger.warn("ignore block data without previous block in the database, block hash:%s", block.getBlockHash());
         return false;
     }
+
+    public boolean updateBlockSyncStatus(Block block, String status) throws Exception {
+        return blockDao.updateBlockSyncStatus(block.getBlockHash(), status);
+    }
 }

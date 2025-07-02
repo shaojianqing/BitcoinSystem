@@ -2,12 +2,12 @@ package sjq.bitcoin.script;
 
 public enum ScriptType {
 
-    P2PKH("pkh", 1),    // pay to pubkey hash (aka pay to address)
-    P2PK("pk", 2),      // pay to pubkey
-    P2SH("sh", 3),      // pay to script hash
-    P2WPKH("wpkh", 4),  // pay to witness pubkey hash
-    P2WSH("wsh", 5),    // pay to witness script hash
-    P2TR("tr", 6);
+    P2PKH("P2PKH", 1),    // pay to pubkey hash (aka pay to address)
+    P2PK("P2PK", 2),      // pay to pubkey
+    P2SH("P2SH", 3),      // pay to script hash
+    P2WPKH("P2WPKH", 4),  // pay to witness pubkey hash
+    P2WSH("P2WSH", 5),    // pay to witness script hash
+    P2TR("P2TR", 6);      // pay to taproot address
 
     private String name;
 

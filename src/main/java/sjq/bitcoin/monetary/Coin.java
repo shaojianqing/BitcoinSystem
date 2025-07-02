@@ -4,7 +4,6 @@ import sjq.bitcoin.utility.ByteUtils;
 
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 public class Coin {
 
