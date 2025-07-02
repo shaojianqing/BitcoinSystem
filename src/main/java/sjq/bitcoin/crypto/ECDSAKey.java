@@ -82,6 +82,4 @@ public class ECDSAKey {
     public void setPublicKey(byte[] publicKey) {
         this.publicKey = publicKey;
     }
-
-
 }

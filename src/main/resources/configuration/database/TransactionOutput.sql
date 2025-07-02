@@ -4,7 +4,7 @@ CREATE TABLE `transaction_output` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `transaction_hash` varchar(100) NOT NULL,
   `script_pubKey` text NOT NULL,
-  `value` bigint NOT NULL,
+  `coin_value` bigint NOT NULL,
   `create_time` datetime NOT NULL,
   `modify_time` datetime NOT NULL,
   PRIMARY KEY (`id`),

@@ -1,6 +1,6 @@
 package sjq.bitcoin.storage.domain;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 public class Transaction {
 
@@ -14,9 +14,9 @@ public class Transaction {
 
     private Long transactionLockTime;
 
-    private Date createTime;
+    private Timestamp createTime;
 
-    private Date modifyTime;
+    private Timestamp modifyTime;
 
     public Long getMessageVersion() {
         return messageVersion;
@@ -58,19 +58,19 @@ public class Transaction {
         this.transactionLockTime = transactionLockTime;
     }
 
-    public Date getCreateTime() {
+    public Timestamp getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(Timestamp createTime) {
         this.createTime = createTime;
     }
 
-    public Date getModifyTime() {
+    public Timestamp getModifyTime() {
         return modifyTime;
     }
 
-    public void setModifyTime(Date modifyTime) {
+    public void setModifyTime(Timestamp modifyTime) {
         this.modifyTime = modifyTime;
     }
 }

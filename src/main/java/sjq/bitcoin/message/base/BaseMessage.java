@@ -1,6 +1,5 @@
 package sjq.bitcoin.message.base;
 
-
 import sjq.bitcoin.configuration.NetworkConfiguration;
 import sjq.bitcoin.hash.Hash;
 import sjq.bitcoin.message.data.NetworkAddress;

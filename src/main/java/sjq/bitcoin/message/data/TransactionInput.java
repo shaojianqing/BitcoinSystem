@@ -47,19 +47,14 @@ public class TransactionInput {
         return transactionInput;
     }
 
-    public ByteBuffer write(ByteBuffer buffer) {
+    public byte[] serialize() {
+        ByteBuffer buffer = ByteBuffer.allocate(messageSize());
+
         buffer.put(fromTransactionHash.serialize());
         ByteUtils.writeInt32LE(transactionOutputIndex, buffer);
         ByteUtils.writeLengthPrefixedBytes(scriptSignature, buffer);
         ByteUtils.writeInt32LE(sequence, buffer);
 
-        return buffer;
-    }
-
-
-    public byte[] serialize() {
-        ByteBuffer buffer = ByteBuffer.allocate(messageSize());
-        buffer = write(buffer);
         return buffer.array();
     }
 

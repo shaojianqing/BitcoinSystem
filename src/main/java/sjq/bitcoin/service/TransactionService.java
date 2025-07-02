@@ -1,7 +1,10 @@
 package sjq.bitcoin.service;
 
 import org.apache.commons.collections4.CollectionUtils;
+import sjq.bitcoin.configuration.NetworkConfiguration;
+import sjq.bitcoin.constant.Constants;
 import sjq.bitcoin.context.Autowire;
+import sjq.bitcoin.hash.Hash;
 import sjq.bitcoin.logger.Logger;
 import sjq.bitcoin.message.data.TransactionLockTime;
 import sjq.bitcoin.monetary.Coin;
@@ -13,10 +16,11 @@ import sjq.bitcoin.storage.dao.*;
 import sjq.bitcoin.storage.domain.*;
 import sjq.bitcoin.utility.HexUtils;
 
-import java.util.Date;
 import java.util.List;
 
 public class TransactionService {
+
+    private NetworkConfiguration configuration;
 
     @Autowire
     private BlockDao blockDao;
@@ -34,10 +38,17 @@ public class TransactionService {
     private TransactionWitnessDao transactionWitnessDao;
 
     @Autowire
-    private TransactionBlockMapDao transactionBlockMapDao;
+    private TransactionBlockDao transactionBlockDao;
 
     @Autowire
-    private TransactionAddressMapDao transactionAddressMapDao;
+    private TransactionAddressDao transactionAddressDao;
+
+    @Autowire
+    private TransactionSpendDao transactionSpendDao;
+
+    public TransactionService() {
+        this.configuration = NetworkConfiguration.getConfiguration();
+    }
 
     public boolean acceptTransaction(TransactionData transaction) {
         return false;
@@ -55,8 +66,8 @@ public class TransactionService {
                 Transaction transaction = buildTransaction(blockInDB, transactionData);
                 transactionDao.saveTransaction(transaction);
 
-                TransactionBlockMap transactionBlockMap = buildTransactionBlockMap(blockInDB, transactionData);
-                transactionBlockMapDao.saveTransactionBlockMap(transactionBlockMap);
+                TransactionBlock transactionBlock = buildTransactionBlockMap(blockInDB, transactionData);
+                transactionBlockDao.saveTransactionBlockMap(transactionBlock);
 
                 List<TransactionInputData> transactionInputDataList = transactionData.getTransactionInputList();
                 if (CollectionUtils.isNotEmpty(transactionInputDataList)) {
@@ -67,8 +78,8 @@ public class TransactionService {
                         TransactionWitness transactionWitness = buildTransactionWitness(transactionData, transactionInputData.getTransactionWitness());
                         transactionWitnessDao.saveTransactionWitness(transactionWitness);
 
-                        TransactionAddressMap transactionAddressMap = buildTransactionAddressMap(transactionData, transactionInputData);
-                        transactionAddressMapDao.saveTransactionAddressMap(transactionAddressMap);
+                        TransactionSpend transactionSpend = buildTransactionSpend(transactionData, transactionInputData);
+                        transactionSpendDao.saveTransactionSpend(transactionSpend);
                     }
                 }
 
@@ -78,8 +89,8 @@ public class TransactionService {
                         TransactionOutput transactionOutput = buildTransactionOutput(transactionData, transactionOutputData);
                         transactionOutputDao.saveTransactionOutput(transactionOutput);
 
-                        TransactionAddressMap transactionAddressMap = buildTransactionAddressMap(transactionData, transactionOutputData);
-                        transactionAddressMapDao.saveTransactionAddressMap(transactionAddressMap);
+                        TransactionAddress transactionAddress = buildTransactionAddress(transactionData, transactionOutputData);
+                        transactionAddressDao.saveTransactionAddressMap(transactionAddress);
                     }
                 }
             }
@@ -97,15 +108,11 @@ public class TransactionService {
         TransactionLockTime transactionLockTime = transactionData.getTransactionLockTime();
         transaction.setTransactionLockTime(transactionLockTime.rawValue());
 
-        Date currentDateTime = new Date();
-        transaction.setCreateTime(currentDateTime);
-        transaction.setModifyTime(currentDateTime);
-
         return transaction;
     }
 
-    private TransactionInput buildTransactionInput(
-            TransactionData transactionData, TransactionInputData transactionInputData) {
+    private TransactionInput buildTransactionInput(TransactionData transactionData,
+                                                   TransactionInputData transactionInputData) {
         TransactionInput transactionInput = new TransactionInput();
         transactionInput.setSequence(transactionInputData.getSequence());
         transactionInput.setTransactionHash(transactionData.getTransactionHash().hexValue());
@@ -113,62 +120,67 @@ public class TransactionService {
         transactionInput.setTransactionOutputIndex(transactionInputData.getTransactionOutputIndex());
         transactionInput.setScriptSignature(HexUtils.formatHex(transactionInputData.getScriptData()));
 
-        Coin coinValue = transactionInputData.getValue();
-        if (coinValue!=null) {
-            transactionInput.setValue(coinValue.getValue());
-        } else {
-            // as for coinbase transaction, the value should be null, set it to be ZERO by default
-            transactionInput.setValue(Coin.ZERO.getValue());
-        }
-
-        Date currentDateTime = new Date();
-        transactionInput.setCreateTime(currentDateTime);
-        transactionInput.setModifyTime(currentDateTime);
-
         return transactionInput;
     }
 
-    private TransactionOutput buildTransactionOutput(
-            TransactionData transactionData, TransactionOutputData transactionOutputData) {
+    private TransactionOutput buildTransactionOutput(TransactionData transactionData,
+                                                     TransactionOutputData transactionOutputData) {
         TransactionOutput transactionOutput = new TransactionOutput();
 
         transactionOutput.setTransactionHash(transactionData.getTransactionHash().hexValue());
         transactionOutput.setScriptPubKey(HexUtils.formatHex(transactionOutputData.getScriptPubKey()));
 
-        Coin coinValue = transactionOutputData.getValue();
-        transactionOutput.setValue(coinValue.getValue());
-
-        Date currentDateTime = new Date();
-        transactionOutput.setCreateTime(currentDateTime);
-        transactionOutput.setModifyTime(currentDateTime);
+        Coin coinValue = transactionOutputData.getCoinValue();
+        transactionOutput.setCoinValue(coinValue.getValue());
 
         return transactionOutput;
     }
 
-    private TransactionWitness buildTransactionWitness(TransactionData transactionData, TransactionWitnessData transactionWitnessData) {
+    private TransactionWitness buildTransactionWitness(TransactionData transactionData,
+                                                       TransactionWitnessData transactionWitnessData) {
         TransactionWitness transactionWitness = new TransactionWitness();
         return transactionWitness;
     }
 
-    private TransactionBlockMap buildTransactionBlockMap(Block block, TransactionData transactionData) {
-        TransactionBlockMap transactionBlockMap = new TransactionBlockMap();
-        transactionBlockMap.setBlockHash(block.getBlockHash());
-        transactionBlockMap.setBlockHeight(block.getBlockHeight());
-        transactionBlockMap.setTransactionHash(transactionData.getTransactionHash().hexValue());
-        transactionBlockMap.setTransactionIndex(transactionData.getTransactionIndex());
+    private TransactionBlock buildTransactionBlockMap(Block block, TransactionData transactionData) {
+        TransactionBlock transactionBlock = new TransactionBlock();
+        transactionBlock.setBlockHash(block.getBlockHash());
+        transactionBlock.setBlockHeight(block.getBlockHeight());
+        transactionBlock.setTransactionHash(transactionData.getTransactionHash().hexValue());
+        transactionBlock.setTransactionIndex(transactionData.getTransactionIndex());
 
-        Date currentDateTime = new Date();
-        transactionBlockMap.setCreateTime(currentDateTime);
-        transactionBlockMap.setModifyTime(currentDateTime);
-
-        return transactionBlockMap;
+        return transactionBlock;
     }
 
-    private TransactionAddressMap buildTransactionAddressMap(TransactionData transactionData, TransactionInputData transactionInputData) {
-        return null;
+    private TransactionSpend buildTransactionSpend(TransactionData transactionData, TransactionInputData transactionInputData) {
+        Hash fromTransactionHash = transactionInputData.getFromTransactionHash();
+        if (Hash.ZERO_HASH.equals(fromTransactionHash) &&
+                Constants.MAX_UNSIGNED_INTEGER.equals(transactionInputData.getTransactionOutputIndex())) {
+            // If it is coinbase transaction input, directly return
+            // null instead of generating transaction spend record
+            return null;
+        } else {
+            TransactionSpend transactionSpend = new TransactionSpend();
+            transactionSpend.setTransactionHash(transactionData.getTransactionHash().hexValue());
+            transactionSpend.setFromTransactionHash(transactionInputData.getFromTransactionHash().hexValue());
+            transactionSpend.setTransactionOutputIndex(transactionInputData.getTransactionOutputIndex());
+            return transactionSpend;
+        }
     }
 
-    private TransactionAddressMap buildTransactionAddressMap(TransactionData transactionData, TransactionOutputData transactionOutputData) {
-        return null;
+    private TransactionAddress buildTransactionAddress(TransactionData transactionData,
+                                                          TransactionOutputData transactionOutputData) throws Exception {
+        /*ScriptProgram scriptProgram = ScriptProgram.parse(transactionOutputData.getScriptPubKey());
+        BitcoinNetwork network = configuration.getBitcoinNetwork();
+        BitcoinAddress destAddress = scriptProgram.getDestAddress(network);*/
+
+        TransactionAddress transactionAddress = new TransactionAddress();
+        transactionAddress.setTransactionHash(transactionData.getTransactionHash().hexValue());
+        transactionAddress.setTransactionOutputIndex(transactionOutputData.getTransactionOutputIndex());
+        //transactionAddress.setAddress(destAddress.getStringFormat());
+        //transactionAddress.setAddressType(destAddress.getScriptType().getName());
+        transactionAddress.setCoinValue(transactionOutputData.getCoinValue().getValue());
+        transactionAddress.setSpendStatus(Boolean.FALSE);
+        return transactionAddress;
     }
 }

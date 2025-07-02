@@ -115,4 +115,14 @@
                 now())
     </insert>
 
+    <update id="sjq.bitcoin.storage.domain.Block.updateBlockSyncStatus" parameterType="java.util.Map">
+        update
+            block
+        set
+            sync_status = #syncStatus#,
+            modify_time = now()
+        where
+            block_hash = #blockHash#
+    </update>
+
 </sqlMapInfo>

@@ -2,7 +2,6 @@ package sjq.bitcoin.service.data;
 
 import sjq.bitcoin.constant.Constants;
 import sjq.bitcoin.hash.Hash;
-import sjq.bitcoin.monetary.Coin;
 
 public class TransactionInputData {
 
@@ -15,8 +14,6 @@ public class TransactionInputData {
     private long transactionOutputIndex;
 
     private byte[] scriptData;
-
-    private Coin value;
 
     private TransactionWitnessData transactionWitness;
 
@@ -76,14 +73,6 @@ public class TransactionInputData {
 
     public void setScriptData(byte[] scriptData) {
         this.scriptData = scriptData;
-    }
-
-    public Coin getValue() {
-        return value;
-    }
-
-    public void setValue(Coin value) {
-        this.value = value;
     }
 
     public TransactionWitnessData getTransactionWitness() {

@@ -4,7 +4,7 @@
     <resultDataMap id="transactionOutputDataMap" class="sjq.bitcoin.storage.domain.TransactionOutput">
         <result property="transactionHash" column="transaction_hash" javaType="java.lang.String" />
         <result property="scriptPubKey" column="script_pubKey" javaType="java.lang.String" />
-        <result property="value" column="value" javaType="java.lang.Long" />
+        <result property="coinValue" column="coin_value" javaType="java.lang.Long" />
         <result property="createTime" column="create_time" javaType="java.sql.Timestamp" />
         <result property="modifyTime" column="modify_time" javaType="java.sql.Timestamp" />
     </resultDataMap>
@@ -14,13 +14,13 @@
             transaction_output(
                 transaction_hash,
                 script_pubKey,
-                value,
+                coin_value,
                 create_time,
                 modify_time)
             values(
                 #transactionHash#,
                 #scriptPubKey#,
-                #value#,
+                #coinValue#,
                 now(),
                 now())
     </insert>

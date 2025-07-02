@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sqlMapInfo namespace="sjq.bitcoin.storage.domain.TransactionWitness">
 
+    <resultDataMap id="transactionSpendDataMap" class="sjq.bitcoin.storage.domain.TransactionWitness">
+        <result property="createTime" column="create_time" javaType="java.sql.Timestamp" />
+        <result property="modifyTime" column="modify_time" javaType="java.sql.Timestamp" />
+    </resultDataMap>
+
+
 </sqlMapInfo>

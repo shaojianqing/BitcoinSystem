@@ -13,22 +13,24 @@ public class TransactionOutput {
 
     private TransactionMessage parentTransaction;
 
-    private Coin value;
+    private Coin coinValue;
 
     private byte[] scriptPubKey;
+
+    private Long transactionOutputIndex;
 
     public static TransactionOutput read(TransactionMessage parentTransaction,
                                          ByteBuffer buffer) throws BufferUnderflowException, ProtocolException {
         TransactionOutput transactionOutput = new TransactionOutput();
         transactionOutput.parentTransaction = parentTransaction;
-        transactionOutput.value = Coin.read(buffer);
+        transactionOutput.coinValue = Coin.read(buffer);
         transactionOutput.scriptPubKey = ByteUtils.readLengthPrefixedBytes(buffer);
 
         return transactionOutput;
     }
 
     public ByteBuffer write(ByteBuffer buffer) throws BufferOverflowException {
-        value.write(buffer);
+        coinValue.write(buffer);
         ByteUtils.writeLengthPrefixedBytes(scriptPubKey, buffer);
         return buffer;
     }
@@ -53,12 +55,12 @@ public class TransactionOutput {
         this.parentTransaction = parentTransaction;
     }
 
-    public Coin getValue() {
-        return value;
+    public Coin getCoinValue() {
+        return coinValue;
     }
 
-    public void setValue(Coin value) {
-        this.value = value;
+    public void setCoinValue(Coin coinValue) {
+        this.coinValue = coinValue;
     }
 
     public byte[] getScriptPubKey() {
@@ -67,5 +69,13 @@ public class TransactionOutput {
 
     public void setScriptPubKey(byte[] scriptPubKey) {
         this.scriptPubKey = scriptPubKey;
+    }
+
+    public Long getTransactionOutputIndex() {
+        return transactionOutputIndex;
+    }
+
+    public void setTransactionOutputIndex(Long transactionOutputIndex) {
+        this.transactionOutputIndex = transactionOutputIndex;
     }
 }

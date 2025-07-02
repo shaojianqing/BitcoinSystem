@@ -136,9 +136,6 @@ public class Blockchain {
     private boolean checkMerkleTreeConsistence(BlockMessage blockMessage) throws IOException {
         MerkleTree merkleTree = MerkleTree.build(blockMessage.getTransactions(), false);
         Hash merkleRoot = merkleTree.getRoot().getNodeHash();
-        if (blockMessage.getMerkleRoot().equals(merkleRoot)) {
-            return true;
-        }
-        return false;
+        return blockMessage.getMerkleRoot().equals(merkleRoot);
     }
 }

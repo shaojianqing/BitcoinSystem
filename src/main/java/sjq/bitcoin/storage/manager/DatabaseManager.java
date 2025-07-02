@@ -42,6 +42,7 @@ public class DatabaseManager {
             initDatasource();
             initSqlMapConfigList();
             initSqlMapClientTemplate();
+            initTransactionTemplate();
         } catch (Exception e) {
             Logger.fatal("database initialization fatal error:%s", e);
             System.exit(-1);
@@ -69,11 +70,12 @@ public class DatabaseManager {
         sqlMapConfigList = new ArrayList<>();
         sqlMapConfigList.add("configuration/mapper/Block.xml");
         sqlMapConfigList.add("configuration/mapper/Transaction.xml");
-        sqlMapConfigList.add("configuration/mapper/TransactionBlockMap.xml");
-        sqlMapConfigList.add("configuration/mapper/TransactionAddressMap.xml");
+        sqlMapConfigList.add("configuration/mapper/TransactionBlock.xml");
         sqlMapConfigList.add("configuration/mapper/TransactionInput.xml");
         sqlMapConfigList.add("configuration/mapper/TransactionOutput.xml");
         sqlMapConfigList.add("configuration/mapper/TransactionWitness.xml");
+        sqlMapConfigList.add("configuration/mapper/TransactionAddress.xml");
+        sqlMapConfigList.add("configuration/mapper/TransactionSpend.xml");
     }
 
     private void initSqlMapClientTemplate() throws Exception {
