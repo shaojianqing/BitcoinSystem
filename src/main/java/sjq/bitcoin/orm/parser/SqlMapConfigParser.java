@@ -7,12 +7,10 @@ import sjq.bitcoin.orm.datamap.ResultDataMap;
 import sjq.bitcoin.orm.exception.SqlTemplateException;
 import sjq.bitcoin.orm.statement.SqlStatement;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 
 public class SqlMapConfigParser {
 	
@@ -52,7 +50,6 @@ public class SqlMapConfigParser {
 				resultDataMap.setClassName(resultMapNode.attributeValue("class"));
 				
 				List<Element> results = resultMapNode.elements("result");
-				
 				if (results!=null && results.size()>0) {					
 					List<PropertyMap> propertyMapList = new ArrayList<PropertyMap>();
 					for (Element resultItemNode:results) {

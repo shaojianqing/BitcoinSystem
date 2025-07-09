@@ -7,12 +7,24 @@
         <result property="address" column="address" javaType="java.lang.String" />
         <result property="addressType" column="address_type" javaType="java.lang.String" />
         <result property="coinValue" column="coin_value" javaType="java.lang.Long" />
-        <result property="spendStatus" column="spend_status" javaType="java.lang.Boolean" />
         <result property="createTime" column="create_time" javaType="java.sql.Timestamp" />
         <result property="modifyTime" column="modify_time" javaType="java.sql.Timestamp" />
     </resultDataMap>
 
-    <insert id="sjq.bitcoin.storage.domain.Transaction.saveTransactionAddressMap"
+    <select id="sjq.bitcoin.storage.domain.Transaction.countTransactionAddress" resultType="java.lang.Long"
+            parameterType="sjq.bitcoin.storage.domain.TransactionAddress">
+        select
+            count(1)
+        from
+            transaction_address
+        where
+            transaction_hash = #transactionHash# and
+            transaction_output_index = #transactionOutputIndex# and
+            address = #address#
+        limit 1
+    </select>
+
+    <insert id="sjq.bitcoin.storage.domain.Transaction.saveTransactionAddress"
             parameterType="sjq.bitcoin.storage.domain.TransactionAddress" >
         insert into
             transaction_address(
@@ -21,7 +33,6 @@
                 address,
                 address_type,
                 coin_value,
-                spend_status,
                 create_time,
                 modify_time)
             values(
@@ -30,7 +41,6 @@
                 #address#,
                 #addressType#,
                 #coinValue#,
-                #spendStatus#,
                 now(),
                 now())
     </insert>

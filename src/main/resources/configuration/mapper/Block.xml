@@ -60,6 +60,18 @@
          limit 1
     </select>
 
+    <select id="sjq.bitcoin.storage.domain.Block.countBlockByHash" resultType="java.lang.Long" parameterType="sjq.bitcoin.storage.domain.Block">
+        select
+            count(1)
+        from
+            block
+        where
+            block_hash = #blockHash# and
+            prev_block_hash = #prevBlockHash# and
+            merkle_root = #merkleRoot#
+        limit 1
+    </select>
+
     <select id="sjq.bitcoin.storage.domain.Block.queryBlockBySyncStatus" resultDataMap="blockDataMap" parameterType="java.util.Map">
         select
             block_hash,
@@ -119,10 +131,11 @@
         update
             block
         set
-            sync_status = #syncStatus#,
+            sync_status = #newSyncStatus#,
             modify_time = now()
         where
-            block_hash = #blockHash#
+            block_hash = #blockHash# and
+            sync_status = #oldSyncStatus#
     </update>
 
 </sqlMapInfo>

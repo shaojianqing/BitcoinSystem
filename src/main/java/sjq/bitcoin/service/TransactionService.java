@@ -19,8 +19,6 @@ import java.util.List;
 
 public class TransactionService {
 
-    private NetworkConfiguration configuration;
-
     @Autowire
     private BlockDao blockDao;
 
@@ -45,10 +43,6 @@ public class TransactionService {
     @Autowire
     private TransactionSpendDao transactionSpendDao;
 
-    public TransactionService() {
-        this.configuration = NetworkConfiguration.getConfiguration();
-    }
-
     public boolean acceptTransaction(TransactionData transaction) {
         return false;
     }
@@ -63,22 +57,58 @@ public class TransactionService {
         if (CollectionUtils.isNotEmpty(transactionList)) {
             for (TransactionData transactionData:transactionList) {
                 Transaction transaction = buildTransaction(blockInDB, transactionData);
-                transactionDao.saveTransaction(transaction);
+                if (!transactionDao.existTransaction(transaction)) {
+                    boolean success = transactionDao.saveTransaction(transaction);
+                    if (success) {
+                        Logger.info("save transaction successfully with transaction hash:%s", transaction.getTransactionHash());
+                    } else {
+                        return false;
+                    }
+                }
 
                 TransactionBlock transactionBlock = buildTransactionBlockMap(blockInDB, transactionData);
-                transactionBlockDao.saveTransactionBlockMap(transactionBlock);
+                if (!transactionBlockDao.existTransactionBlock(transactionBlock)) {
+                    boolean success = transactionBlockDao.saveTransactionBlock(transactionBlock);
+                    if (success) {
+                        Logger.info("save transaction block successfully with block hash:%s, transaction hash:%s",
+                                transactionBlock.getBlockHash(), transactionBlock.getTransactionHash());
+                    } else {
+                        return false;
+                    }
+                }
 
                 List<TransactionInputData> transactionInputDataList = transactionData.getTransactionInputList();
                 if (CollectionUtils.isNotEmpty(transactionInputDataList)) {
                     for (TransactionInputData transactionInputData:transactionInputDataList) {
                         TransactionInput transactionInput = buildTransactionInput(transactionData, transactionInputData);
-                        transactionInputDao.saveTransactionInput(transactionInput);
+                        if (!transactionInputDao.existTransactionInput(transactionInput)) {
+                            boolean success = transactionInputDao.saveTransactionInput(transactionInput);
+                            if (success) {
+                                Logger.info("save transaction input successfully with transaction hash:%s, from transaction hash:%s",
+                                       transactionInput.getTransactionHash(), transactionInput.getFromTransactionHash());
+                            } else {
+                                return false;
+                            }
+                        }
 
                         TransactionWitness transactionWitness = buildTransactionWitness(transactionData, transactionInputData.getTransactionWitness());
-                        transactionWitnessDao.saveTransactionWitness(transactionWitness);
+                        if (!transactionWitnessDao.exist(transactionWitness)) {
+                            transactionWitnessDao.saveTransactionWitness(transactionWitness);
+                        }
 
                         TransactionSpend transactionSpend = buildTransactionSpend(transactionData, transactionInputData);
-                        transactionSpendDao.saveTransactionSpend(transactionSpend);
+
+                        if (transactionSpend != null) {
+                            if (!transactionSpendDao.existTransactionSpend(transactionSpend)) {
+                                boolean success = transactionSpendDao.saveTransactionSpend(transactionSpend);
+                                if (success) {
+                                    Logger.info("save transaction spend successfully with transaction hash:%s, from transaction hash:%s",
+                                            transactionSpend.getTransactionHash(), transactionSpend.getFromTransactionHash());
+                                } else {
+                                    return false;
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -86,10 +116,26 @@ public class TransactionService {
                 if (CollectionUtils.isNotEmpty(transactionOutputDataList)) {
                     for (TransactionOutputData transactionOutputData:transactionOutputDataList) {
                         TransactionOutput transactionOutput = buildTransactionOutput(transactionData, transactionOutputData);
-                        transactionOutputDao.saveTransactionOutput(transactionOutput);
+                        if (!transactionOutputDao.existTransactionOutput(transactionOutput)) {
+                            boolean success = transactionOutputDao.saveTransactionOutput(transactionOutput);
+                            if (success) {
+                                Logger.info("save transaction output successfully with transaction hash:%s, script pubKey:%s",
+                                        transactionOutput.getTransactionHash(), transactionOutput.getScriptPubKey());
+                            } else {
+                                return false;
+                            }
+                        }
 
                         TransactionAddress transactionAddress = buildTransactionAddress(transactionData, transactionOutputData);
-                        transactionAddressDao.saveTransactionAddressMap(transactionAddress);
+                        if (!transactionAddressDao.existTransactionAddress(transactionAddress)) {
+                            boolean success = transactionAddressDao.saveTransactionAddress(transactionAddress);
+                            if (success) {
+                                Logger.info("save transaction address successfully with transaction hash:%s, address:%s",
+                                        transactionAddress.getTransactionHash(), transactionAddress.getAddress());
+                            } else {
+                                return false;
+                            }
+                        }
                     }
                 }
             }
@@ -170,7 +216,7 @@ public class TransactionService {
     private TransactionAddress buildTransactionAddress(TransactionData transactionData,
                                                           TransactionOutputData transactionOutputData) throws Exception {
         ScriptProgram scriptProgram = ScriptProgram.parse(transactionOutputData.getScriptPubKey());
-        BitcoinNetwork network = configuration.getBitcoinNetwork();
+        BitcoinNetwork network = NetworkConfiguration.getConfiguration().getBitcoinNetwork();
         BitcoinAddress destAddress = scriptProgram.getDestAddress(network);
 
         TransactionAddress transactionAddress = new TransactionAddress();
@@ -179,7 +225,6 @@ public class TransactionService {
         transactionAddress.setAddress(destAddress.getStringFormat());
         transactionAddress.setAddressType(destAddress.getScriptType().getName());
         transactionAddress.setCoinValue(transactionOutputData.getCoinValue().getValue());
-        transactionAddress.setSpendStatus(Boolean.FALSE);
         return transactionAddress;
     }
 }

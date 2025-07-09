@@ -125,6 +125,12 @@ public class Blockchain {
             boolean success = transactionService.batchSaveTransactionData(block, transactionList);
             if (success) {
                 Logger.info("batch save transaction data list into database successfully with block hash:%s", block.getBlockHash());
+                success = blockService.updateBlockSyncStatus(block, Block.STATUS_SYNC_HEADER, Block.STATUS_SYNC_TRANSACTION);
+                if (success) {
+                    Logger.info("update block sync status into database successfully with block hash:%s", block.getBlockHash());
+                } else {
+                    Logger.warn("fail to update block sync data into database with block hash:%s", block.getBlockHash());
+                }
             } else {
                 Logger.warn("fail to batch save transaction data list into database with block hash:%s", block.getBlockHash());
             }

@@ -12,4 +12,8 @@ public class TransactionWitnessDao {
     public boolean saveTransactionWitness(TransactionWitness transactionWitness) {
         return false;
     }
+
+    public boolean exist(TransactionWitness transactionWitness) {
+        return false;
+    }
 }

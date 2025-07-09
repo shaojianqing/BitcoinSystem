@@ -11,6 +11,17 @@
         <result property="modifyTime" column="modify_time" javaType="java.sql.Timestamp" />
     </resultDataMap>
 
+    <select id="sjq.bitcoin.storage.domain.Transaction.countTransaction" resultType="java.lang.Long" parameterType="sjq.bitcoin.storage.domain.Transaction">
+        select
+            count(1)
+        from
+            transaction
+        where
+            block_hash = #blockHash# and
+            transaction_hash = #transactionHash#
+        limit 1
+    </select>
+
     <insert id="sjq.bitcoin.storage.domain.Transaction.saveTransaction" parameterType="sjq.bitcoin.storage.domain.Transaction" >
         insert into
             transaction(

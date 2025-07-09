@@ -1,5 +1,6 @@
 package sjq.bitcoin.script;
 
+import sjq.bitcoin.crypto.ECDSAKey;
 import sjq.bitcoin.service.data.BitcoinAddress;
 import sjq.bitcoin.service.data.LegacyAddress;
 import sjq.bitcoin.service.data.SegwitAddress;
@@ -84,6 +85,10 @@ public class ScriptProgram {
         if (isP2SH()) {
             byte[] addressBytes = extractHashFromP2SH();
             return LegacyAddress.fromScriptHash(network, addressBytes);
+        } else if (isP2PK()) {
+            byte[] publicKey = extractKeyFromP2PK();
+            ECDSAKey ecdsaKey = ECDSAKey.getInstanceFromPublicKey(publicKey);
+            return ecdsaKey.generateAddress(network, ScriptType.P2PKH);
         } else if (isP2PKH()) {
             byte[] addressBytes = extractHashFromP2PKH();
             return LegacyAddress.fromPubKeyHash(network, addressBytes);

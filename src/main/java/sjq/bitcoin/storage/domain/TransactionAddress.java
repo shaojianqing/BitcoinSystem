@@ -16,8 +16,6 @@ public class TransactionAddress {
 
     private Long coinValue;
 
-    private Boolean spendStatus;
-
     private Timestamp createTime;
 
     private Timestamp modifyTime;
@@ -68,14 +66,6 @@ public class TransactionAddress {
 
     public void setCoinValue(Long coinValue) {
         this.coinValue = coinValue;
-    }
-
-    public Boolean getSpendStatus() {
-        return spendStatus;
-    }
-
-    public void setSpendStatus(Boolean spendStatus) {
-        this.spendStatus = spendStatus;
     }
 
     public Timestamp getCreateTime() {
