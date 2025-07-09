@@ -6,13 +6,20 @@ import sjq.bitcoin.storage.domain.TransactionBlock;
 
 public class TransactionBlockDao {
 
-    private final static String SAVE_TRANSACTION_BLOCK_MAP = "sjq.bitcoin.storage.domain.Transaction.saveTransactionBlockMap";
+    private final static String SAVE_TRANSACTION_BLOCK = "sjq.bitcoin.storage.domain.Transaction.saveTransactionBlock";
+
+    private final static String COUNT_TRANSACTION_BLOCK = "sjq.bitcoin.storage.domain.Transaction.countTransactionBlock";
 
     @Autowire
     private SqlMapClientTemplate sqlMapClientTemplate;
 
-    public boolean saveTransactionBlockMap(TransactionBlock transactionBlock) throws Exception {
-        int count = sqlMapClientTemplate.execute(SAVE_TRANSACTION_BLOCK_MAP, transactionBlock);
+    public boolean saveTransactionBlock(TransactionBlock transactionBlock) throws Exception {
+        int count = sqlMapClientTemplate.execute(SAVE_TRANSACTION_BLOCK, transactionBlock);
         return count == 1;
+    }
+
+    public boolean existTransactionBlock(TransactionBlock transactionBlock) throws Exception {
+        Long count = (Long)sqlMapClientTemplate.queryForObject(COUNT_TRANSACTION_BLOCK, transactionBlock);
+        return (count == 1);
     }
 }

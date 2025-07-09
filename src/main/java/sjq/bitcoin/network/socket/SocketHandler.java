@@ -14,9 +14,7 @@ import java.nio.ByteBuffer;
 
 public class SocketHandler {
 
-    private NetworkConfiguration configuration = NetworkConfiguration.getConfiguration();
-
-    private PeerNode peerNode;
+    private final PeerNode peerNode;
 
     private byte[] largeMessageBuffer;
 
@@ -106,7 +104,7 @@ public class SocketHandler {
 
     public void seekPastMagicPosition(ByteBuffer buffer) throws BufferUnderflowException {
         int magicCursor = 3;  // Which byte of the magic we're looking for currently.
-        int magicCode = configuration.getMagicCode();
+        int magicCode = NetworkConfiguration.getConfiguration().getMagicCode();
         while (true) {
             byte b = buffer.get();
             // We're looking for a run of bytes that is the same as the packet magic but we want to ignore partial

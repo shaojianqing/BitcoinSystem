@@ -15,6 +15,8 @@ public class BlockDao {
 
     private final static String GET_BLOCK_BY_HASH = "sjq.bitcoin.storage.domain.Block.getBlockByHash";
 
+    private final static String COUNT_BLOCK_BY_HASH = "sjq.bitcoin.storage.domain.Block.countBlockByHash";
+
     private final static String QUERY_BLOCK_BY_SYNC_STATUS = "sjq.bitcoin.storage.domain.Block.queryBlockBySyncStatus";
 
     private final static String SAVE_BLOCK = "sjq.bitcoin.storage.domain.Block.saveBlock";
@@ -38,7 +40,7 @@ public class BlockDao {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("syncStatus", status);
         paramMap.put("limitSize", limit);
-        return sqlMapClientTemplate.queryForList(QUERY_BLOCK_BY_SYNC_STATUS, paramMap);
+        return (List<Block>)sqlMapClientTemplate.queryForList(QUERY_BLOCK_BY_SYNC_STATUS, paramMap);
     }
 
     public Page<Block> searchBlockPage(Integer blockHeight, String blockHash, Integer startTimestamp, Integer endTimestamp) {
@@ -50,6 +52,11 @@ public class BlockDao {
         return count == 1;
     }
 
+    public boolean existBlock(Block block) throws Exception {
+        Long count = (Long)sqlMapClientTemplate.queryForObject(COUNT_BLOCK_BY_HASH, block);
+        return (count == 1);
+    }
+
     public boolean updateBlockHeight(String blockHash, Long blockHeight) throws Exception {
         Map<String, Object> param = new HashMap<>();
         param.put("blockHash", blockHash);
@@ -58,10 +65,11 @@ public class BlockDao {
         return count==1;
     }
 
-    public boolean updateBlockSyncStatus(String blockHash, String status) throws Exception {
+    public boolean updateBlockSyncStatus(String blockHash, String oldStatus, String newStatus) throws Exception {
         Map<String, Object> param = new HashMap<>();
         param.put("blockHash", blockHash);
-        param.put("syncStatus", status);
+        param.put("oldSyncStatus", oldStatus);
+        param.put("newSyncStatus", newStatus);
         int count = sqlMapClientTemplate.execute(UPDATE_BLOCK_SYNC_STATUS, param);
         return count==1;
     }

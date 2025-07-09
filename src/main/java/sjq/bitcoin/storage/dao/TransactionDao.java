@@ -9,6 +9,8 @@ public class TransactionDao {
 
     private final static String SAVE_TRANSACTION = "sjq.bitcoin.storage.domain.Transaction.saveTransaction";
 
+    private final static String COUNT_TRANSACTION = "sjq.bitcoin.storage.domain.Transaction.countTransaction";
+
     @Autowire
     private SqlMapClientTemplate sqlMapClientTemplate;
 
@@ -23,5 +25,10 @@ public class TransactionDao {
     public boolean saveTransaction(Transaction transaction) throws Exception {
         int count = sqlMapClientTemplate.execute(SAVE_TRANSACTION, transaction);
         return count == 1;
+    }
+
+    public boolean existTransaction(Transaction transaction) throws Exception {
+        Long count = (Long)sqlMapClientTemplate.queryForObject(COUNT_TRANSACTION, transaction);
+        return (count == 1);
     }
 }

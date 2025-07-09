@@ -29,6 +29,6 @@ public class Context {
         } catch (Exception e) {
             Logger.fatal("can not initiate instance with class:%s, exception:%s", clazz.getName(), e);
         }
-        return null;
+        throw new RuntimeException("can not build the expected class with class name:" + clazz.getName());
     }
 }

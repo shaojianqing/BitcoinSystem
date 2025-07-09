@@ -16,9 +16,9 @@ public class BlockService {
 
     private static final NetworkConfiguration configuration = NetworkConfiguration.getConfiguration();
 
-    private Long GENESIS_BLOCK_HEIGHT = 0l;
+    private static final Integer GENESIS_BLOCK_HEIGHT = 0;
 
-    private Integer BLOCK_BATCH_LIMIT = 10;
+    private static final Integer BLOCK_BATCH_LIMIT = 10;
 
     @Autowire
     private BlockDao blockDao;
@@ -39,10 +39,6 @@ public class BlockService {
             Logger.fatal("can not initiate genesis block exception:%s", e);
             System.exit(-1);
         }
-    }
-
-    public Block getGenesisBlock() {
-        return GENESIS_BLOCK;
     }
 
     public Block getBestBlock() throws Exception {
@@ -70,8 +66,8 @@ public class BlockService {
     public boolean saveBlock(Block block) throws Exception {
         // If the block does exist in the database, directly ignore the block data. This may
         // happen when receiving repeated block header message from other p2p node.
-        Block existBlock = getBlockByHash(block.getBlockHash());
-        if (existBlock != null) {
+        boolean exist = blockDao.existBlock(block);
+        if (exist) {
             Logger.info("ignore exist block data in the database, block hash:%s", block.getBlockHash());
             return false;
         }
@@ -89,7 +85,7 @@ public class BlockService {
         return false;
     }
 
-    public boolean updateBlockSyncStatus(Block block, String status) throws Exception {
-        return blockDao.updateBlockSyncStatus(block.getBlockHash(), status);
+    public boolean updateBlockSyncStatus(Block block, String oldStatus, String newStatus) throws Exception {
+        return blockDao.updateBlockSyncStatus(block.getBlockHash(), oldStatus, newStatus);
     }
 }

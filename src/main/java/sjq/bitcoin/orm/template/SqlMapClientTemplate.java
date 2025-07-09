@@ -92,21 +92,32 @@ public class SqlMapClientTemplate {
 
 			return sqlStatement.executeQuerySql(dataSource, parameter, resultSet -> {
 				ResultDataMap resultDataMap = sqlStatement.getResultDataMap();
-				String className = resultDataMap.getClassName();
+				String className;
+				if (resultDataMap != null) {
+					className = resultDataMap.getClassName();
+				} else if (StringUtils.isNotBlank(sqlStatement.getResultType())) {
+					className = sqlStatement.getResultType();
+				} else {
+					throw new SqlTemplateException("Both ResultDataMap and ResultType are empty, Can not find Bean Class Name Definition!");
+				}
 
-				if (StringUtils.isNotBlank(className)) {
+				if (resultDataMap != null) {
 					Class<?> clazz = Class.forName(className);
 					Object data = clazz.newInstance();
 					Map<String, Method> methodMap = ClassUtil.prepareMethodMap(clazz);
 					List<PropertyMap> propertyMapList = resultDataMap.getPropertyList();
 					if (resultSet.next()) {
-						for (PropertyMap propertyMap:propertyMapList) {
+						for (PropertyMap propertyMap : propertyMapList) {
 							prepareDataValue(resultSet, data, methodMap, propertyMap);
 						}
 						return data;
 					}
-				} else {
-					throw new SqlTemplateException("Can not find Bean Class Name Definition!");
+				} else if (StringUtils.isNotBlank(sqlStatement.getResultType())) {
+					Object data = null;
+					if (resultSet.next()) {
+						data = prepareDataValue(resultSet, className);
+					}
+					return data;
 				}
 
 				return null;
@@ -155,7 +166,28 @@ public class SqlMapClientTemplate {
 			setDataValue(value, data, methodMap, propertyMap);
 		}
 	}
-	
+
+	private Object prepareDataValue(ResultSet resultSet, String javaType) throws SQLException, SqlTemplateException {
+		if (TypeUtil.TYPE_STRING.equals(javaType)) {
+			return resultSet.getString(1);
+		} else if (TypeUtil.TYPE_DATE.equals(javaType)) {
+			return resultSet.getDate(1);
+		} else if (TypeUtil.TYPE_DOUBLE.equals(javaType)) {
+			return resultSet.getDouble(1);
+		} else if (TypeUtil.TYPE_SHORT.equals(javaType)) {
+			return resultSet.getShort(1);
+		} else if (TypeUtil.TYPE_FLOAT.equals(javaType)) {
+			return resultSet.getFloat(1);
+		} else if (TypeUtil.TYPE_INTEGER.equals(javaType)) {
+			return resultSet.getInt(1);
+		} else if (TypeUtil.TYPE_LONG.equals(javaType)) {
+			return resultSet.getLong(1);
+		} else if (TypeUtil.TYPE_TIMESTAMP.equals(javaType)) {
+			return resultSet.getTimestamp(1);
+		}
+		throw new SqlTemplateException(String.format("Can not map the correct java type:%s", javaType));
+	}
+
 	private void setDataValue(Object value, Object data, Map<String, Method> methodMap, PropertyMap propertyMap)
 			throws IllegalAccessException, InvocationTargetException {
 		String writerMethodName = ClassUtil.getWriteMethodName(propertyMap.getPropertyName());

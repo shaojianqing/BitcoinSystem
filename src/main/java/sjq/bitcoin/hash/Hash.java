@@ -56,6 +56,11 @@ public class Hash {
         return ByteUtils.reverseBytes(value);
     }
 
+    public static byte[] calculate(byte[] content) {
+        MessageDigest digest = newSha256Digest();
+        return digest.digest(content);
+    }
+
     public static byte[] calculateTwice(byte[] content) {
         MessageDigest digest = newSha256Digest();
         return digest.digest(digest.digest(content));

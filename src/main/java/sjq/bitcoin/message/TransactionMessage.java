@@ -10,6 +10,7 @@ import sjq.bitcoin.utility.ByteUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,9 +40,35 @@ public class TransactionMessage extends BaseMessage implements Message {
     }
 
     public static TransactionMessage read(ByteBuffer buffer,
-                                          int protocolVersion) throws Exception {
+                                          int protocolVersion) throws BufferUnderflowException, ProtocolException {
         TransactionMessage transaction = new TransactionMessage(protocolVersion);
-        transaction.deserializeMessage(buffer.array());
+        transaction.messageVersion = ByteUtils.readUint32LE(buffer);
+        transaction.readTransactionInputs(buffer);
+        byte hasWitnessFlag = 0x00;
+        if (transaction.transactionInputs.size()==0 && allowTransactionWitness(protocolVersion)) {
+            hasWitnessFlag = ByteUtils.readByte(buffer);
+            if (hasWitnessFlag!=0) {
+                transaction.readTransactionInputs(buffer);
+                transaction.readTransactionOutputs(buffer);
+            } else {
+                transaction.transactionOutputs = new ArrayList<>();
+            }
+        } else {
+            transaction.readTransactionOutputs(buffer);
+        }
+
+        if ((hasWitnessFlag&0x01)!=0 && allowTransactionWitness(protocolVersion)) {
+            hasWitnessFlag^=0x01;
+            transaction.readTransactionWitness(buffer);
+        }
+
+        if (hasWitnessFlag!=0x00) {
+            throw new ProtocolException("unknown transaction optional data");
+        }
+
+        long lockTimeValue = ByteUtils.readUint32LE(buffer);
+        transaction.transactionLockTime = TransactionLockTime.of(lockTimeValue);
+
         return transaction;
     }
 
@@ -134,38 +161,6 @@ public class TransactionMessage extends BaseMessage implements Message {
 
         ByteUtils.writeInt32LE(transactionLockTime.rawValue(), outputStream);
         return outputStream;
-    }
-
-    @Override
-    public void deserializeMessage(byte[] data) throws Exception {
-        ByteBuffer buffer = ByteBuffer.wrap(data);
-
-        this.messageVersion = ByteUtils.readUint32LE(buffer);
-        this.readTransactionInputs(buffer);
-        byte hasWitnessFlag = 0x00;
-        if (this.transactionInputs.size()==0 && allowTransactionWitness(protocolVersion)) {
-            hasWitnessFlag = ByteUtils.readByte(buffer);
-            if (hasWitnessFlag!=0) {
-                this.readTransactionInputs(buffer);
-                this.readTransactionOutputs(buffer);
-            } else {
-                this.transactionOutputs = new ArrayList<>();
-            }
-        } else {
-            this.readTransactionOutputs(buffer);
-        }
-
-        if ((hasWitnessFlag&0x01)!=0 && allowTransactionWitness(protocolVersion)) {
-            hasWitnessFlag^=0x01;
-            this.readTransactionWitness(buffer);
-        }
-
-        if (hasWitnessFlag!=0x00) {
-            throw new ProtocolException("unknown transaction optional data");
-        }
-
-        long lockTimeValue = ByteUtils.readUint32LE(buffer);
-        this.transactionLockTime = TransactionLockTime.of(lockTimeValue);
     }
 
     public long getMessageVersion() {
