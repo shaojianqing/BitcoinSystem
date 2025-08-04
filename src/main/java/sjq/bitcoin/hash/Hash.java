@@ -15,11 +15,11 @@ public class Hash {
 
     public static final Hash ZERO_HASH = wrap(new byte[HASH_LENGTH]);
 
-    private byte[] value;
+    private final byte[] value;
 
     private Hash(byte[] rawBytes) {
         checkHash(rawBytes);
-        value = rawBytes;
+        this.value = rawBytes;
     }
 
     private void checkHash(byte[] rawBytes) {

@@ -13,10 +13,16 @@ public class Coin {
 
     public static Coin ONE = new Coin(ONE_COIN);
 
+    public static Coin NEGATIVE = new Coin(-1);
+
     private long value;
 
-    public Coin(long value) {
+    private Coin(long value) {
         this.value = value;
+    }
+
+    public static Coin of(long value) {
+        return new Coin(value);
     }
 
     public static Coin read(ByteBuffer buffer) throws BufferUnderflowException {

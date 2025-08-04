@@ -31,7 +31,7 @@ public abstract class ItemListMessage extends BaseMessage {
     }
 
     @Override
-    protected byte[] serializeMessage() throws IOException {
+    public byte[] serializeMessage() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         VariableInteger itemCount = VariableInteger.of(inventoryItemList.size());
         outputStream.write(itemCount.serialize());

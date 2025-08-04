@@ -55,7 +55,7 @@ public abstract class BaseMessage implements Message {
         return outputStream.toByteArray();
     }
 
-    protected byte[] serializeMessage() throws IOException {
+    public byte[] serializeMessage() throws IOException {
         return new byte[0];
     }
 

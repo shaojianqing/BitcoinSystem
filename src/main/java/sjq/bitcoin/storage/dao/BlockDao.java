@@ -25,6 +25,8 @@ public class BlockDao {
 
     private final static String UPDATE_BLOCK_SYNC_STATUS = "sjq.bitcoin.storage.domain.Block.updateBlockSyncStatus";
 
+    private final static String UPDATE_BLOCK_VERIFY_STATUS = "sjq.bitcoin.storage.domain.Block.updateBlockVerifyStatus";
+
     @Autowire
     private SqlMapClientTemplate sqlMapClientTemplate;
 
@@ -71,6 +73,15 @@ public class BlockDao {
         param.put("oldSyncStatus", oldStatus);
         param.put("newSyncStatus", newStatus);
         int count = sqlMapClientTemplate.execute(UPDATE_BLOCK_SYNC_STATUS, param);
+        return count==1;
+    }
+
+    public boolean updateBlockVerifyStatus(String blockHash, String oldStatus, String newStatus) throws Exception {
+        Map<String, Object> param = new HashMap<>();
+        param.put("blockHash", blockHash);
+        param.put("oldVerifyStatus", oldStatus);
+        param.put("newVerifyStatus", newStatus);
+        int count = sqlMapClientTemplate.execute(UPDATE_BLOCK_VERIFY_STATUS, param);
         return count==1;
     }
 }

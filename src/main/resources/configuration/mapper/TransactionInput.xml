@@ -25,6 +25,23 @@
         limit 1
     </select>
 
+    <select id="sjq.bitcoin.storage.domain.Transaction.queryTransactionInputList"
+            resultDataMap="transactionInputDataMap" parameterType="java.util.Map">
+        select
+            transaction_hash,
+            from_transaction_hash,
+            sequence,
+            transaction_output_index,
+            script_signature,
+            create_time,
+            modify_time
+        from
+            transaction_input
+        where
+            transaction_hash = #transactionHash#
+        limit 1
+    </select>
+
     <insert id="sjq.bitcoin.storage.domain.Transaction.saveTransactionInput"
             parameterType="sjq.bitcoin.storage.domain.TransactionInput" >
         insert into

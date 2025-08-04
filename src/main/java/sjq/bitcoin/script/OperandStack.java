@@ -27,4 +27,8 @@ public class OperandStack {
         stack.peek();
         return true;
     }
+
+    public int size() {
+        return stack.size();
+    }
 }

@@ -9,4 +9,8 @@ public class TransactionWitnessConvertor {
         TransactionWitnessData transactionWitnessData = new TransactionWitnessData();
         return transactionWitnessData;
     }
+
+    public static TransactionWitness convertTransactionWitnessFromData(TransactionWitnessData transactionWitnessData) {
+        return new TransactionWitness();
+    }
 }

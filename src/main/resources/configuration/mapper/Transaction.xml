@@ -7,11 +7,13 @@
         <result property="blockHeight" column="block_height" javaType="java.lang.Long" />
         <result property="blockHash" column="block_hash" javaType="java.lang.String" />
         <result property="transactionLockTime" column="transaction_lock_time" javaType="java.lang.Long" />
+        <result property="verifyStatus" column="verify_status" javaType="java.lang.String" />
         <result property="createTime" column="create_time" javaType="java.sql.Timestamp" />
         <result property="modifyTime" column="modify_time" javaType="java.sql.Timestamp" />
     </resultDataMap>
 
-    <select id="sjq.bitcoin.storage.domain.Transaction.countTransaction" resultType="java.lang.Long" parameterType="sjq.bitcoin.storage.domain.Transaction">
+    <select id="sjq.bitcoin.storage.domain.Transaction.countTransaction" resultType="java.lang.Long"
+            parameterType="sjq.bitcoin.storage.domain.Transaction">
         select
             count(1)
         from
@@ -30,6 +32,7 @@
                 block_height,
                 block_hash,
                 transaction_lock_time,
+                verify_status,
                 create_time,
                 modify_time)
             values(
@@ -38,6 +41,7 @@
                 #blockHeight#,
                 #blockHash#,
                 #transactionLockTime#,
+                #verifyStatus#,
                 now(),
                 now())
     </insert>

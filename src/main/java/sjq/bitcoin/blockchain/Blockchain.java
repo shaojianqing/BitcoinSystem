@@ -2,7 +2,9 @@ package sjq.bitcoin.blockchain;
 
 import sjq.bitcoin.context.Autowire;
 import sjq.bitcoin.core.task.BlockSyncTask;
+import sjq.bitcoin.core.task.BlockVerifyTask;
 import sjq.bitcoin.core.task.TransactionSyncTask;
+import sjq.bitcoin.core.task.TransactionVerifyTask;
 import sjq.bitcoin.hash.Hash;
 import sjq.bitcoin.logger.Logger;
 import sjq.bitcoin.merkle.MerkleTree;
@@ -25,15 +27,27 @@ public class Blockchain {
 
     private static final long SYNC_TASK_DELAY = 20000;
 
+    private static final long VERIFY_TASK_DELAY = 10000;
+
     private static final long SYNC_TASK_PERIOD = 20000;
+
+    private static final long VERIFY_TASK_PERIOD = 10000;
 
     private static final String BLOCK_SYNC_TIMER = "BlockSyncTimer";
 
+    private static final String BLOCK_VERIFY_TIMER = "BlockVerifyTimer";
+
     private static final String TRANSACTION_SYNC_TIMER = "TransactionSyncTimer";
+
+    private static final String TRANSACTION_VERIFY_TIMER = "TransactionVerifyTimer";
 
     private final Timer blockSyncTaskTimer;
 
+    private final Timer blockVerifyTaskTimer;
+
     private final Timer transactionSyncTaskTimer;
+
+    private final Timer transactionVerifyTaskTimer;
 
     @Autowire
     private PeerManager peerManager;
@@ -48,16 +62,28 @@ public class Blockchain {
     private BlockSyncTask blockSyncTask;
 
     @Autowire
+    private BlockVerifyTask blockVerifyTask;
+
+    @Autowire
     private TransactionSyncTask transactionSyncTask;
+
+    @Autowire
+    private TransactionVerifyTask transactionVerifyTask;
 
     public Blockchain() {
         blockSyncTaskTimer = new Timer(BLOCK_SYNC_TIMER);
+        blockVerifyTaskTimer = new Timer(BLOCK_VERIFY_TIMER);
+
         transactionSyncTaskTimer = new Timer(TRANSACTION_SYNC_TIMER);
+        transactionVerifyTaskTimer = new Timer(TRANSACTION_VERIFY_TIMER);
     }
 
     public void start() {
         blockSyncTaskTimer.schedule(blockSyncTask, SYNC_TASK_DELAY, SYNC_TASK_PERIOD);
+        blockVerifyTaskTimer.schedule(blockVerifyTask, VERIFY_TASK_DELAY, VERIFY_TASK_PERIOD);
+
         transactionSyncTaskTimer.schedule(transactionSyncTask, SYNC_TASK_DELAY, SYNC_TASK_PERIOD);
+        transactionVerifyTaskTimer.schedule(transactionVerifyTask, VERIFY_TASK_DELAY, VERIFY_TASK_PERIOD);
     }
 
     public Long getBestBlockHeight() throws Exception {
@@ -122,7 +148,14 @@ public class Blockchain {
             List<TransactionData> transactionList = TransactionConvertor.
                     convertTransactionDataFromMessage(blockMessage.getTransactions());
 
-            boolean success = transactionService.batchSaveTransactionData(block, transactionList);
+            boolean success = blockService.updateBlockVerifyStatus(block, Block.STATUS_UN_VERIFY_HEADER, Block.STATUS_VERIFY_HEADER);
+            if (success) {
+                Logger.info("update block verify status into database successfully with block hash:%s", block.getBlockHash());
+            } else {
+                Logger.warn("fail to update block verify data into database with block hash:%s", block.getBlockHash());
+            }
+
+            success = transactionService.batchSaveTransactionData(block, transactionList);
             if (success) {
                 Logger.info("batch save transaction data list into database successfully with block hash:%s", block.getBlockHash());
                 success = blockService.updateBlockSyncStatus(block, Block.STATUS_SYNC_HEADER, Block.STATUS_SYNC_TRANSACTION);

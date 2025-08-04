@@ -1,6 +1,7 @@
 package sjq.bitcoin.script;
 
 import sjq.bitcoin.crypto.ECDSAKey;
+import sjq.bitcoin.crypto.transaction.SignatureContext;
 import sjq.bitcoin.service.data.BitcoinAddress;
 import sjq.bitcoin.service.data.LegacyAddress;
 import sjq.bitcoin.service.data.SegwitAddress;
@@ -9,34 +10,68 @@ import sjq.bitcoin.utility.HexUtils;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class ScriptProgram {
 
-    private List<Instruction> instructions = new ArrayList<>();
+    private final List<Instruction> instructions;
 
-    public static ScriptProgram parse(byte[] scriptData) throws Exception {
+    private SignatureContext signatureContext;
+
+    private ScriptProgram(List<Instruction> instructions) {
+        this.instructions = instructions;
+    }
+
+    public static ScriptProgram build() {
+        return new ScriptProgram(null);
+    }
+
+    public static ScriptProgram build(byte[] scriptData) throws Exception {
+        List<Instruction> instructions = new ArrayList<>();
+        ScriptProgram scriptProgram = new ScriptProgram(instructions);
 
         ByteBuffer scriptBuffer = ByteBuffer.wrap(scriptData);
-        ScriptProgram program = new ScriptProgram();
-
-        List<Instruction> instructions = new ArrayList<>();
         while(scriptBuffer.position()<scriptBuffer.limit()) {
             byte byteCode = scriptBuffer.get();
-            short operCode = (short)(byteCode & 0xFF);
-            ScriptOpCode opCode = ScriptOpCode.getScriptOpCodeByCode(operCode);
-            Instruction instruction = InstructionTable.newInstructionByOpCode(opCode);
+            short operationCode = (short)(byteCode & 0xFF);
+            ScriptOpCode opCode = ScriptOpCode.getScriptOpCodeByCode(operationCode);
+            Instruction instruction = InstructionTable.newInstructionByOpCode(opCode, scriptProgram);
             instruction.fetch(scriptBuffer);
             instructions.add(instruction);
         }
 
-        program.instructions = Collections.unmodifiableList(instructions);
-        return program;
+        return scriptProgram;
     }
 
-    public static ScriptProgram build() {
-        return new ScriptProgram();
+    public static boolean verify(SignatureContext signatureContext,
+                                 ScriptProgram scriptSignatureProgram, ScriptProgram scriptPubKeyProgram) {
+        // Since They share the same signature context for both signature and pubKey script program,
+        // here signatureContext should be set for both of them in advance.
+        scriptSignatureProgram.initSignatureContext(signatureContext);
+        scriptPubKeyProgram.initSignatureContext(signatureContext);
+
+        // Both signature and public Key script program share the same operand stack instance. After
+        // signature script program finishes execution, public key script program should start execution
+        // with the same operand stack instance, so that the verification data chain could be verified
+        // continuously and precisely.
+        OperandStack operandStack = new OperandStack();
+        scriptSignatureProgram.executeScript(operandStack);
+        scriptPubKeyProgram.executeScript(operandStack);
+        byte[] result = operandStack.pop();
+        return Arrays.equals(result, InstructionTable.TRUE);
+    }
+
+    private void initSignatureContext(SignatureContext signatureContext) {
+        this.signatureContext = signatureContext;
+    }
+
+    private void executeScript(OperandStack stack) {
+        int index = 0;
+        while(index<instructions.size()) {
+            Instruction instruction = instructions.get(index);
+            instruction.execute(stack);
+            index++;
+        }
     }
 
     public ScriptProgram data(byte[] data) throws Exception {
@@ -53,7 +88,7 @@ public class ScriptProgram {
         }
 
         ScriptOpCode opCode = ScriptOpCode.getScriptOpCodeByCode(operCode);
-        Instruction instruction = InstructionTable.newInstructionByOpCode(opCode);
+        Instruction instruction = InstructionTable.newInstructionByOpCode(opCode, this);
         instruction.setOperand(operand);
         int position = this.instructions.size();
         this.instructions.add(position, instruction);
@@ -66,7 +101,7 @@ public class ScriptProgram {
             throw new ScriptException(String.format("opCode is not correct with value:%d", operCode));
         }
         ScriptOpCode opCode = ScriptOpCode.getScriptOpCodeByCode(operCode);
-        Instruction instruction = InstructionTable.newInstructionByOpCode(opCode);
+        Instruction instruction = InstructionTable.newInstructionByOpCode(opCode, this);
         int position = this.instructions.size();
         this.instructions.add(position, instruction);
         return this;
@@ -288,5 +323,9 @@ public class ScriptProgram {
 
     public List<Instruction> getInstructions() {
         return instructions;
+    }
+
+    public SignatureContext getSignatureContext() {
+        return signatureContext;
     }
 }

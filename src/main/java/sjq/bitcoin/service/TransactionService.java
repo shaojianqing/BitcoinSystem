@@ -4,8 +4,11 @@ import org.apache.commons.collections4.CollectionUtils;
 import sjq.bitcoin.configuration.NetworkConfiguration;
 import sjq.bitcoin.constant.Constants;
 import sjq.bitcoin.context.Autowire;
+import sjq.bitcoin.crypto.transaction.SignatureContext;
+import sjq.bitcoin.crypto.transaction.SignatureHashType;
 import sjq.bitcoin.hash.Hash;
 import sjq.bitcoin.logger.Logger;
+import sjq.bitcoin.message.convertor.TransactionOutputConvertor;
 import sjq.bitcoin.message.data.TransactionLockTime;
 import sjq.bitcoin.monetary.Coin;
 import sjq.bitcoin.script.BitcoinNetwork;
@@ -143,6 +146,50 @@ public class TransactionService {
         return true;
     }
 
+    public boolean verifyTransaction(TransactionData transactionData) throws Exception {
+        List<TransactionInputData> transactionInputList = transactionData.getTransactionInputList();
+        // if transaction does not contain any transaction inputs,
+        // directly return true. Even if this case should not exist.
+        if (CollectionUtils.isEmpty(transactionInputList)) {
+            return true;
+        }
+
+        boolean verifyStatus = false;
+        for (int index=0;index<transactionInputList.size();++index) {
+            TransactionInputData transactionInputData = transactionInputList.get(index);
+            // if this is coinbase transaction input, it does not need to be verified.
+           if (transactionInputData.isCoinbaseTransactionInput()) {
+               continue;
+           }
+
+           TransactionOutputData transactionOutputData =
+                   queryTransactionOutputByTransactionInput(transactionData, transactionInputData);
+            // if the corresponding transaction output can not be queried, maybe it is because the transaction message
+            // has not been synced up locally, directly break and ignore this verification and wait for transaction
+            // to be synced up
+           if (transactionOutputData == null) {
+               break;
+           }
+
+           byte[] connectScriptPubKey = transactionOutputData.getScriptPubKey();
+           SignatureContext signatureContext = new SignatureContext(transactionData, index, connectScriptPubKey);
+
+            verifyStatus = transactionInputData.verify(signatureContext, transactionOutputData);
+           if (!verifyStatus) {
+               transactionDao.updateTransactionVerifyStatus(transactionData.getTransactionHash().hexValue(),
+                       Transaction.STATUS_UN_VERIFY, Transaction.STATUS_VERIFY_FAILURE);
+               break;
+           }
+        }
+
+        if (verifyStatus) {
+            transactionDao.updateTransactionVerifyStatus(
+                    transactionData.getTransactionHash().hexValue(),
+                    Transaction.STATUS_UN_VERIFY, Transaction.STATUS_VERIFY_SUCCESS);
+        }
+        return verifyStatus;
+    }
+
     private Transaction buildTransaction(Block block, TransactionData transactionData) {
         Transaction transaction = new Transaction();
         transaction.setBlockHash(block.getBlockHash());
@@ -163,7 +210,7 @@ public class TransactionService {
         transactionInput.setTransactionHash(transactionData.getTransactionHash().hexValue());
         transactionInput.setFromTransactionHash(transactionInputData.getFromTransactionHash().hexValue());
         transactionInput.setTransactionOutputIndex(transactionInputData.getTransactionOutputIndex());
-        transactionInput.setScriptSignature(HexUtils.formatHex(transactionInputData.getScriptData()));
+        transactionInput.setScriptSignature(HexUtils.formatHex(transactionInputData.getScriptSignature()));
 
         return transactionInput;
     }
@@ -173,6 +220,7 @@ public class TransactionService {
         TransactionOutput transactionOutput = new TransactionOutput();
 
         transactionOutput.setTransactionHash(transactionData.getTransactionHash().hexValue());
+        transactionOutput.setTransactionOutputIndex(transactionOutputData.getTransactionOutputIndex());
         transactionOutput.setScriptPubKey(HexUtils.formatHex(transactionOutputData.getScriptPubKey()));
 
         Coin coinValue = transactionOutputData.getCoinValue();
@@ -215,7 +263,7 @@ public class TransactionService {
 
     private TransactionAddress buildTransactionAddress(TransactionData transactionData,
                                                           TransactionOutputData transactionOutputData) throws Exception {
-        ScriptProgram scriptProgram = ScriptProgram.parse(transactionOutputData.getScriptPubKey());
+        ScriptProgram scriptProgram = ScriptProgram.build(transactionOutputData.getScriptPubKey());
         BitcoinNetwork network = NetworkConfiguration.getConfiguration().getBitcoinNetwork();
         BitcoinAddress destAddress = scriptProgram.getDestAddress(network);
 
@@ -226,5 +274,26 @@ public class TransactionService {
         transactionAddress.setAddressType(destAddress.getScriptType().getName());
         transactionAddress.setCoinValue(transactionOutputData.getCoinValue().getValue());
         return transactionAddress;
+    }
+
+    private TransactionOutputData queryTransactionOutputByTransactionInput(
+            TransactionData transactionData, TransactionInputData transactionInputData) throws Exception {
+        String fromTransactionHash = transactionInputData.getFromTransactionHash().hexValue();
+        Long transactionOutputIndex = transactionInputData.getTransactionOutputIndex();
+        TransactionOutput transactionOutput = transactionOutputDao.
+                queryTransactionOutputByTransactionInput(fromTransactionHash, transactionOutputIndex);
+        if (transactionOutput != null) {
+            byte[] scriptPubKeyBytes = HexUtils.parseHex(transactionOutput.getScriptPubKey());
+
+            TransactionOutputData transactionOutputData = new TransactionOutputData();
+            transactionOutputData.setParentTransaction(transactionData);
+            transactionOutputData.setTransactionOutputIndex(transactionOutput.getTransactionOutputIndex());
+            transactionOutputData.setScriptPubKey(scriptPubKeyBytes);
+            transactionOutputData.setPubKeyProgram(ScriptProgram.build(scriptPubKeyBytes));
+            transactionOutputData.setCoinValue(Coin.of(transactionOutput.getCoinValue()));
+
+            return transactionOutputData;
+        }
+        return null;
     }
 }

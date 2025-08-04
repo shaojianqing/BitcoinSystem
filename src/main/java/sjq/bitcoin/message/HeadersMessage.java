@@ -25,7 +25,7 @@ public class HeadersMessage extends BaseMessage implements Message {
     }
 
     @Override
-    protected byte[] serializeMessage() throws IOException {
+    public byte[] serializeMessage() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         outputStream.write(headerCount.serialize());
 

@@ -7,13 +7,13 @@ public class TransactionOutputData {
 
     private TransactionData parentTransaction;
 
-    private ScriptProgram program;
+    private Long transactionOutputIndex;
 
     private byte[] scriptPubKey;
 
     private Coin coinValue;
 
-    private Long transactionOutputIndex;
+    private ScriptProgram pubKeyProgram;
 
     public TransactionData getParentTransaction() {
         return parentTransaction;
@@ -23,12 +23,12 @@ public class TransactionOutputData {
         this.parentTransaction = parentTransaction;
     }
 
-    public ScriptProgram getProgram() {
-        return program;
+    public Long getTransactionOutputIndex() {
+        return transactionOutputIndex;
     }
 
-    public void setProgram(ScriptProgram program) {
-        this.program = program;
+    public void setTransactionOutputIndex(Long transactionOutputIndex) {
+        this.transactionOutputIndex = transactionOutputIndex;
     }
 
     public byte[] getScriptPubKey() {
@@ -47,11 +47,11 @@ public class TransactionOutputData {
         this.coinValue = coinValue;
     }
 
-    public Long getTransactionOutputIndex() {
-        return transactionOutputIndex;
+    public ScriptProgram getPubKeyProgram() {
+        return pubKeyProgram;
     }
 
-    public void setTransactionOutputIndex(Long transactionOutputIndex) {
-        this.transactionOutputIndex = transactionOutputIndex;
+    public void setPubKeyProgram(ScriptProgram pubKeyProgram) {
+        this.pubKeyProgram = pubKeyProgram;
     }
 }

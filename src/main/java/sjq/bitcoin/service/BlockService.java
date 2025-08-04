@@ -88,4 +88,8 @@ public class BlockService {
     public boolean updateBlockSyncStatus(Block block, String oldStatus, String newStatus) throws Exception {
         return blockDao.updateBlockSyncStatus(block.getBlockHash(), oldStatus, newStatus);
     }
+
+    public boolean updateBlockVerifyStatus(Block block, String oldStatus, String newStatus) throws Exception {
+        return blockDao.updateBlockVerifyStatus(block.getBlockHash(), oldStatus, newStatus);
+    }
 }

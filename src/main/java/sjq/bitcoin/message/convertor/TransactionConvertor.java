@@ -1,7 +1,10 @@
 package sjq.bitcoin.message.convertor;
 
 import org.apache.commons.collections4.CollectionUtils;
+import sjq.bitcoin.constant.Constants;
 import sjq.bitcoin.message.TransactionMessage;
+import sjq.bitcoin.message.data.TransactionInput;
+import sjq.bitcoin.message.data.TransactionOutput;
 import sjq.bitcoin.service.data.TransactionData;
 import sjq.bitcoin.service.data.TransactionInputData;
 import sjq.bitcoin.service.data.TransactionOutputData;
@@ -47,5 +50,22 @@ public class TransactionConvertor {
             }
         }
         return transactionDataList;
+    }
+
+    public static TransactionMessage convertTransactionMessageFromData(TransactionData transactionData) {
+        TransactionMessage transactionMessage = TransactionMessage.createTransactionMessage(Constants.VERSION_CURRENT);
+
+        transactionMessage.setMessageVersion(transactionData.getMessageVersion());
+        transactionMessage.setTransactionLockTime(transactionData.getTransactionLockTime());
+
+        List<TransactionInput> transactionInputList = TransactionInputConvertor.
+                convertTransactionInputFromDataList(transactionMessage, transactionData.getTransactionInputList());
+        transactionMessage.setTransactionInputs(transactionInputList);
+
+        List<TransactionOutput> transactionOutputList = TransactionOutputConvertor.
+                convertTransactionOutputFromDataList(transactionMessage, transactionData.getTransactionOutputList());
+        transactionMessage.setTransactionOutputs(transactionOutputList);
+
+        return transactionMessage;
     }
 }

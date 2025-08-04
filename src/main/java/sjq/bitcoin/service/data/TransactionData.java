@@ -1,10 +1,10 @@
 package sjq.bitcoin.service.data;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import sjq.bitcoin.hash.Hash;
 import sjq.bitcoin.message.data.TransactionLockTime;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TransactionData {
 
@@ -27,6 +27,10 @@ public class TransactionData {
         transaction.addTransactionInput(transactionInput);
 
         return transaction;
+    }
+
+    public TransactionData clone() {
+        return new TransactionData();
     }
 
     public TransactionInputData addTransactionInput(TransactionInputData transactionInput) {

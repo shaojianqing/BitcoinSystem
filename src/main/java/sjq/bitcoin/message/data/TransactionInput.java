@@ -13,6 +13,8 @@ public class TransactionInput {
 
     public static final long NO_SEQUENCE = 0xFFFFFFFFL;
 
+    public static final byte[] EMPTY_SCRIPT = new byte[0];
+
     private TransactionMessage parentTransaction;
 
     private long sequence;
@@ -44,6 +46,50 @@ public class TransactionInput {
         transactionInput.scriptSignature = ByteUtils.readLengthPrefixedBytes(buffer);
         transactionInput.sequence = ByteUtils.readUint32LE(buffer);
 
+        return transactionInput;
+    }
+
+    public TransactionInput cloneWithoutScript() {
+        TransactionInput transactionInput = new TransactionInput();
+        transactionInput.setParentTransaction(parentTransaction);
+        transactionInput.setFromTransactionHash(fromTransactionHash);
+        transactionInput.setTransactionOutputIndex(transactionOutputIndex);
+        transactionInput.setTransactionWitness(transactionWitness);
+        transactionInput.setScriptSignature(EMPTY_SCRIPT);
+        transactionInput.setSequence(sequence);
+        return transactionInput;
+    }
+
+    public TransactionInput cloneWithoutWitness() {
+        TransactionInput transactionInput = new TransactionInput();
+        transactionInput.setParentTransaction(parentTransaction);
+        transactionInput.setFromTransactionHash(fromTransactionHash);
+        transactionInput.setTransactionOutputIndex(transactionOutputIndex);
+        transactionInput.setTransactionWitness(null);
+        transactionInput.setScriptSignature(scriptSignature);
+        transactionInput.setSequence(sequence);
+        return transactionInput;
+    }
+
+    public TransactionInput cloneWithScript(byte[] scriptData) {
+        TransactionInput transactionInput = new TransactionInput();
+        transactionInput.setParentTransaction(parentTransaction);
+        transactionInput.setFromTransactionHash(fromTransactionHash);
+        transactionInput.setTransactionOutputIndex(transactionOutputIndex);
+        transactionInput.setTransactionWitness(transactionWitness);
+        transactionInput.setScriptSignature(scriptData);
+        transactionInput.setSequence(sequence);
+        return transactionInput;
+    }
+
+    public TransactionInput cloneWithSequence(long sequence) {
+        TransactionInput transactionInput = new TransactionInput();
+        transactionInput.setParentTransaction(parentTransaction);
+        transactionInput.setFromTransactionHash(fromTransactionHash);
+        transactionInput.setTransactionOutputIndex(transactionOutputIndex);
+        transactionInput.setTransactionWitness(transactionWitness);
+        transactionInput.setScriptSignature(scriptSignature);
+        transactionInput.setSequence(sequence);
         return transactionInput;
     }
 

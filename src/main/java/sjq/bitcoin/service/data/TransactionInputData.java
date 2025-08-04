@@ -1,7 +1,9 @@
 package sjq.bitcoin.service.data;
 
 import sjq.bitcoin.constant.Constants;
+import sjq.bitcoin.crypto.transaction.SignatureContext;
 import sjq.bitcoin.hash.Hash;
+import sjq.bitcoin.script.ScriptProgram;
 
 public class TransactionInputData {
 
@@ -13,7 +15,9 @@ public class TransactionInputData {
 
     private long transactionOutputIndex;
 
-    private byte[] scriptData;
+    private byte[] scriptSignature;
+
+    private ScriptProgram signatureProgram;
 
     private TransactionWitnessData transactionWitness;
 
@@ -21,18 +25,26 @@ public class TransactionInputData {
      * coinbase transaction is made in case of new block mining. It is
      * designed by Bitcoin protocol as the only way for new bitcoin issuance.
      **/
-    public static TransactionInputData buildCoinbaseTransactionInput(TransactionData parentTransaction, byte[] scriptData) {
+    public static TransactionInputData buildCoinbaseTransactionInput(TransactionData parentTransaction, byte[] scriptSignature) {
         TransactionInputData transactionInput = new TransactionInputData();
         transactionInput.parentTransaction = parentTransaction;
         transactionInput.fromTransactionHash = Hash.ZERO_HASH;
         transactionInput.transactionOutputIndex = Constants.MAX_UNSIGNED_INTEGER;
-        transactionInput.scriptData = scriptData;
+        transactionInput.scriptSignature = scriptSignature;
 
         return transactionInput;
     }
 
-    public void verify(TransactionOutputData transactionOutput) {
+    public boolean isCoinbaseTransactionInput() {
+        if (Hash.ZERO_HASH.equals(fromTransactionHash) &&
+                Constants.MAX_UNSIGNED_INTEGER.equals(transactionOutputIndex)) {
+            return true;
+        }
+        return false;
+    }
 
+    public boolean verify(SignatureContext signatureContext, TransactionOutputData transactionOutput) {
+        return ScriptProgram.verify(signatureContext, this.signatureProgram, transactionOutput.getPubKeyProgram());
     }
 
     public TransactionData getParentTransaction() {
@@ -67,12 +79,20 @@ public class TransactionInputData {
         this.transactionOutputIndex = transactionOutputIndex;
     }
 
-    public byte[] getScriptData() {
-        return scriptData;
+    public byte[] getScriptSignature() {
+        return scriptSignature;
     }
 
-    public void setScriptData(byte[] scriptData) {
-        this.scriptData = scriptData;
+    public void setScriptSignature(byte[] scriptSignature) {
+        this.scriptSignature = scriptSignature;
+    }
+
+    public ScriptProgram getSignatureProgram() {
+        return signatureProgram;
+    }
+
+    public void setSignatureProgram(ScriptProgram signatureProgram) {
+        this.signatureProgram = signatureProgram;
     }
 
     public TransactionWitnessData getTransactionWitness() {

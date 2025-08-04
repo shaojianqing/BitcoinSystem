@@ -1,11 +1,19 @@
 package sjq.bitcoin.script;
 
+import sjq.bitcoin.crypto.ECDSATool;
+import sjq.bitcoin.crypto.exception.SignatureDecodeException;
+import sjq.bitcoin.crypto.transaction.SignatureContext;
+import sjq.bitcoin.crypto.transaction.SignatureHashType;
+import sjq.bitcoin.crypto.transaction.TransactionSignature;
+import sjq.bitcoin.hash.Hash;
 import sjq.bitcoin.logger.Logger;
 import sjq.bitcoin.utility.AssertUtils;
 import sjq.bitcoin.utility.ByteUtils;
 import sjq.bitcoin.utility.CryptoUtils;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,7 +21,11 @@ import static sjq.bitcoin.script.OperandStack.MAX_SCRIPT_ELEMENT_SIZE;
 
 public class InstructionTable {
 
-    private static final byte[] EMPTY = new byte[]{};
+    public static final byte[] EMPTY = new byte[]{};
+
+    public static final byte[] TRUE = new byte[]{1};
+
+    public static final byte[] FALSE = new byte[]{};
 
     private static Map<ScriptOpCode, Class<? extends Instruction>> instructionMap = new HashMap<>();
 
@@ -192,8 +204,8 @@ public class InstructionTable {
         instructionMap.put(ScriptOpCode.OP_HASH160, OpHash160Instruction.class);
         instructionMap.put(ScriptOpCode.OP_HASH256, OpHash256Instruction.class);
         instructionMap.put(ScriptOpCode.OP_CODESEPARATOR, OpCodeSeparatorInstruction.class);
-        instructionMap.put(ScriptOpCode.OP_CHECKSIG, OpCheckSigInstruction.class);
-        instructionMap.put(ScriptOpCode.OP_CHECKSIGVERIFY, OpCheckSigVerifyInstruction.class);
+        instructionMap.put(ScriptOpCode.OP_CHECKSIG, OpCheckSignatureInstruction.class);
+        instructionMap.put(ScriptOpCode.OP_CHECKSIGVERIFY, OpCheckSignatureVerifyInstruction.class);
         instructionMap.put(ScriptOpCode.OP_CHECKMULTISIG, OpCheckMultiSigInstruction.class);
         instructionMap.put(ScriptOpCode.OP_CHECKMULTISIGVERIFY, OpCheckMultiSigVerifyInstruction.class);
         instructionMap.put(ScriptOpCode.OP_CHECKSIGADD, OpCheckSigAddInstruction.class);
@@ -222,11 +234,12 @@ public class InstructionTable {
         instructionMap.put(ScriptOpCode.OP_INVALIDOPCODE, OpInvalidOpCodeInstruction.class);
     }
 
-    public static Instruction newInstructionByOpCode(ScriptOpCode opCode) throws Exception {
+    public static Instruction newInstructionByOpCode(ScriptOpCode opCode, ScriptProgram runtime) throws Exception {
         if (instructionMap.containsKey(opCode)) {
             Class<? extends Instruction> clazz = instructionMap.get(opCode);
-            Instruction instruction = clazz.getConstructor().newInstance();
+            Instruction instruction = clazz.newInstance();
             instruction.setOpCode(opCode);
+            instruction.setScriptProgram(runtime);
             return instruction;
         }
         throw new ScriptException(String.format("can not find instruction for opCode:%s", opCode));
@@ -235,6 +248,11 @@ public class InstructionTable {
     private static abstract class AbstractInstruction implements Instruction {
 
         protected ScriptOpCode code;
+
+        protected ScriptProgram runtime;
+
+        public AbstractInstruction(){
+        }
 
         public void fetch(ByteBuffer scriptBuffer) {
         }
@@ -313,15 +331,21 @@ public class InstructionTable {
 
         public void setOperand(byte[] operand) {
         }
+
+        public void setScriptProgram(ScriptProgram runtime) {
+            this.runtime = runtime;
+        }
+
+        public ScriptProgram getRuntime() {
+            return runtime;
+        }
     }
 
     private static class OpPushInstruction extends AbstractInstruction {
 
         private byte[] data;
 
-        public OpPushInstruction(){
-        }
-
+        @Override
         public void fetch(ByteBuffer scriptBuffer) {
             int length = code.getCode();
             data = ByteUtils.readBytesByLength(scriptBuffer, length);
@@ -349,9 +373,7 @@ public class InstructionTable {
 
         private byte[] data;
 
-        public OpPushData1Instruction(){
-        }
-
+        @Override
         public void fetch(ByteBuffer scriptBuffer) {
             byte length = ByteUtils.readByte(scriptBuffer);
             data = ByteUtils.readBytesByLength(scriptBuffer, length);
@@ -367,9 +389,7 @@ public class InstructionTable {
 
         private byte[] data;
 
-        public OpPushData2Instruction(){
-        }
-
+        @Override
         public void fetch(ByteBuffer scriptBuffer) {
             int length = ByteUtils.readUint16LE(scriptBuffer);
             data = ByteUtils.readBytesByLength(scriptBuffer, length);
@@ -385,9 +405,7 @@ public class InstructionTable {
 
         private byte[] data;
 
-        public OpPushData4Instruction(){
-        }
-
+        @Override
         public void fetch(ByteBuffer scriptBuffer) {
             int length = (int)ByteUtils.readUint32LE(scriptBuffer);
             data = ByteUtils.readBytesByLength(scriptBuffer, length);
@@ -401,9 +419,6 @@ public class InstructionTable {
 
     private static class OpPushNegative1Instruction extends AbstractInstruction {
 
-        public OpPushNegative1Instruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
             byte[] items = new byte[]{-1};
@@ -413,9 +428,6 @@ public class InstructionTable {
 
     private static class OpIfInstruction extends AbstractInstruction {
 
-        public OpIfInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -423,9 +435,6 @@ public class InstructionTable {
     }
 
     private static class OpNotIfInstruction extends AbstractInstruction {
-
-        public OpNotIfInstruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -435,9 +444,6 @@ public class InstructionTable {
 
     private static class OpElseInstruction extends AbstractInstruction {
 
-        public OpElseInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -445,9 +451,6 @@ public class InstructionTable {
     }
 
     private static class OpEndIfInstruction extends AbstractInstruction {
-
-        public OpEndIfInstruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -457,9 +460,6 @@ public class InstructionTable {
 
     private static class OpVerifyInstruction extends AbstractInstruction {
 
-        public OpVerifyInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -467,9 +467,6 @@ public class InstructionTable {
     }
 
     private static class OpReturnInstruction extends AbstractInstruction {
-
-        public OpReturnInstruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -479,9 +476,6 @@ public class InstructionTable {
 
     private static class OpToAltStackInstruction extends AbstractInstruction {
 
-        public OpToAltStackInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -489,9 +483,6 @@ public class InstructionTable {
     }
 
     private static class OpFromAltStackInstruction extends AbstractInstruction {
-
-        public OpFromAltStackInstruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -501,9 +492,6 @@ public class InstructionTable {
 
     private static class OpIfDupInstruction extends AbstractInstruction {
 
-        public OpIfDupInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -511,9 +499,6 @@ public class InstructionTable {
     }
 
     private static class OpDepthInstruction extends AbstractInstruction {
-
-        public OpDepthInstruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -523,9 +508,6 @@ public class InstructionTable {
 
     private static class OpDropInstruction extends AbstractInstruction {
 
-        public OpDropInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -533,9 +515,6 @@ public class InstructionTable {
     }
 
     private static class OpDupInstruction extends AbstractInstruction {
-
-        public OpDupInstruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -546,9 +525,6 @@ public class InstructionTable {
 
     private static class OpNipInstruction extends AbstractInstruction {
 
-        public OpNipInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -556,9 +532,6 @@ public class InstructionTable {
     }
 
     private static class OpOverInstruction extends AbstractInstruction {
-
-        public OpOverInstruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -568,9 +541,6 @@ public class InstructionTable {
 
     private static class OpPickInstruction extends AbstractInstruction {
 
-        public OpPickInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -578,9 +548,6 @@ public class InstructionTable {
     }
 
     private static class OpRollInstruction extends AbstractInstruction {
-
-        public OpRollInstruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -590,9 +557,6 @@ public class InstructionTable {
 
     private static class OpRotInstruction extends AbstractInstruction {
 
-        public OpRotInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -600,9 +564,6 @@ public class InstructionTable {
     }
 
     private static class OpSwapInstruction extends AbstractInstruction {
-
-        public OpSwapInstruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -616,9 +577,6 @@ public class InstructionTable {
 
     private static class OpTuckInstruction extends AbstractInstruction {
 
-        public OpTuckInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -626,9 +584,6 @@ public class InstructionTable {
     }
 
     private static class OpDrop2Instruction extends AbstractInstruction {
-
-        public OpDrop2Instruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -638,9 +593,6 @@ public class InstructionTable {
 
     private static class OpDup2Instruction extends AbstractInstruction {
 
-        public OpDup2Instruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -649,18 +601,12 @@ public class InstructionTable {
 
     private static class OpDup3Instruction extends AbstractInstruction {
 
-        public OpDup3Instruction(){
-        }
-
         public void execute(OperandStack stack) {
 
         }
     }
 
     private static class OpOver2Instruction extends AbstractInstruction {
-
-        public OpOver2Instruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -670,9 +616,6 @@ public class InstructionTable {
 
     private static class OpRot2Instruction extends AbstractInstruction {
 
-        public OpRot2Instruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -680,9 +623,6 @@ public class InstructionTable {
     }
 
     private static class OpSwap2Instruction extends AbstractInstruction {
-
-        public OpSwap2Instruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -692,9 +632,6 @@ public class InstructionTable {
 
     private static class OpCatInstruction extends AbstractInstruction {
 
-        public OpCatInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -702,9 +639,6 @@ public class InstructionTable {
     }
 
     private static class OpSubStrInstruction extends AbstractInstruction {
-
-        public OpSubStrInstruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -714,9 +648,6 @@ public class InstructionTable {
 
     private static class OpInstruction extends AbstractInstruction {
 
-        public OpInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -724,9 +655,6 @@ public class InstructionTable {
     }
 
     private static class OpLeftInstruction extends AbstractInstruction {
-
-        public OpLeftInstruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -736,9 +664,6 @@ public class InstructionTable {
 
     private static class OpRightInstruction extends AbstractInstruction {
 
-        public OpRightInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -746,9 +671,6 @@ public class InstructionTable {
     }
 
     private static class OpSizeInstruction extends AbstractInstruction {
-
-        public OpSizeInstruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -758,9 +680,6 @@ public class InstructionTable {
 
     private static class OpAdd1Instruction extends AbstractInstruction {
 
-        public OpAdd1Instruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -768,9 +687,6 @@ public class InstructionTable {
     }
 
     private static class OpSub1Instruction extends AbstractInstruction {
-
-        public OpSub1Instruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -780,9 +696,6 @@ public class InstructionTable {
 
     private static class OpMul2Instruction extends AbstractInstruction {
 
-        public OpMul2Instruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -790,9 +703,6 @@ public class InstructionTable {
     }
 
     private static class OpDiv2Instruction extends AbstractInstruction {
-
-        public OpDiv2Instruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -802,9 +712,6 @@ public class InstructionTable {
 
     private static class OpNegateInstruction extends AbstractInstruction {
 
-        public OpNegateInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -812,9 +719,6 @@ public class InstructionTable {
     }
 
     private static class OpAbsInstruction extends AbstractInstruction {
-
-        public OpAbsInstruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -824,9 +728,6 @@ public class InstructionTable {
 
     private static class OpNotInstruction extends AbstractInstruction {
 
-        public OpNotInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -834,9 +735,6 @@ public class InstructionTable {
     }
 
     private static class OpNotEqual0Instruction extends AbstractInstruction {
-
-        public OpNotEqual0Instruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -846,9 +744,6 @@ public class InstructionTable {
 
     private static class OpAddInstruction extends AbstractInstruction {
 
-        public OpAddInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -856,9 +751,6 @@ public class InstructionTable {
     }
 
     private static class OpSubInstruction extends AbstractInstruction {
-
-        public OpSubInstruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -868,9 +760,6 @@ public class InstructionTable {
 
     private static class OpMulInstruction extends AbstractInstruction {
 
-        public OpMulInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -878,9 +767,6 @@ public class InstructionTable {
     }
 
     private static class OpDivInstruction extends AbstractInstruction {
-
-        public OpDivInstruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -890,9 +776,6 @@ public class InstructionTable {
 
     private static class OpModInstruction extends AbstractInstruction {
 
-        public OpModInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -900,9 +783,6 @@ public class InstructionTable {
     }
 
     private static class OpShiftLeftInstruction extends AbstractInstruction {
-
-        public OpShiftLeftInstruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -912,9 +792,6 @@ public class InstructionTable {
 
     private static class OpShiftRightInstruction extends AbstractInstruction {
 
-        public OpShiftRightInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -922,9 +799,6 @@ public class InstructionTable {
     }
 
     private static class OpBoolAndInstruction extends AbstractInstruction {
-
-        public OpBoolAndInstruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -934,9 +808,6 @@ public class InstructionTable {
 
     private static class OpBoolOrInstruction extends AbstractInstruction {
 
-        public OpBoolOrInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -944,9 +815,6 @@ public class InstructionTable {
     }
 
     private static class OpNumEqualInstruction extends AbstractInstruction {
-
-        public OpNumEqualInstruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -956,9 +824,6 @@ public class InstructionTable {
 
     private static class OpNumEqualVerifyInstruction extends AbstractInstruction {
 
-        public OpNumEqualVerifyInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -967,12 +832,8 @@ public class InstructionTable {
 
     private static class OpNumNotEqualInstruction extends AbstractInstruction {
 
-        public OpNumNotEqualInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
-
         }
     }
 
@@ -989,9 +850,6 @@ public class InstructionTable {
 
     private static class OpGreaterThanInstruction extends AbstractInstruction {
 
-        public OpGreaterThanInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -999,9 +857,6 @@ public class InstructionTable {
     }
 
     private static class OpLessThanOrEqualInstruction extends AbstractInstruction {
-
-        public OpLessThanOrEqualInstruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -1011,9 +866,6 @@ public class InstructionTable {
 
     private static class OpGreaterThanOrEqualInstruction extends AbstractInstruction {
 
-        public OpGreaterThanOrEqualInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -1021,9 +873,6 @@ public class InstructionTable {
     }
 
     private static class OpMinInstruction extends AbstractInstruction {
-
-        public OpMinInstruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -1033,9 +882,6 @@ public class InstructionTable {
 
     private static class OpMaxInstruction extends AbstractInstruction {
 
-        public OpMaxInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -1043,9 +889,6 @@ public class InstructionTable {
     }
 
     private static class OpWithinInstruction extends AbstractInstruction {
-
-        public OpWithinInstruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -1055,9 +898,6 @@ public class InstructionTable {
 
     private static class OpInvertInstruction extends AbstractInstruction {
 
-        public OpInvertInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -1065,9 +905,6 @@ public class InstructionTable {
     }
 
     private static class OpAndInstruction extends AbstractInstruction {
-
-        public OpAndInstruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -1077,18 +914,12 @@ public class InstructionTable {
 
     private static class OpOrInstruction extends AbstractInstruction {
 
-        public OpOrInstruction(){
-        }
-
         public void execute(OperandStack stack) {
 
         }
     }
 
     private static class OpXorInstruction extends AbstractInstruction {
-
-        public OpXorInstruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -1098,9 +929,6 @@ public class InstructionTable {
 
     private static class OpEqualInstruction extends AbstractInstruction {
 
-        public OpEqualInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -1109,20 +937,26 @@ public class InstructionTable {
 
     private static class OpEqualVerifyInstruction extends AbstractInstruction {
 
-        public OpEqualVerifyInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
+            if (stack.size()<2) {
+                throw new ScriptException(String.format("script execution exception " +
+                        "with %s, no enough elements in operand stack", getOpCode()));
+            }
 
+            byte[] data1 = stack.pop();
+            byte[] data2 = stack.pop();
+
+            boolean equal = Arrays.equals(data1, data2);
+            if (!equal) {
+                throw new ScriptException(String.format("execute instruction %s failure!", getOpCode().getName()));
+            }
         }
     }
 
     private static class OpRipemd160Instruction extends AbstractInstruction  {
 
-        public OpRipemd160Instruction(){
-        }
-
+        @Override
         public void fetch(ByteBuffer scriptBuffer) {
 
         }
@@ -1135,9 +969,6 @@ public class InstructionTable {
 
     private static class OpSha1Instruction extends AbstractInstruction  {
 
-        public OpSha1Instruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -1145,9 +976,6 @@ public class InstructionTable {
     }
 
     private static class OpSha256Instruction extends AbstractInstruction  {
-
-        public OpSha256Instruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -1166,19 +994,22 @@ public class InstructionTable {
 
     private static class OpHash160Instruction extends AbstractInstruction {
 
-        public OpHash160Instruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
-
+            try {
+                byte[] source = stack.pop();
+                AssertUtils.notNull(source,
+                        "the input source for sha256ToHash160 can not be null!");
+                byte[] result = CryptoUtils.sha256ToHash160(source);
+                stack.push(result);
+            } catch (Exception e) {
+                String message = String.format("script execution exception, with %s, message:%s", getOpCode(), e.getMessage());
+                throw new ScriptException(message);
+            }
         }
     }
 
     private static class OpCodeSeparatorInstruction extends AbstractInstruction {
-
-        public OpCodeSeparatorInstruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -1187,9 +1018,6 @@ public class InstructionTable {
     }
 
     private static class OpHash256Instruction extends AbstractInstruction {
-
-        public OpHash256Instruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -1205,54 +1033,48 @@ public class InstructionTable {
         }
     }
 
-    private static class OpCheckSigVerifyInstruction extends AbstractInstruction {
-
-        public OpCheckSigVerifyInstruction(){
-        }
+    private static class OpCheckSignatureInstruction extends AbstractInstruction {
 
         @Override
         public void execute(OperandStack stack) {
-
+            boolean success = executeCheckSignature(this, stack);
+            if (success) {
+                stack.push(TRUE);
+            } else {
+                stack.push(FALSE);
+            }
         }
     }
 
-    private static class OpCheckSigInstruction extends AbstractInstruction {
-
-        public OpCheckSigInstruction(){
-        }
+    private static class OpCheckSignatureVerifyInstruction extends AbstractInstruction {
 
         @Override
         public void execute(OperandStack stack) {
-
+            boolean success = executeCheckSignature(this, stack);
+            if (!success) {
+                String message = String.format("script execution exception with %s, check signature and verify failure!", getOpCode());
+                throw new ScriptException(message);
+            }
         }
     }
 
     private static class OpCheckMultiSigInstruction extends AbstractInstruction {
 
-        public OpCheckMultiSigInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
-
+            executeCheckMultiSignature(this, stack);
         }
     }
 
     private static class OpCheckMultiSigVerifyInstruction extends AbstractInstruction {
 
-        public OpCheckMultiSigVerifyInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
-
+            executeCheckMultiSignature(this, stack);
         }
     }
 
     private static class OpCheckSigAddInstruction extends AbstractInstruction {
-
-        public OpCheckSigAddInstruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -1262,9 +1084,6 @@ public class InstructionTable {
 
     private static class OpCheckLockTimeVerifyAddInstruction extends AbstractInstruction {
 
-        public OpCheckLockTimeVerifyAddInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
 
@@ -1272,9 +1091,6 @@ public class InstructionTable {
     }
 
     private static class OpCheckSequenceVerifyAddInstruction extends AbstractInstruction {
-
-        public OpCheckSequenceVerifyAddInstruction(){
-        }
 
         @Override
         public void execute(OperandStack stack) {
@@ -1284,6 +1100,7 @@ public class InstructionTable {
 
     // If occurring in transaction, it should be treated as illegal or invalid transaction
     private static class OpReservedInstruction extends AbstractInstruction {
+
         @Override
         public void execute(OperandStack stack) {
             throw new ScriptException("This is reserved operation code which makes the transaction invalid!");
@@ -1292,6 +1109,7 @@ public class InstructionTable {
 
     // If occurring in transaction, it should be treated as illegal or invalid transaction
     private static class OpVerInstruction extends AbstractInstruction {
+
         @Override
         public void execute(OperandStack stack) {
             throw new ScriptException("This is reserved operation code which makes the transaction invalid!");
@@ -1300,6 +1118,7 @@ public class InstructionTable {
 
     // Just ignore this kind of operation code definition
     private static class OpNopInstruction extends AbstractInstruction {
+
         @Override
         public void execute(OperandStack stack) {
             Logger.info("This is unused operation code for now, just ignore it and do nothing!");
@@ -1307,9 +1126,41 @@ public class InstructionTable {
     }
 
     private static class OpInvalidOpCodeInstruction extends AbstractInstruction {
+
         @Override
         public void execute(OperandStack stack) {
             throw new ScriptException("This is invalid operation code as for the script system!");
         }
+    }
+
+    private static boolean executeCheckSignature(AbstractInstruction instruction, OperandStack operandStack) {
+        try {
+            ScriptProgram runtime = instruction.getRuntime();
+            SignatureContext signatureContext = runtime.getSignatureContext();
+
+            if (operandStack.size() < 2) {
+                throw new ScriptException(String.format("script execution exception " +
+                        "with %s, no enough elements in operand stack", instruction.getOpCode()));
+            }
+
+            byte[] pubKeyBytes = operandStack.pop();
+            byte[] signatureBytes = operandStack.pop();
+
+            TransactionSignature transactionSignature = TransactionSignature.decode(signatureBytes, true, true);
+            SignatureHashType signatureHashType = transactionSignature.getType();
+
+            Hash hash = signatureContext.generateHashForSignature(signatureHashType);
+            return ECDSATool.verifySignature(hash, pubKeyBytes, transactionSignature);
+        } catch (SignatureDecodeException se) {
+            throw new ScriptException(String.format("script execution exception " +
+                    "with %s, signature decode failure!", instruction.getOpCode()));
+        } catch (IOException e) {
+            throw new ScriptException(String.format("script execution exception " +
+                    "with %s, generate hash for signature failure!", instruction.getOpCode()));
+        }
+    }
+
+    private static void executeCheckMultiSignature(AbstractInstruction instruction, OperandStack operandStack) {
+
     }
 }

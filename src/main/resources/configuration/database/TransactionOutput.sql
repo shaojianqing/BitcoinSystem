@@ -3,6 +3,7 @@
 CREATE TABLE `transaction_output` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `transaction_hash` varchar(100) NOT NULL,
+  `transaction_output_index` bigint NOT NULL,
   `script_pubKey` text NOT NULL,
   `coin_value` bigint NOT NULL,
   `create_time` datetime NOT NULL,

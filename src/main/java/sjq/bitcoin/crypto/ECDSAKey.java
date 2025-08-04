@@ -32,6 +32,8 @@ public class ECDSAKey {
 
     public static final ECDomainParameters CURVE_INSTANCE;
 
+    public static final BigInteger HALF_CURVE_ORDER;
+
     private static final boolean PUBKEY_COMPRESSED = true;
 
     private byte[] privateKey;
@@ -49,12 +51,13 @@ public class ECDSAKey {
         CURVE_PARAMS = CustomNamedCurves.getByName(CURVE_NAME);
         CURVE_INSTANCE = new ECDomainParameters(CURVE_PARAMS.getCurve(),
                 CURVE_PARAMS.getG(), CURVE_PARAMS.getN(), CURVE_PARAMS.getH());
+        HALF_CURVE_ORDER = CURVE_PARAMS.getN().shiftRight(1);
     }
 
     private ECDSAKey() {
     }
 
-    public static ECDSAKey getInstance(byte[] privateKey) {
+    public static ECDSAKey getInstanceFromPrivateKey(byte[] privateKey) {
         BigInteger privateKeyValue = ByteUtils.bytesToBigInteger(privateKey);
         FixedPointCombMultiplier multiplier = new FixedPointCombMultiplier();
         ECPoint point = multiplier.multiply(CURVE_INSTANCE.getG(), privateKeyValue);

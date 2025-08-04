@@ -8,6 +8,8 @@ public class TransactionOutput {
 
     private String transactionHash;
 
+    private Long transactionOutputIndex;
+
     private String scriptPubKey;
 
     private Long coinValue;
@@ -30,6 +32,14 @@ public class TransactionOutput {
 
     public void setTransactionHash(String transactionHash) {
         this.transactionHash = transactionHash;
+    }
+
+    public Long getTransactionOutputIndex() {
+        return transactionOutputIndex;
+    }
+
+    public void setTransactionOutputIndex(Long transactionOutputIndex) {
+        this.transactionOutputIndex = transactionOutputIndex;
     }
 
     public String getScriptPubKey() {
