@@ -22,7 +22,7 @@ public class TestSegwitAddress {
     public void convertToBech32AddressP2WH() throws Exception {
 
         byte[] pukKeyBytes = HexUtils.parseHex(originScriptPubKeyP2WH);
-        ScriptProgram program = ScriptProgram.parse(pukKeyBytes);
+        ScriptProgram program = ScriptProgram.build(pukKeyBytes);
 
         BitcoinAddress address = program.getDestAddress(BitcoinNetwork.MAINNET);
         Logger.info("The formatted address:%s", address.getStringFormat());
@@ -34,7 +34,7 @@ public class TestSegwitAddress {
     public void convertToBech32AddressP2TR() throws Exception {
 
         byte[] pukKeyBytes = HexUtils.parseHex(originScriptPubKeyP2TR);
-        ScriptProgram program = ScriptProgram.parse(pukKeyBytes);
+        ScriptProgram program = ScriptProgram.build(pukKeyBytes);
 
         BitcoinAddress address = program.getDestAddress(BitcoinNetwork.MAINNET);
         Logger.info("The formatted address:%s", address.getStringFormat());

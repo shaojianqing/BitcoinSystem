@@ -4,6 +4,12 @@ import java.sql.Timestamp;
 
 public class Transaction {
 
+    public static final String STATUS_UN_VERIFY = "Unverified";
+
+    public static final String STATUS_VERIFY_SUCCESS = "Success";
+
+    public static final String STATUS_VERIFY_FAILURE = "Failure";
+
     private String transactionHash;
 
     private Long messageVersion;
@@ -13,6 +19,8 @@ public class Transaction {
     private String blockHash;
 
     private Long transactionLockTime;
+
+    private String verifyStatus;
 
     private Timestamp createTime;
 
@@ -56,6 +64,14 @@ public class Transaction {
 
     public void setTransactionLockTime(Long transactionLockTime) {
         this.transactionLockTime = transactionLockTime;
+    }
+
+    public String getVerifyStatus() {
+        return verifyStatus;
+    }
+
+    public void setVerifyStatus(String verifyStatus) {
+        this.verifyStatus = verifyStatus;
     }
 
     public Timestamp getCreateTime() {

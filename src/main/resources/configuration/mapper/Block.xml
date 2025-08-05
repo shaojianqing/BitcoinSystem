@@ -138,4 +138,15 @@
             sync_status = #oldSyncStatus#
     </update>
 
+    <update id="sjq.bitcoin.storage.domain.Block.updateBlockVerifyStatus" parameterType="java.util.Map">
+        update
+            block
+        set
+            verify_status = #newVerifyStatus#,
+            modify_time = now()
+        where
+            block_hash = #blockHash# and
+            verify_status = #oldVerifyStatus#
+    </update>
+
 </sqlMapInfo>

@@ -39,6 +39,10 @@ public class TransactionMessage extends BaseMessage implements Message {
         return transactionMessage;
     }
 
+    public static TransactionMessage createTransactionMessage(int protocolVersion) {
+        return new TransactionMessage(protocolVersion);
+    }
+
     public static TransactionMessage read(ByteBuffer buffer,
                                           int protocolVersion) throws BufferUnderflowException, ProtocolException {
         TransactionMessage transaction = new TransactionMessage(protocolVersion);
@@ -106,6 +110,14 @@ public class TransactionMessage extends BaseMessage implements Message {
         transactionOutputs.add(transactionOutput);
     }
 
+    public void replaceTransactionInput(TransactionInput transactionInput, int index){
+        TransactionInput originInput = transactionInputs.get(index);
+        originInput.setParentTransaction(null);
+
+        transactionInput.setParentTransaction(this);
+        transactionInputs.set(index, transactionInput);
+    }
+
     private static boolean allowTransactionWitness(int protocolVersion) {
         return (protocolVersion & Constants.SERIALIZE_TRANSACTION_NO_WITNESS) == 0
                 && protocolVersion >= Constants.TRANSACTION_WITNESS_VERSION;
@@ -128,7 +140,7 @@ public class TransactionMessage extends BaseMessage implements Message {
         return false;
     }
 
-    protected byte[] serializeMessage() throws IOException {
+    public byte[] serializeMessage() throws IOException {
         ByteArrayOutputStream outputStream = serializeToStream(false);
         return outputStream.toByteArray();
     }
@@ -175,8 +187,16 @@ public class TransactionMessage extends BaseMessage implements Message {
         return transactionInputs;
     }
 
+    public void setTransactionInputs(List<TransactionInput> transactionInputs) {
+        this.transactionInputs = transactionInputs;
+    }
+
     public List<TransactionOutput> getTransactionOutputs() {
         return transactionOutputs;
+    }
+
+    public void setTransactionOutputs(List<TransactionOutput> transactionOutputs) {
+        this.transactionOutputs = transactionOutputs;
     }
 
     public TransactionLockTime getTransactionLockTime() {

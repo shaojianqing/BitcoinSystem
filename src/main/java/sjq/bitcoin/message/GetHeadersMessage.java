@@ -30,7 +30,7 @@ public class GetHeadersMessage extends BaseMessage implements Message {
     }
 
     @Override
-    protected byte[] serializeMessage() throws IOException {
+    public byte[] serializeMessage() throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ByteUtils.writeInt32LE(version, outputStream);
 

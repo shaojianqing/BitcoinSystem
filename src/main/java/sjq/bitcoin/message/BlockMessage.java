@@ -54,7 +54,7 @@ public class BlockMessage extends BaseMessage implements Message {
     }
 
     @Override
-    protected byte[] serializeMessage() throws IOException {
+    public byte[] serializeMessage() throws IOException {
         return new byte[0];
     }
 

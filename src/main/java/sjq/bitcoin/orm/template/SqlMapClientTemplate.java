@@ -187,7 +187,7 @@ public class SqlMapClientTemplate {
 		}
 		throw new SqlTemplateException(String.format("Can not map the correct java type:%s", javaType));
 	}
-	
+
 	private void setDataValue(Object value, Object data, Map<String, Method> methodMap, PropertyMap propertyMap)
 			throws IllegalAccessException, InvocationTargetException {
 		String writerMethodName = ClassUtil.getWriteMethodName(propertyMap.getPropertyName());

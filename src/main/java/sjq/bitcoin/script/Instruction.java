@@ -21,4 +21,6 @@ public interface Instruction {
     int getInstructionSize();
 
     byte[] getInstructionByte();
+
+    void setScriptProgram(ScriptProgram runtime);
 }
