@@ -14,14 +14,17 @@ BitcoinSystem, and it is regarded as my respect to Bitcoin and Satoshi. So Bitco
 the detailed and precise system design and technical mechanism.
 
 # General Architecture
+BitcoinSystem is relatively complex system written in Java language. As a full node running in the Bitcoin P2P network, BitcoinSystem is intended to implement all aspects of Bitcoin protocol including wallet, miner and so on. Currently, the architecture of BitcoinSystem is analysed and designed 
+as the diagram below. BitcoinSystem runs as a Java GUI application which provides http service as well. And it plays the role of P2P node in the Bitcoin network and communicates with other Bitcoin nodes with binary messages defined in Bitcoin protocol precisely. The content below describes all 
+the main architectural components involved and combined in BitcoinSystem application.
 
 ![](https://github.com/shaojianqing/BitcoinSystem/blob/master/doc/images/general_architecture.png)
 > General Architecture Design
 
 |Seq|Module|Description|
 |:-- |:--------------- |:-------------------------------------------|
-|1|Context Core | |
-|2|ORM Facility | |
+|1|Context Core |This is the IOC container core just like Spring IOC, and it provides and supports annotation based context container ability. Since BitcoinSystem is intended to be developed from scratch, I implement this context core as the IOC container core, rather than using Spring IOC.|
+|2|ORM Facility |This is the object relation mapping framework for domain and database operation. Because all kinds of blockchain data in BitcoinSystem are stored and managed in relational database, that kind of ORM framework is necessary to simplify the data persistence operation. For the same reason as context core, I implement this kind of ORM Facility just like ibatis.|
 |3|P2P Network | |
 |4|Messages | |
 |5|Script Runtime | |
@@ -33,7 +36,7 @@ the detailed and precise system design and technical mechanism.
 |11|Entities | |
 |12|API Server | |
 |13|GUI Interface | |
-
+e
 # Database Entity Design
 
 ![](https://github.com/shaojianqing/BitcoinSystem/blob/master/doc/images/database_design.png)
