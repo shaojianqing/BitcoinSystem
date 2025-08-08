@@ -56,7 +56,7 @@ e
 ![](https://github.com/shaojianqing/BitcoinSystem/blob/master/doc/images/blockchain_structure.png)
 > Blockchain Data Structure
 
-### Main Data Structure in Blockchain 
+### Main Data Structure in Bitcoin Blockchain 
 
 ### UTXO Transaction Model Description
 
