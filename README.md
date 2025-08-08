@@ -53,4 +53,12 @@ e
 |7|transaction_address | |
 
 # Block and Transaction Structure
+![](https://github.com/shaojianqing/BitcoinSystem/blob/master/doc/images/blockchain_structure.png)
+> Blockchain Data Structure
+
+## Main Data Structure in Blockchain 
+
+## UTXO Transaction Model Description
+
+## Bitcoin Asset Ownership and Address
  
