@@ -18,7 +18,7 @@ import sjq.bitcoin.service.data.LegacyAddress;
 import sjq.bitcoin.service.data.SegwitAddress;
 import sjq.bitcoin.utility.AssertUtils;
 import sjq.bitcoin.utility.ByteUtils;
-import sjq.bitcoin.utility.CryptoUtils;
+import sjq.bitcoin.utility.HashUtils;
 import sjq.bitcoin.utility.HexUtils;
 
 import java.math.BigInteger;
@@ -117,7 +117,7 @@ public class ECDSAKey {
 
     private byte[] getPublicKeyHash() {
         if (publicKeyHash==null) {
-            publicKeyHash = CryptoUtils.sha256ToHash160(publicKey);
+            publicKeyHash = HashUtils.sha256ToHash160(publicKey);
         }
         return publicKeyHash;
     }

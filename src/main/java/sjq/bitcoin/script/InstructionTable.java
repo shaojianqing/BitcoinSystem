@@ -9,7 +9,7 @@ import sjq.bitcoin.hash.Hash;
 import sjq.bitcoin.logger.Logger;
 import sjq.bitcoin.utility.AssertUtils;
 import sjq.bitcoin.utility.ByteUtils;
-import sjq.bitcoin.utility.CryptoUtils;
+import sjq.bitcoin.utility.HashUtils;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -983,7 +983,7 @@ public class InstructionTable {
                 byte[] source = stack.pop();
                 AssertUtils.notNull(source,
                         "the input source for sha256 can not be null!");
-                byte[] result = CryptoUtils.sha256(source);
+                byte[] result = HashUtils.sha256(source);
                 stack.push(result);
             } catch (Exception e) {
                 String message = String.format("script execution exception, with %s, message:%s", getOpCode(), e.getMessage());
@@ -1000,7 +1000,7 @@ public class InstructionTable {
                 byte[] source = stack.pop();
                 AssertUtils.notNull(source,
                         "the input source for sha256ToHash160 can not be null!");
-                byte[] result = CryptoUtils.sha256ToHash160(source);
+                byte[] result = HashUtils.sha256ToHash160(source);
                 stack.push(result);
             } catch (Exception e) {
                 String message = String.format("script execution exception, with %s, message:%s", getOpCode(), e.getMessage());
@@ -1024,7 +1024,7 @@ public class InstructionTable {
             try {
                 byte[] source = stack.pop();
                 AssertUtils.notNull(source, "the input source for hash256 can not be null!");
-                byte[] result = CryptoUtils.hash256(source);
+                byte[] result = HashUtils.hash256(source);
                 stack.push(result);
             } catch (Exception e) {
                 String message = String.format("script execution exception with %s, message:%s", getOpCode(), e.getMessage());

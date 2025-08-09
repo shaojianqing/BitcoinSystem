@@ -5,7 +5,7 @@ import sjq.bitcoin.hash.Hash;
 
 import java.security.MessageDigest;
 
-public class CryptoUtils {
+public class HashUtils {
 
     public static byte[] sha256(byte[] data) throws Exception {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");

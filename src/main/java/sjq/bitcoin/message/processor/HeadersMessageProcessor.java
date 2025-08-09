@@ -1,4 +1,4 @@
-package sjq.bitcoin.network.processor;
+package sjq.bitcoin.message.processor;
 
 import sjq.bitcoin.blockchain.Blockchain;
 import sjq.bitcoin.context.Autowire;

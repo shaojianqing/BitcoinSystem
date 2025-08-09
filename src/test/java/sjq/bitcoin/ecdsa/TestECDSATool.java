@@ -7,7 +7,7 @@ import sjq.bitcoin.crypto.ECDSASignature;
 import sjq.bitcoin.crypto.ECDSATool;
 import sjq.bitcoin.crypto.transaction.TransactionSignature;
 import sjq.bitcoin.logger.Logger;
-import sjq.bitcoin.utility.CryptoUtils;
+import sjq.bitcoin.utility.HashUtils;
 import sjq.bitcoin.utility.HexUtils;
 
 public class TestECDSATool {
@@ -44,7 +44,7 @@ public class TestECDSATool {
         byte[] publicKeyBytes = HexUtils.parseHex("027e8acffa97f47f0318524cc4cf16e25da5e0a755e43f6b9544b81916922b08af");
         ECDSAKey ecdsaKey = ECDSAKey.getInstanceFromPublicKey(publicKeyBytes);
 
-        byte[] publicKeyHash = CryptoUtils.sha256ToHash160(ecdsaKey.getPublicKey());
+        byte[] publicKeyHash = HashUtils.sha256ToHash160(ecdsaKey.getPublicKey());
         String publicKeyHashString = HexUtils.formatHex(publicKeyHash);
 
         Logger.info("public key hash:%s", publicKeyHashString);
