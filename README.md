@@ -44,13 +44,13 @@ the main architectural components involved and combined in BitcoinSystem applica
 
 |Seq|Module|Description|
 |:-- |:--------------- |:-------------------------------------------|
-|1|block | |
-|2|transaction | |
-|3|transaction_block | |
-|4|transaction_spend | |
-|5|transaction_input | |
-|6|transaction_output | |
-|7|transaction_address | |
+|1|block |This table is to store block header data, including block hash, previous block hash, merkel root, timestamp and so on. In order to maintain block sync and verification status, it contains sync status, verify status and transaction count as well. |
+|2|transaction |This table is to store transaction data, mainly including transaction hash, corresponding block hash, lock time and verify status. The detailed transaction data including transaction input and transaction output data is stored in separate tables. |
+|3|transaction_block |This table is to store the block and transaction mapping relation data. Because transaction data is designed to stored in sharding tables which is sharded by transaction hash. For fast transaction data query by block hash, this kind of mapping relation data should be stored and sharded by block hash correctly. |
+|4|transaction_spend |This table is to store Bitcoin asset spending status. Because Bitcoin asset is designed to take the UTXO model, Bitcoin asset balance is calculated and presented by the coin value field in unspent transaction output, it is more convenient to store the spending status for specified transaction output record, if the total balance is calculated for a specified Bitcoin address. |
+|5|transaction_input |This table is to store transaction input data originally inside transaction data. Usually, transaction input data is to declare the ownership and unlock the referenced Bitcoin asset presented by the corresponding transaction output. The main fields are from transaction hash, transaction output index and signature script. |
+|6|transaction_output |This table is to store transaction output data originally inside transaction data. Because of the UTXO model, transaction output records the balance of Bitcoin asset for specified address stored in public key script. The main fields are transaction output index, coin value and public key script. |
+|7|transaction_address |This table is to store transaction balance for specified address. Because of the UTXO model, the total balance of Bitcoin asset for specified address is accumulated by all unspent transaction output records. So this table here is mainly for performance consideration when calculating total Bitcoin asset. |
 
 # Block and Transaction Structure
 ![](https://github.com/shaojianqing/BitcoinSystem/blob/master/doc/images/blockchain_structure.png)
