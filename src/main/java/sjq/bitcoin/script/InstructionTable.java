@@ -957,13 +957,18 @@ public class InstructionTable {
     private static class OpRipemd160Instruction extends AbstractInstruction  {
 
         @Override
-        public void fetch(ByteBuffer scriptBuffer) {
-
-        }
-
-        @Override
         public void execute(OperandStack stack) {
+            try {
+                byte[] source = stack.pop();
+                AssertUtils.notNull(source,
+                        "the input source for ripemd160 can not be null!");
 
+                byte[] result = HashUtils.ripeMd160(source);
+                stack.push(result);
+            } catch (Exception e) {
+                String message = String.format("script execution exception, with %s, message:%s", getOpCode(), e.getMessage());
+                throw new ScriptException(message);
+            }
         }
     }
 
@@ -971,7 +976,16 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
-
+            try {
+                byte[] source = stack.pop();
+                AssertUtils.notNull(source,
+                        "the input source for sha1 can not be null!");
+                byte[] result = HashUtils.sha1(source);
+                stack.push(result);
+            } catch (Exception e) {
+                String message = String.format("script execution exception, with %s, message:%s", getOpCode(), e.getMessage());
+                throw new ScriptException(message);
+            }
         }
     }
 

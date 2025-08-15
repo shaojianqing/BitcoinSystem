@@ -7,13 +7,22 @@ import java.security.MessageDigest;
 
 public class HashUtils {
 
+    private static final String SHA_1 = "SHA-1";
+
+    private static final String SHA_256 = "SHA-256";
+
+    public static byte[] sha1(byte[] data) throws Exception {
+        MessageDigest digest = MessageDigest.getInstance(SHA_1);
+        return digest.digest(data);
+    }
+
     public static byte[] sha256(byte[] data) throws Exception {
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        MessageDigest digest = MessageDigest.getInstance(SHA_256);
         return digest.digest(data);
     }
 
     public static byte[] hash256(byte[] data) throws Exception {
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        MessageDigest digest = MessageDigest.getInstance(SHA_256);
         byte[] result = digest.digest(data);
         return digest.digest(result);
     }

@@ -7,7 +7,6 @@ import sjq.bitcoin.message.*;
 import sjq.bitcoin.message.base.Message;
 import sjq.bitcoin.message.processor.*;
 import sjq.bitcoin.network.node.PeerNode;
-import sjq.bitcoin.network.processor.*;
 
 import java.util.HashMap;
 import java.util.Map;
