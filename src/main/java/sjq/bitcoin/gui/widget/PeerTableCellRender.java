@@ -2,7 +2,6 @@ package sjq.bitcoin.gui.widget;
 
 import org.apache.commons.lang3.StringUtils;
 import sjq.bitcoin.constant.Appearance;
-import sjq.bitcoin.gui.data.PeerData;
 import sjq.bitcoin.network.node.PeerNode;
 
 import javax.swing.*;

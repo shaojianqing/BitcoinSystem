@@ -1,5 +1,6 @@
 package sjq.bitcoin.gui;
 
+import sjq.bitcoin.blockchain.param.BlockQueryRequest;
 import sjq.bitcoin.gui.widget.CustomComboBoxUI;
 import sjq.bitcoin.constant.Appearance;
 
@@ -10,87 +11,93 @@ import java.awt.event.MouseListener;
 
 public class SearchBar extends JPanel {
 
-    private JLabel blockHeightLbl;
+    private final JLabel blockHeightLbl;
 
-    private JTextField blockHeightTxt;
+    private final JTextField blockHeightTxt;
 
-    private JLabel blockHashLbl;
+    private final JLabel blockHashLbl;
 
-    private JTextField blockHashTxt;
+    private final JTextField blockHashTxt;
 
-    private JLabel blockStatusLbl;
+    private final JLabel blockStatusLbl;
 
-    private JComboBox blockStatusCmb;
+    private final JComboBox<String> blockStatusCmb;
 
-    private JLabel searchBtnLbl;
+    private final JLabel searchBtnLbl;
 
-    private JButton searchBtn;
+    private final JButton searchBtn;
 
-    public SearchBar() {
+    private final BlockTable blockTable;
+
+    public SearchBar(BlockTable blockTable) {
         setBackground(Appearance.MAIN_COLOR);
         setLayout(new FlowLayout(FlowLayout.LEFT));
         setPreferredSize(new Dimension(1180, 38));
         setBorder(BorderFactory.createLineBorder(Appearance.SEARCHBAR_COLOR));
 
-        blockHeightLbl = new JLabel();
-        blockHashLbl = new JLabel();
-        blockStatusLbl = new JLabel();
-        searchBtnLbl = new JLabel();
+        this.blockTable = blockTable;
+        this.blockHeightLbl = new JLabel();
+        this.blockHashLbl = new JLabel();
+        this.blockStatusLbl = new JLabel();
+        this.searchBtnLbl = new JLabel();
 
-        blockHeightLbl.setForeground(Appearance.INPUT_TEXT_COLOR);
-        blockHashLbl.setForeground(Appearance.INPUT_TEXT_COLOR);
-        blockHashLbl.setPreferredSize(new Dimension(100, 24));
-        blockHashLbl.setHorizontalAlignment(SwingConstants.RIGHT);
-        blockStatusLbl.setForeground(Appearance.INPUT_TEXT_COLOR);
-        blockStatusLbl.setPreferredSize(new Dimension(100, 24));
-        blockStatusLbl.setHorizontalAlignment(SwingConstants.RIGHT);
-        searchBtnLbl.setPreferredSize(new Dimension(20, 24));
-        searchBtnLbl.setHorizontalAlignment(SwingConstants.RIGHT);
+        this.blockHeightLbl.setForeground(Appearance.INPUT_TEXT_COLOR);
+        this.blockHashLbl.setForeground(Appearance.INPUT_TEXT_COLOR);
+        this.blockHashLbl.setPreferredSize(new Dimension(100, 24));
+        this.blockHashLbl.setHorizontalAlignment(SwingConstants.RIGHT);
+        this.blockStatusLbl.setForeground(Appearance.INPUT_TEXT_COLOR);
+        this.blockStatusLbl.setPreferredSize(new Dimension(100, 24));
+        this.blockStatusLbl.setHorizontalAlignment(SwingConstants.RIGHT);
+        this.searchBtnLbl.setPreferredSize(new Dimension(20, 24));
+        this.searchBtnLbl.setHorizontalAlignment(SwingConstants.RIGHT);
 
-        blockHeightLbl.setText("Block Height:");
-        blockHashLbl.setText("Block Hash:");
-        blockStatusLbl.setText("Block Status:");
+        this.blockHeightLbl.setText("Block Height:");
+        this.blockHashLbl.setText("Block Hash:");
+        this.blockStatusLbl.setText("Verify Status:");
 
-        blockHeightTxt = new JTextField();
-        blockHashTxt = new JTextField();
-        blockStatusCmb = new JComboBox();
+        this.blockHeightTxt = new JTextField();
+        this.blockHashTxt = new JTextField();
+        this.blockStatusCmb = new JComboBox<String>();
 
-        blockHeightTxt.setPreferredSize(new Dimension(120, 24));
-        blockHeightTxt.setBorder(BorderFactory.createLineBorder(Appearance.BORDER_COLOR));
-        blockHeightTxt.setBackground(Appearance.AREA_COLOR);
-        blockHeightTxt.setForeground(Color.WHITE);
-        blockHeightTxt.setCaretColor(Appearance.INPUT_TEXT_COLOR);
+        this.blockHeightTxt.setPreferredSize(new Dimension(120, 24));
+        this.blockHeightTxt.setBorder(BorderFactory.createLineBorder(Appearance.BORDER_COLOR));
+        this.blockHeightTxt.setBackground(Appearance.AREA_COLOR);
+        this.blockHeightTxt.setForeground(Color.WHITE);
+        this.blockHeightTxt.setCaretColor(Appearance.INPUT_TEXT_COLOR);
 
-        blockHashTxt.setPreferredSize(new Dimension(420, 24));
-        blockHashTxt.setBorder(BorderFactory.createLineBorder(Appearance.BORDER_COLOR));
-        blockHashTxt.setBackground(Appearance.AREA_COLOR);
-        blockHashTxt.setCaretColor(Appearance.INPUT_TEXT_COLOR);
-        blockHashTxt.setForeground(Color.WHITE);
+        this.blockHashTxt.setPreferredSize(new Dimension(420, 24));
+        this.blockHashTxt.setBorder(BorderFactory.createLineBorder(Appearance.BORDER_COLOR));
+        this.blockHashTxt.setBackground(Appearance.AREA_COLOR);
+        this.blockHashTxt.setCaretColor(Appearance.INPUT_TEXT_COLOR);
+        this.blockHashTxt.setForeground(Color.WHITE);
 
-        blockStatusCmb.setPreferredSize(new Dimension(160, 24));
-        blockStatusCmb.setOpaque(true);
-        blockStatusCmb.addItem("Confirmed");
-        blockStatusCmb.addItem("Unconfirmed");
-        blockStatusCmb.setUI(new CustomComboBoxUI());
-        blockStatusCmb.setBorder(BorderFactory.createLineBorder(Appearance.BORDER_COLOR));
-        blockStatusCmb.setForeground(Appearance.INPUT_TEXT_COLOR);
-        blockStatusCmb.setBackground(Appearance.MAIN_COLOR);
+        this.blockStatusCmb.setPreferredSize(new Dimension(160, 24));
+        this.blockStatusCmb.setOpaque(true);
+        this.blockStatusCmb.addItem("All");
+        this.blockStatusCmb.addItem("UnVerifyHeader");
+        this.blockStatusCmb.addItem("VerifyHeader");
+        this.blockStatusCmb.addItem("VerifyTransaction");
+        this.blockStatusCmb.setUI(new CustomComboBoxUI());
+        this.blockStatusCmb.setBorder(BorderFactory.createLineBorder(Appearance.BORDER_COLOR));
+        this.blockStatusCmb.setForeground(Appearance.INPUT_TEXT_COLOR);
+        this.blockStatusCmb.setBackground(Appearance.MAIN_COLOR);
 
-        searchBtn = new JButton();
-        searchBtn.setText("Search");
-        searchBtn.setEnabled(true);
-        searchBtn.setOpaque(true);
-        searchBtn.setIconTextGap(10);
-        searchBtn.setBorder(BorderFactory.createLineBorder(Appearance.BORDER_COLOR, 1));
-        searchBtn.setPreferredSize(new Dimension(100, 24));
-        searchBtn.setForeground(Appearance.INPUT_TEXT_COLOR);
-        searchBtn.setBackground(Appearance.MAIN_COLOR);
-        searchBtn.setIcon(new ImageIcon("res/images/icon_search_data.png"));
+        this.searchBtn = new JButton();
+        this.searchBtn.setText("Search");
+        this.searchBtn.setEnabled(true);
+        this.searchBtn.setOpaque(true);
+        this.searchBtn.setIconTextGap(10);
+        this.searchBtn.setBorder(BorderFactory.createLineBorder(Appearance.BORDER_COLOR, 1));
+        this.searchBtn.setPreferredSize(new Dimension(100, 24));
+        this.searchBtn.setForeground(Appearance.INPUT_TEXT_COLOR);
+        this.searchBtn.setBackground(Appearance.MAIN_COLOR);
+        this.searchBtn.setIcon(new ImageIcon("res/images/icon_search_data.png"));
 
-        searchBtn.addMouseListener(new MouseListener() {
+        this.searchBtn.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 searchBtn.setBackground(Appearance.AREA_COLOR);
+                searchBlockDataList();
             }
 
             @Override
@@ -114,16 +121,24 @@ public class SearchBar extends JPanel {
             }
         });
 
-        add(blockHeightLbl);
-        add(blockHeightTxt);
+        this.add(blockHeightLbl);
+        this.add(blockHeightTxt);
 
-        add(blockHashLbl);
-        add(blockHashTxt);
+        this.add(blockHashLbl);
+        this.add(blockHashTxt);
 
-        add(blockStatusLbl);
-        add(blockStatusCmb);
+        this.add(blockStatusLbl);
+        this.add(blockStatusCmb);
 
-        add(searchBtnLbl);
-        add(searchBtn);
+        this.add(searchBtnLbl);
+        this.add(searchBtn);
+    }
+
+    private void searchBlockDataList() {
+        String blockHeight = blockHeightTxt.getText();
+        String blockHash = blockHashTxt.getText();
+        String blockStatus = (String)blockStatusCmb.getSelectedItem();
+
+        this.blockTable.searchBlockData(BlockQueryRequest.build(blockHeight, blockHash, blockStatus));
     }
 }

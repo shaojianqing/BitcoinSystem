@@ -8,13 +8,13 @@ import java.util.List;
 
 public class SqlTemplateUtil {
 
-	public static String retriveFirstKey(String sqlStringTemplate) {
+	public static String retrieveFirstKey(String sqlStringTemplate) {
 		char string[] = sqlStringTemplate.toCharArray();
 		int i=0, start=0, end=0;
 		boolean isOccur = false;
 		while(i<string.length) {
 			char c = string[i];
-			if (c=='#') {
+			if (c=='#' || c=='$') {
 				if (isOccur) {
 					end = i;
 					if (start+1<end) {
@@ -44,7 +44,7 @@ public class SqlTemplateUtil {
 		
 		while(i<string.length) {
 			char c = string[i];			
-			if (c=='#') {
+			if (c=='#' || c=='$') {
 				if (isReOccur) {
 					++i;
 					isReOccur = false;

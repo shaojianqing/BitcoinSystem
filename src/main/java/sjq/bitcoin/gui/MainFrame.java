@@ -32,25 +32,26 @@ public class MainFrame extends JFrame {
     private Console console;
 
     public void initMainView() {
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        setTitle(Constants.SYSTEM_NAME);
-        setBackground(Appearance.MAIN_COLOR);
-        setSize(FRAME_WIDTH, FRAME_HEIGHT);
-        setResizable(false);
+        this.setTitle(Constants.SYSTEM_NAME);
+        this.setBackground(Appearance.MAIN_COLOR);
+        this.setSize(FRAME_WIDTH, FRAME_HEIGHT);
+        this.setResizable(false);
 
-        getContentPane().setLayout(layout);
-        getContentPane().setBackground(Appearance.MAIN_COLOR);
-        getContentPane().add(toolbar, BorderLayout.NORTH);
-        getContentPane().add(blockTable, BorderLayout.CENTER);
-        getContentPane().add(peerTable, BorderLayout.EAST);
-        getContentPane().add(console, BorderLayout.SOUTH);
+        this.getContentPane().setLayout(layout);
+        this.getContentPane().setBackground(Appearance.MAIN_COLOR);
+        this.getContentPane().add(toolbar, BorderLayout.NORTH);
+        this.getContentPane().add(blockTable, BorderLayout.CENTER);
+        this.getContentPane().add(peerTable, BorderLayout.EAST);
+        this.getContentPane().add(console, BorderLayout.SOUTH);
 
-        setVisible(true);
+        this.setVisible(true);
     }
 
     public void initDataView() {
-        peerTable.initDataView();
-        console.initDataView();
+        this.peerTable.initDataView();
+        this.blockTable.initDataView();
+        this.console.initDataView();
     }
 }

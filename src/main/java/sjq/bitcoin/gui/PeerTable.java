@@ -93,7 +93,7 @@ public class PeerTable extends JPanel implements PeerChangeListener {
             String address = peer.getAddress().getHostString();
             String connectionTime = DateUtils.formatNormalDate(peer.getConnectionTime());
             return new PeerData(address, status, connectionTime);
-        }).collect(Collectors.toList());
+        }).toList();
 
         int peerTableHeight = PEER_ROW_HEIGHT*peerDataList.size();
         if (peerTableHeight < PEER_TABLE_HEIGHT) {

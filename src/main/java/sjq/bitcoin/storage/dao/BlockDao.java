@@ -19,6 +19,8 @@ public class BlockDao {
 
     private final static String QUERY_BLOCK_BY_SYNC_STATUS = "sjq.bitcoin.storage.domain.Block.queryBlockBySyncStatus";
 
+    private final static String QUERY_BLOCK_WITH_CONDITION = "sjq.bitcoin.storage.domain.Block.queryBlockWithCondition";
+
     private final static String SAVE_BLOCK = "sjq.bitcoin.storage.domain.Block.saveBlock";
 
     private final static String UPDATE_BLOCK_HEIGHT = "sjq.bitcoin.storage.domain.Block.updateBlockHeight";
@@ -43,6 +45,13 @@ public class BlockDao {
         paramMap.put("syncStatus", status);
         paramMap.put("limitSize", limit);
         return (List<Block>)sqlMapClientTemplate.queryForList(QUERY_BLOCK_BY_SYNC_STATUS, paramMap);
+    }
+
+    public List<Block> queryBlockWithCondition(String condition, Integer limit) throws Exception {
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("queryCondition", condition);
+        paramMap.put("limitSize", limit);
+        return (List<Block>)sqlMapClientTemplate.queryForList(QUERY_BLOCK_WITH_CONDITION, paramMap);
     }
 
     public Page<Block> searchBlockPage(Integer blockHeight, String blockHash, Integer startTimestamp, Integer endTimestamp) {

@@ -57,22 +57,26 @@ public class SqlStatement {
 				paramMap = BeanUtil.objectToMap(parameter);
 			} else if (parameter instanceof Map) {
 				paramMap = (Map<String, Object>)parameter;
-			} else if (parameter instanceof String) {
-				String key = SqlTemplateUtil.retriveFirstKey(sqlTemplateString);
+			} else {
+				String key = SqlTemplateUtil.retrieveFirstKey(sqlTemplateString);
 				paramMap = new HashMap<>();
 				paramMap.put(key, parameter);
-			} else {
-				paramMap = new HashMap<>();
 			}
 			
-			Map<String, Object> replaceParamMap = new HashMap<String, Object>();
+			Map<String, Object> replaceParamMap = new HashMap<>();
 			Set<String> keySet = paramMap.keySet();
 			for (String key:keySet) {
-				String newKey = String.format("#%s#", key);
-				Object value = paramMap.get(key);
-				String realValue = String.valueOf(value);
-				realValue = String.format("'%s'", realValue);
-				replaceParamMap.put(newKey, realValue);
+				String newKey1 = String.format("#%s#", key);
+				Object value1 = paramMap.get(key);
+				String realValue1 = String.valueOf(value1);
+				realValue1 = String.format("'%s'", realValue1);
+				replaceParamMap.put(newKey1, realValue1);
+
+				String newKey2 = String.format("$%s$", key);
+				Object value2 = paramMap.get(key);
+				String realValue2 = String.valueOf(value2);
+				realValue2 = String.format("%s", realValue2);
+				replaceParamMap.put(newKey2, realValue2);
 			}
 			
 			List<String> sqlElementList = SqlTemplateUtil.split2List(sqlTemplateString);
@@ -101,7 +105,7 @@ public class SqlStatement {
 			} else if (parameter instanceof Map) {
 				paramMap = (Map<String, Object>)parameter;
 			} else if (parameter instanceof String) {
-				String key = SqlTemplateUtil.retriveFirstKey(sqlTemplateString);
+				String key = SqlTemplateUtil.retrieveFirstKey(sqlTemplateString);
 				paramMap = new HashMap<>();
 				paramMap.put(key, parameter);
 			} else {

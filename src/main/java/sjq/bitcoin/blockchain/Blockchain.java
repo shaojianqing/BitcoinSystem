@@ -1,5 +1,6 @@
 package sjq.bitcoin.blockchain;
 
+import sjq.bitcoin.blockchain.param.BlockQueryRequest;
 import sjq.bitcoin.context.Autowire;
 import sjq.bitcoin.core.task.BlockSyncTask;
 import sjq.bitcoin.core.task.BlockVerifyTask;
@@ -97,6 +98,10 @@ public class Blockchain {
 
     public List<Block> queryBlockWithHeaderSynced() throws Exception {
         return blockService.queryBlockWithHeaderSynced();
+    }
+
+    public List<Block> queryBlockWithCondition(BlockQueryRequest queryRequest) throws Exception {
+        return blockService.queryBlockWithCondition(queryRequest);
     }
 
     public void processTransaction(TransactionMessage transactionMessage) {

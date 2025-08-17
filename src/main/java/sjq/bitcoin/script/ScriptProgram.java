@@ -23,7 +23,7 @@ public class ScriptProgram {
     }
 
     public static ScriptProgram build() {
-        return new ScriptProgram(null);
+        return new ScriptProgram(new ArrayList<>());
     }
 
     public static ScriptProgram build(byte[] scriptData) throws Exception {

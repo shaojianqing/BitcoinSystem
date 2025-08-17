@@ -1,3 +1,6 @@
+![](https://github.com/shaojianqing/BitcoinSystem/blob/master/doc/images/main_screenshot.png)
+> BitcoinSystem Main Screenshot 
+
 # Introduction
 Bitcoin should be seen as some kind of remarkable innovation for modern centralized financial system in this world. Bitcoin defines and operates a new kind of decentralized network which could define and deliver value in the form of bitcoin currency. 
 Compared with modern centralized financial world, Bitcoin is completely decentralized network with the features of fairness, consistence and symmetry. Modern centralized financial system mainly consists of central bank and commercial bank system, and it

@@ -16,7 +16,7 @@ public class PeerDataModel extends DefaultTableModel {
 
     private static final int PEER_COLUMN_COUNT = 3;
 
-    private static final String[] PEER_COLUMNS = new String[3];
+    private static final String[] PEER_COLUMNS = new String[PEER_COLUMN_COUNT];
 
     private List<PeerData> peerDataList = new ArrayList<>();
 

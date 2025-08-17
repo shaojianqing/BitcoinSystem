@@ -92,7 +92,29 @@
         where
             sync_status = #syncStatus#
         order by block_height asc
-        limit 10
+        limit $limitSize$
+    </select>
+
+    <select id="sjq.bitcoin.storage.domain.Block.queryBlockWithCondition" resultDataMap="blockDataMap" parameterType="java.util.Map">
+        select
+            block_hash,
+            prev_block_hash,
+            merkle_root,
+            block_height,
+            version,
+            difficulty,
+            nonce,
+            sync_status,
+            verify_status,
+            timestamp,
+            trx_count,
+            create_time,
+            modify_time
+        from
+            block
+        $queryCondition$
+        order by block_height desc
+        limit $limitSize$
     </select>
 
     <insert id="sjq.bitcoin.storage.domain.Block.saveBlock" parameterType="sjq.bitcoin.storage.domain.Block" >

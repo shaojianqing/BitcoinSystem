@@ -24,7 +24,17 @@ public class Appearance {
 
     public static final Color CONSOLE_TEXT_COLOR = new Color(100, 140, 188);
 
-    public static final Color PEER_ACKNOWLEDGE_COLOR = new Color(20, 230, 128);
+    public static final Color PEER_ACKNOWLEDGE_COLOR = new Color(50, 220, 50);
 
     public static final Color PEER_CONNECTION_COLOR = new Color(220, 220, 80);
+
+    public static final Color BLOCK_SYNC_HEADER_COLOR = new Color(200, 160, 50);
+
+    public static final Color BLOCK_SYNC_TRANSACTION_COLOR = new Color(50, 220, 50);
+
+    public static final Color BLOCK_UNVERIFIED_HEADER_COLOR = new Color(220, 50, 50);
+
+    public static final Color BLOCK_VERIFIED_HEADER_COLOR = new Color(200, 160, 50);
+
+    public static final Color BLOCK_VERIFIED_TRANSACTION_COLOR = new Color(50, 220, 50);
 }

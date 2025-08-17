@@ -1,6 +1,7 @@
 package sjq.bitcoin.service;
 
 import org.apache.commons.lang3.StringUtils;
+import sjq.bitcoin.blockchain.param.BlockQueryRequest;
 import sjq.bitcoin.configuration.NetworkConfiguration;
 import sjq.bitcoin.context.Autowire;
 import sjq.bitcoin.logger.Logger;
@@ -19,6 +20,8 @@ public class BlockService {
     private static final Integer GENESIS_BLOCK_HEIGHT = 0;
 
     private static final Integer BLOCK_BATCH_LIMIT = 10;
+
+    private static final Integer QUERY_BATCH_LIMIT = 20;
 
     @Autowire
     private BlockDao blockDao;
@@ -51,6 +54,12 @@ public class BlockService {
 
     public List<Block> queryBlockWithHeaderSynced() throws Exception {
         return blockDao.queryBlockBatchBySyncStatus(Block.STATUS_SYNC_HEADER, BLOCK_BATCH_LIMIT);
+    }
+
+    public List<Block> queryBlockWithCondition(BlockQueryRequest queryRequest) throws Exception {
+        String queryCondition = buildQueryCondition(
+                queryRequest.getBlockHeight(), queryRequest.getBlockHash(), queryRequest.getVerifyStatus());
+        return blockDao.queryBlockWithCondition(queryCondition, QUERY_BATCH_LIMIT);
     }
 
     public Block getBlockByHash(String blockHash) throws Exception {
@@ -91,5 +100,31 @@ public class BlockService {
 
     public boolean updateBlockVerifyStatus(Block block, String oldStatus, String newStatus) throws Exception {
         return blockDao.updateBlockVerifyStatus(block.getBlockHash(), oldStatus, newStatus);
+    }
+
+    private String buildQueryCondition(String blockHeight, String blockHash, String verifyStatus) {
+        StringBuilder conditionBuilder = new StringBuilder();
+        if (StringUtils.isNotBlank(blockHeight)) {
+            conditionBuilder.append(String.format("block_height = '%s'", blockHeight));
+        }
+
+        if (StringUtils.isNotBlank(blockHash)) {
+            if (conditionBuilder.length()>0) {
+                conditionBuilder.append(" and ");
+            }
+            conditionBuilder.append(String.format("block_hash = '%s'", blockHash));
+        }
+
+        if (StringUtils.isNotBlank(verifyStatus) && (!StringUtils.equals(verifyStatus, "All"))) {
+            if (conditionBuilder.length()>0) {
+                conditionBuilder.append(" and ");
+            }
+            conditionBuilder.append(String.format("verify_status = '%s'", verifyStatus));
+        }
+
+        if (conditionBuilder.length()>0) {
+            conditionBuilder.insert(0, "where ");
+        }
+        return conditionBuilder.toString();
     }
 }
