@@ -18,7 +18,8 @@ public class TestECDSATool {
 
     private static final String originPublicKeyHashString = "ff9fb84dc0462e501a7c7a3731ecb69f89c9cdbe";
 
-    private static final String signature = "3045022025f1fab8db15f56c8e5f1ba2d4ffabf42f128173874a8f57242a1c307d4b4270022100c4b6fad07f6c9f0f7ad498e97a607529b8cbcb4eb4b580d185032561a42cb3b801";
+    private static final String signature = "3045022025f1fab8db15f56c8e5f1ba2d4ffabf42f128173874a8f57242a1c307d4b427" +
+            "0022100c4b6fad07f6c9f0f7ad498e97a607529b8cbcb4eb4b580d185032561a42cb3b801";
 
     private static final String hashForSignature = "04e3868f5dd0d71fbe7b2df55c3378caa36141fb27855d6cda124932474be3fc";
 

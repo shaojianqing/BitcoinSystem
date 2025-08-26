@@ -15,7 +15,9 @@ public class TestScriptVerificationP2PKH extends TestScriptVerificationBase  {
 
     private static final String scriptPubKeySuccessP2PKH = "76a914f4e171be7d53175dd523c786f8cfe890ef6ee97a88ac";
 
-    private static final String scriptSignatureSuccessP2PKH = "483045022025f1fab8db15f56c8e5f1ba2d4ffabf42f128173874a8f57242a1c307d4b4270022100c4b6fad07f6c9f0f7ad498e97a607529b8cbcb4eb4b580d185032561a42cb3b801210308cbe7b5b7f3d366f07f01d6906d56b40871c7865b38f2e8a91f76df639fe640";
+    private static final String scriptSignatureSuccessP2PKH = "483045022025f1fab8db15f56c8e5f1ba2d4ffabf42f128173874a8f" +
+            "57242a1c307d4b4270022100c4b6fad07f6c9f0f7ad498e97a607529b8cbcb4eb4b580d185032561a42cb3b801210308cbe7b5b7f3" +
+            "d366f07f01d6906d56b40871c7865b38f2e8a91f76df639fe640";
 
     @Test
     public void verifySuccess() {
