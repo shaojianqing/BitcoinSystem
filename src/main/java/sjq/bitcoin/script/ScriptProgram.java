@@ -1,5 +1,6 @@
 package sjq.bitcoin.script;
 
+import org.apache.commons.collections4.CollectionUtils;
 import sjq.bitcoin.crypto.ECDSAKey;
 import sjq.bitcoin.crypto.transaction.SignatureContext;
 import sjq.bitcoin.service.data.BitcoinAddress;
@@ -8,15 +9,17 @@ import sjq.bitcoin.service.data.SegwitAddress;
 import sjq.bitcoin.utility.HexUtils;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class ScriptProgram {
+
+    public static final EnumSet<VerifyFlag> ALL_VERIFY_FLAGS = EnumSet.allOf(VerifyFlag.class);
 
     private final List<Instruction> instructions;
 
     private SignatureContext signatureContext;
+
+    private Set<VerifyFlag> verifyFlagSet;
 
     private ScriptProgram(List<Instruction> instructions) {
         this.instructions = instructions;
@@ -43,12 +46,17 @@ public class ScriptProgram {
         return scriptProgram;
     }
 
-    public static boolean verify(SignatureContext signatureContext,
-                                 ScriptProgram scriptSignatureProgram, ScriptProgram scriptPubKeyProgram) {
+    public static boolean verify(SignatureContext signatureContext, ScriptProgram scriptSignatureProgram,
+                                 ScriptProgram scriptPubKeyProgram, Set<VerifyFlag> verifyFlagSet) {
         // Since They share the same signature context for both signature and pubKey script program,
         // here signatureContext should be set for both of them in advance.
         scriptSignatureProgram.initSignatureContext(signatureContext);
         scriptPubKeyProgram.initSignatureContext(signatureContext);
+
+        // Since verify flags is used to determine verification condition, it is set here both for
+        // scriptSignatureProgram and scriptPubKeyProgram when executing instructions.
+        scriptSignatureProgram.initVerifyFlagSet(verifyFlagSet);
+        scriptPubKeyProgram.initVerifyFlagSet(verifyFlagSet);
 
         // Both signature and public Key script program share the same operand stack instance. After
         // signature script program finishes execution, public key script program should start execution
@@ -63,6 +71,10 @@ public class ScriptProgram {
 
     private void initSignatureContext(SignatureContext signatureContext) {
         this.signatureContext = signatureContext;
+    }
+
+    private void initVerifyFlagSet(Set<VerifyFlag> verifyFlagSet) {
+        this.verifyFlagSet = verifyFlagSet;
     }
 
     private void executeScript(OperandStack stack) {
@@ -114,6 +126,13 @@ public class ScriptProgram {
             buffer.put(instruction.getInstructionByte());
         }
         return buffer.array();
+    }
+
+    public boolean supportVerifyFlag(VerifyFlag verifyFlag) {
+        if (CollectionUtils.isNotEmpty(verifyFlagSet)) {
+            return verifyFlagSet.contains(verifyFlag);
+        }
+        return false;
     }
 
     public BitcoinAddress getDestAddress(BitcoinNetwork network) {

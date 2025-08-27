@@ -1,5 +1,6 @@
 package sjq.bitcoin.crypto.transaction;
 
+import org.apache.commons.collections4.CollectionUtils;
 import sjq.bitcoin.hash.Hash;
 import sjq.bitcoin.message.TransactionMessage;
 import sjq.bitcoin.message.convertor.TransactionConvertor;
@@ -7,6 +8,7 @@ import sjq.bitcoin.message.data.TransactionInput;
 import sjq.bitcoin.message.data.TransactionOutput;
 import sjq.bitcoin.monetary.Coin;
 import sjq.bitcoin.script.ScriptConstant;
+import sjq.bitcoin.script.VerifyFlag;
 import sjq.bitcoin.service.data.TransactionData;
 import sjq.bitcoin.utility.ByteUtils;
 

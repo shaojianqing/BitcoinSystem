@@ -29,7 +29,7 @@ public abstract class TestScriptVerificationBase {
             byte[] pubKeyBytes = HexUtils.parseHex(scriptPubKey);
             ScriptProgram pubKeyProgram = ScriptProgram.build(pubKeyBytes);
 
-            return ScriptProgram.verify(signatureContext, signatureProgram,  pubKeyProgram);
+            return ScriptProgram.verify(signatureContext, signatureProgram,  pubKeyProgram, ScriptProgram.ALL_VERIFY_FLAGS);
         } catch (Exception e) {
             e.printStackTrace();
             return false;

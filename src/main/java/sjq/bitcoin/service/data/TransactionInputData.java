@@ -44,7 +44,8 @@ public class TransactionInputData {
     }
 
     public boolean verify(SignatureContext signatureContext, TransactionOutputData transactionOutput) {
-        return ScriptProgram.verify(signatureContext, this.signatureProgram, transactionOutput.getPubKeyProgram());
+        return ScriptProgram.verify(signatureContext, this.signatureProgram,
+                transactionOutput.getPubKeyProgram(), ScriptProgram.ALL_VERIFY_FLAGS);
     }
 
     public TransactionData getParentTransaction() {

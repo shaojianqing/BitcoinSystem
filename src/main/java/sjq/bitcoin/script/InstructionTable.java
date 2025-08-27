@@ -12,6 +12,7 @@ import sjq.bitcoin.utility.ByteUtils;
 import sjq.bitcoin.utility.HashUtils;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -311,6 +312,34 @@ public class InstructionTable {
             if (!condition) {
                 throw new ScriptException(message);
             }
+        }
+
+        protected void checkOperandStackSize(OperandStack stack, int expectedSize) {
+            if (stack.size()<expectedSize) {
+                throw new ScriptException(String.format("script execution exception " +
+                        "with %s, no enough elements in operand stack", getOpCode()));
+            }
+        }
+
+        protected BigInteger convertBigInteger(final byte[] digits, final boolean requireMinimal) {
+            return convertBigInteger(digits, requireMinimal);
+        }
+
+        protected BigInteger convertBigInteger(final byte[] digits, final int maxLength, final boolean requireMinimal) {
+            if (digits.length > maxLength) {
+                throw new ScriptException("Script attempted to use an integer larger than " + maxLength + " bytes");
+            }
+
+            if (requireMinimal && digits.length > 0) {
+                if ((digits[digits.length - 1] & 0x7f) == 0) {
+                    if (digits.length <= 1 || (digits[digits.length - 2] & 0x80) == 0) {
+                        throw  new ScriptException("non-minimally encoded script number");
+                    }
+                }
+            }
+
+            byte[] bigEndingDigits = ByteUtils.reverseBytes(digits);
+            return ByteUtils.decodeMPI(bigEndingDigits, false);
         }
 
         public boolean isOpCode() {
@@ -698,7 +727,7 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
-
+            throw new ScriptException(String.format("This is disabled operation code as for the script system, with:%s!", getOpCode()));
         }
     }
 
@@ -706,7 +735,7 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
-
+            throw new ScriptException(String.format("This is disabled operation code as for the script system, with:%s!", getOpCode()));
         }
     }
 
@@ -746,7 +775,22 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 2);
 
+            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
+
+            byte[] digitBytes2 = stack.pop();
+            byte[] digitBytes1 = stack.pop();
+
+            BigInteger number2 = convertBigInteger(digitBytes2, requireMinimal);
+            BigInteger number1 = convertBigInteger(digitBytes1, requireMinimal);
+
+            BigInteger result = number1.add(number2);
+
+            byte[] resultBytes = ByteUtils.encodeMPI(result, false);
+            byte[] reversedResult = ByteUtils.reverseBytes(resultBytes);
+
+            stack.push(reversedResult);
         }
     }
 
@@ -754,7 +798,22 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 2);
 
+            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
+
+            byte[] digitBytes2 = stack.pop();
+            byte[] digitBytes1 = stack.pop();
+
+            BigInteger number2 = convertBigInteger(digitBytes2, requireMinimal);
+            BigInteger number1 = convertBigInteger(digitBytes1, requireMinimal);
+
+            BigInteger result = number1.subtract(number2);
+
+            byte[] resultBytes = ByteUtils.encodeMPI(result, false);
+            byte[] reversedResult = ByteUtils.reverseBytes(resultBytes);
+
+            stack.push(reversedResult);
         }
     }
 
@@ -762,7 +821,7 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
-
+            throw new ScriptException(String.format("This is disabled operation code as for the script system, with:%s!", getOpCode()));
         }
     }
 
@@ -770,7 +829,7 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
-
+            throw new ScriptException(String.format("This is disabled operation code as for the script system, with:%s!", getOpCode()));
         }
     }
 
@@ -778,7 +837,7 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
-
+            throw new ScriptException(String.format("This is disabled operation code as for the script system, with:%s!", getOpCode()));
         }
     }
 
@@ -786,7 +845,7 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
-
+            throw new ScriptException(String.format("This is disabled operation code as for the script system, with:%s!", getOpCode()));
         }
     }
 
@@ -794,7 +853,7 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
-
+            throw new ScriptException(String.format("This is disabled operation code as for the script system, with:%s!", getOpCode()));
         }
     }
 
@@ -802,7 +861,28 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 2);
 
+            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
+
+            byte[] digitBytes2 = stack.pop();
+            byte[] digitBytes1 = stack.pop();
+
+            BigInteger number2 = convertBigInteger(digitBytes2, requireMinimal);
+            BigInteger number1 = convertBigInteger(digitBytes1, requireMinimal);
+
+            boolean isNum1NotZero = (!number1.equals(BigInteger.ZERO));
+            boolean isNum2NotZero = (!number2.equals(BigInteger.ZERO));
+
+            BigInteger result = BigInteger.ZERO;
+            if (isNum1NotZero && isNum2NotZero) {
+                result = BigInteger.ONE;
+            }
+
+            byte[] resultBytes = ByteUtils.encodeMPI(result, false);
+            byte[] reversedResult = ByteUtils.reverseBytes(resultBytes);
+
+            stack.push(reversedResult);
         }
     }
 
@@ -810,7 +890,28 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 2);
 
+            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
+
+            byte[] digitBytes2 = stack.pop();
+            byte[] digitBytes1 = stack.pop();
+
+            BigInteger number2 = convertBigInteger(digitBytes2, requireMinimal);
+            BigInteger number1 = convertBigInteger(digitBytes1, requireMinimal);
+
+            boolean isNum1NotZero = (!number1.equals(BigInteger.ZERO));
+            boolean isNum2NotZero = (!number2.equals(BigInteger.ZERO));
+
+            BigInteger result = BigInteger.ZERO;
+            if (isNum1NotZero || isNum2NotZero) {
+                result = BigInteger.ONE;
+            }
+
+            byte[] resultBytes = ByteUtils.encodeMPI(result, false);
+            byte[] reversedResult = ByteUtils.reverseBytes(resultBytes);
+
+            stack.push(reversedResult);
         }
     }
 
@@ -818,7 +919,51 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 2);
 
+            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
+
+            byte[] digitBytes2 = stack.pop();
+            byte[] digitBytes1 = stack.pop();
+
+            BigInteger number2 = convertBigInteger(digitBytes2, requireMinimal);
+            BigInteger number1 = convertBigInteger(digitBytes1, requireMinimal);
+
+            BigInteger result = BigInteger.ZERO;
+            if (number1.equals(number2)) {
+                result = BigInteger.ONE;
+            }
+
+            byte[] resultBytes = ByteUtils.encodeMPI(result, false);
+            byte[] reversedResult = ByteUtils.reverseBytes(resultBytes);
+
+            stack.push(reversedResult);
+        }
+    }
+
+    private static class OpNumNotEqualInstruction extends AbstractInstruction {
+
+        @Override
+        public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 2);
+
+            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
+
+            byte[] digitBytes2 = stack.pop();
+            byte[] digitBytes1 = stack.pop();
+
+            BigInteger number2 = convertBigInteger(digitBytes2, requireMinimal);
+            BigInteger number1 = convertBigInteger(digitBytes1, requireMinimal);
+
+            BigInteger result = BigInteger.ZERO;
+            if (!number1.equals(number2)) {
+                result = BigInteger.ONE;
+            }
+
+            byte[] resultBytes = ByteUtils.encodeMPI(result, false);
+            byte[] reversedResult = ByteUtils.reverseBytes(resultBytes);
+
+            stack.push(reversedResult);
         }
     }
 
@@ -830,21 +975,29 @@ public class InstructionTable {
         }
     }
 
-    private static class OpNumNotEqualInstruction extends AbstractInstruction {
-
-        @Override
-        public void execute(OperandStack stack) {
-        }
-    }
-
     private static class OpLessThanInstruction extends AbstractInstruction {
 
-        public OpLessThanInstruction(){
-        }
-
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 2);
 
+            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
+
+            byte[] digitBytes2 = stack.pop();
+            byte[] digitBytes1 = stack.pop();
+
+            BigInteger number2 = convertBigInteger(digitBytes2, requireMinimal);
+            BigInteger number1 = convertBigInteger(digitBytes1, requireMinimal);
+
+            BigInteger result = BigInteger.ZERO;
+            if (number1.compareTo(number2) < 0) {
+                result = BigInteger.ONE;
+            }
+
+            byte[] resultBytes = ByteUtils.encodeMPI(result, false);
+            byte[] reversedResult = ByteUtils.reverseBytes(resultBytes);
+
+            stack.push(reversedResult);
         }
     }
 
@@ -852,7 +1005,25 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 2);
 
+            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
+
+            byte[] digitBytes2 = stack.pop();
+            byte[] digitBytes1 = stack.pop();
+
+            BigInteger number2 = convertBigInteger(digitBytes2, requireMinimal);
+            BigInteger number1 = convertBigInteger(digitBytes1, requireMinimal);
+
+            BigInteger result = BigInteger.ZERO;
+            if (number1.compareTo(number2) > 0) {
+                result = BigInteger.ONE;
+            }
+
+            byte[] resultBytes = ByteUtils.encodeMPI(result, false);
+            byte[] reversedResult = ByteUtils.reverseBytes(resultBytes);
+
+            stack.push(reversedResult);
         }
     }
 
@@ -860,7 +1031,25 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 2);
 
+            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
+
+            byte[] digitBytes2 = stack.pop();
+            byte[] digitBytes1 = stack.pop();
+
+            BigInteger number2 = convertBigInteger(digitBytes2, requireMinimal);
+            BigInteger number1 = convertBigInteger(digitBytes1, requireMinimal);
+
+            BigInteger result = BigInteger.ZERO;
+            if (number1.compareTo(number2) <= 0) {
+                result = BigInteger.ONE;
+            }
+
+            byte[] resultBytes = ByteUtils.encodeMPI(result, false);
+            byte[] reversedResult = ByteUtils.reverseBytes(resultBytes);
+
+            stack.push(reversedResult);
         }
     }
 
@@ -868,7 +1057,25 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 2);
 
+            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
+
+            byte[] digitBytes2 = stack.pop();
+            byte[] digitBytes1 = stack.pop();
+
+            BigInteger number2 = convertBigInteger(digitBytes2, requireMinimal);
+            BigInteger number1 = convertBigInteger(digitBytes1, requireMinimal);
+
+            BigInteger result = BigInteger.ZERO;
+            if (number1.compareTo(number2) >= 0) {
+                result = BigInteger.ONE;
+            }
+
+            byte[] resultBytes = ByteUtils.encodeMPI(result, false);
+            byte[] reversedResult = ByteUtils.reverseBytes(resultBytes);
+
+            stack.push(reversedResult);
         }
     }
 
@@ -876,7 +1083,27 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 2);
 
+            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
+
+            byte[] digitBytes2 = stack.pop();
+            byte[] digitBytes1 = stack.pop();
+
+            BigInteger number2 = convertBigInteger(digitBytes2, requireMinimal);
+            BigInteger number1 = convertBigInteger(digitBytes1, requireMinimal);
+
+            BigInteger result;
+            if (number1.compareTo(number2) < 0) {
+                result = number1;
+            } else {
+                result = number2;
+            }
+
+            byte[] resultBytes = ByteUtils.encodeMPI(result, false);
+            byte[] reversedResult = ByteUtils.reverseBytes(resultBytes);
+
+            stack.push(reversedResult);
         }
     }
 
@@ -884,7 +1111,27 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 2);
 
+            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
+
+            byte[] digitBytes2 = stack.pop();
+            byte[] digitBytes1 = stack.pop();
+
+            BigInteger number2 = convertBigInteger(digitBytes2, requireMinimal);
+            BigInteger number1 = convertBigInteger(digitBytes1, requireMinimal);
+
+            BigInteger result;
+            if (number1.compareTo(number2) > 0) {
+                result = number1;
+            } else {
+                result = number2;
+            }
+
+            byte[] resultBytes = ByteUtils.encodeMPI(result, false);
+            byte[] reversedResult = ByteUtils.reverseBytes(resultBytes);
+
+            stack.push(reversedResult);
         }
     }
 
@@ -939,10 +1186,7 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
-            if (stack.size()<2) {
-                throw new ScriptException(String.format("script execution exception " +
-                        "with %s, no enough elements in operand stack", getOpCode()));
-            }
+            checkOperandStackSize(stack, 2);
 
             byte[] data1 = stack.pop();
             byte[] data2 = stack.pop();

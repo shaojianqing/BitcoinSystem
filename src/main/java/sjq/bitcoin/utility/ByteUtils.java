@@ -407,8 +407,9 @@ public class ByteUtils {
         // We could use the XOR trick here but it's easier to understand if we don't. If we find this is really a
         // performance issue the matter can be revisited.
         byte[] buf = new byte[bytes.length];
-        for (int i = 0; i < bytes.length; i++)
+        for (int i = 0; i < bytes.length; i++) {
             buf[i] = bytes[bytes.length - 1 - i];
+        }
         return buf;
     }
 
@@ -452,6 +453,33 @@ public class ByteUtils {
         }
     }
 
+    /**
+     * MPI encoded numbers are produced by the OpenSSL BN_bn2mpi function. They consist of
+     * a 4 byte big endian length field, followed by the stated number of bytes representing
+     * the number in big endian format (with a sign bit).
+     *
+     * @param hasLength can be set to false if the given array is missing the 4 byte length field
+     */
+    public static BigInteger decodeMPI(byte[] mpi, boolean hasLength) {
+        byte[] valueBuffer;
+        if (hasLength) {
+            ByteBuffer lengthBuffer = ByteBuffer.wrap(mpi, 0, mpi.length);
+            int length = (int) readUint32BE(lengthBuffer);
+            valueBuffer = new byte[length];
+            System.arraycopy(mpi, 4, valueBuffer, 0, length);
+        } else {
+            valueBuffer = mpi;
+        }
+        if (valueBuffer.length == 0) {
+            return BigInteger.ZERO;
+        }
+        boolean isNegative = (valueBuffer[0] & 0x80) == 0x80;
+        if (isNegative) {
+            valueBuffer[0] &= 0x7f;
+        }
+        BigInteger result = new BigInteger(valueBuffer);
+        return isNegative ? result.negate() : result;
+    }
 
     /**
      * @see #encodeCompactBits(BigInteger)
