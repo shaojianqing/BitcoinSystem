@@ -322,7 +322,7 @@ public class InstructionTable {
         }
 
         protected BigInteger convertBigInteger(final byte[] digits, final boolean requireMinimal) {
-            return convertBigInteger(digits, requireMinimal);
+            return convertBigInteger(digits, 4, requireMinimal);
         }
 
         protected BigInteger convertBigInteger(final byte[] digits, final int maxLength, final boolean requireMinimal) {
@@ -367,6 +367,32 @@ public class InstructionTable {
 
         public ScriptProgram getRuntime() {
             return runtime;
+        }
+    }
+
+    private static abstract class ArithmeticInstruction extends AbstractInstruction {
+
+        protected BigInteger number1;
+
+        protected BigInteger number2;
+
+        protected BigInteger result;
+
+        protected void prepareNumber(OperandStack stack) {
+            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
+
+            byte[] digitBytes2 = stack.pop();
+            byte[] digitBytes1 = stack.pop();
+
+            number2 = convertBigInteger(digitBytes2, requireMinimal);
+            number1 = convertBigInteger(digitBytes1, requireMinimal);
+        }
+
+        protected void processResult(OperandStack stack) {
+            byte[] resultBytes = ByteUtils.encodeMPI(result, false);
+            byte[] reversedResult = ByteUtils.reverseBytes(resultBytes);
+
+            stack.push(reversedResult);
         }
     }
 
@@ -771,49 +797,25 @@ public class InstructionTable {
         }
     }
 
-    private static class OpAddInstruction extends AbstractInstruction {
+    private static class OpAddInstruction extends ArithmeticInstruction {
 
         @Override
         public void execute(OperandStack stack) {
             checkOperandStackSize(stack, 2);
-
-            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
-
-            byte[] digitBytes2 = stack.pop();
-            byte[] digitBytes1 = stack.pop();
-
-            BigInteger number2 = convertBigInteger(digitBytes2, requireMinimal);
-            BigInteger number1 = convertBigInteger(digitBytes1, requireMinimal);
-
-            BigInteger result = number1.add(number2);
-
-            byte[] resultBytes = ByteUtils.encodeMPI(result, false);
-            byte[] reversedResult = ByteUtils.reverseBytes(resultBytes);
-
-            stack.push(reversedResult);
+            prepareNumber(stack);
+            result = number1.add(number2);
+            processResult(stack);
         }
     }
 
-    private static class OpSubInstruction extends AbstractInstruction {
+    private static class OpSubInstruction extends ArithmeticInstruction {
 
         @Override
         public void execute(OperandStack stack) {
             checkOperandStackSize(stack, 2);
-
-            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
-
-            byte[] digitBytes2 = stack.pop();
-            byte[] digitBytes1 = stack.pop();
-
-            BigInteger number2 = convertBigInteger(digitBytes2, requireMinimal);
-            BigInteger number1 = convertBigInteger(digitBytes1, requireMinimal);
-
-            BigInteger result = number1.subtract(number2);
-
-            byte[] resultBytes = ByteUtils.encodeMPI(result, false);
-            byte[] reversedResult = ByteUtils.reverseBytes(resultBytes);
-
-            stack.push(reversedResult);
+            prepareNumber(stack);
+            result = number1.subtract(number2);
+            processResult(stack);
         }
     }
 
@@ -857,113 +859,69 @@ public class InstructionTable {
         }
     }
 
-    private static class OpBoolAndInstruction extends AbstractInstruction {
+    private static class OpBoolAndInstruction extends ArithmeticInstruction {
 
         @Override
         public void execute(OperandStack stack) {
             checkOperandStackSize(stack, 2);
-
-            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
-
-            byte[] digitBytes2 = stack.pop();
-            byte[] digitBytes1 = stack.pop();
-
-            BigInteger number2 = convertBigInteger(digitBytes2, requireMinimal);
-            BigInteger number1 = convertBigInteger(digitBytes1, requireMinimal);
+            prepareNumber(stack);
 
             boolean isNum1NotZero = (!number1.equals(BigInteger.ZERO));
             boolean isNum2NotZero = (!number2.equals(BigInteger.ZERO));
 
-            BigInteger result = BigInteger.ZERO;
+            result = BigInteger.ZERO;
             if (isNum1NotZero && isNum2NotZero) {
                 result = BigInteger.ONE;
             }
 
-            byte[] resultBytes = ByteUtils.encodeMPI(result, false);
-            byte[] reversedResult = ByteUtils.reverseBytes(resultBytes);
-
-            stack.push(reversedResult);
+            processResult(stack);
         }
     }
 
-    private static class OpBoolOrInstruction extends AbstractInstruction {
+    private static class OpBoolOrInstruction extends ArithmeticInstruction {
 
         @Override
         public void execute(OperandStack stack) {
             checkOperandStackSize(stack, 2);
-
-            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
-
-            byte[] digitBytes2 = stack.pop();
-            byte[] digitBytes1 = stack.pop();
-
-            BigInteger number2 = convertBigInteger(digitBytes2, requireMinimal);
-            BigInteger number1 = convertBigInteger(digitBytes1, requireMinimal);
+            prepareNumber(stack);
 
             boolean isNum1NotZero = (!number1.equals(BigInteger.ZERO));
             boolean isNum2NotZero = (!number2.equals(BigInteger.ZERO));
 
-            BigInteger result = BigInteger.ZERO;
+            result = BigInteger.ZERO;
             if (isNum1NotZero || isNum2NotZero) {
                 result = BigInteger.ONE;
             }
 
-            byte[] resultBytes = ByteUtils.encodeMPI(result, false);
-            byte[] reversedResult = ByteUtils.reverseBytes(resultBytes);
-
-            stack.push(reversedResult);
+            processResult(stack);
         }
     }
 
-    private static class OpNumEqualInstruction extends AbstractInstruction {
+    private static class OpNumEqualInstruction extends ArithmeticInstruction {
 
         @Override
         public void execute(OperandStack stack) {
             checkOperandStackSize(stack, 2);
-
-            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
-
-            byte[] digitBytes2 = stack.pop();
-            byte[] digitBytes1 = stack.pop();
-
-            BigInteger number2 = convertBigInteger(digitBytes2, requireMinimal);
-            BigInteger number1 = convertBigInteger(digitBytes1, requireMinimal);
-
-            BigInteger result = BigInteger.ZERO;
+            prepareNumber(stack);
+            result = BigInteger.ZERO;
             if (number1.equals(number2)) {
                 result = BigInteger.ONE;
             }
-
-            byte[] resultBytes = ByteUtils.encodeMPI(result, false);
-            byte[] reversedResult = ByteUtils.reverseBytes(resultBytes);
-
-            stack.push(reversedResult);
+            processResult(stack);
         }
     }
 
-    private static class OpNumNotEqualInstruction extends AbstractInstruction {
+    private static class OpNumNotEqualInstruction extends ArithmeticInstruction {
 
         @Override
         public void execute(OperandStack stack) {
             checkOperandStackSize(stack, 2);
-
-            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
-
-            byte[] digitBytes2 = stack.pop();
-            byte[] digitBytes1 = stack.pop();
-
-            BigInteger number2 = convertBigInteger(digitBytes2, requireMinimal);
-            BigInteger number1 = convertBigInteger(digitBytes1, requireMinimal);
-
-            BigInteger result = BigInteger.ZERO;
+            prepareNumber(stack);
+            result = BigInteger.ZERO;
             if (!number1.equals(number2)) {
                 result = BigInteger.ONE;
             }
-
-            byte[] resultBytes = ByteUtils.encodeMPI(result, false);
-            byte[] reversedResult = ByteUtils.reverseBytes(resultBytes);
-
-            stack.push(reversedResult);
+            processResult(stack);
         }
     }
 
@@ -975,163 +933,89 @@ public class InstructionTable {
         }
     }
 
-    private static class OpLessThanInstruction extends AbstractInstruction {
+    private static class OpLessThanInstruction extends ArithmeticInstruction {
 
         @Override
         public void execute(OperandStack stack) {
             checkOperandStackSize(stack, 2);
-
-            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
-
-            byte[] digitBytes2 = stack.pop();
-            byte[] digitBytes1 = stack.pop();
-
-            BigInteger number2 = convertBigInteger(digitBytes2, requireMinimal);
-            BigInteger number1 = convertBigInteger(digitBytes1, requireMinimal);
-
-            BigInteger result = BigInteger.ZERO;
+            prepareNumber(stack);
+            result = BigInteger.ZERO;
             if (number1.compareTo(number2) < 0) {
                 result = BigInteger.ONE;
             }
-
-            byte[] resultBytes = ByteUtils.encodeMPI(result, false);
-            byte[] reversedResult = ByteUtils.reverseBytes(resultBytes);
-
-            stack.push(reversedResult);
+            processResult(stack);
         }
     }
 
-    private static class OpGreaterThanInstruction extends AbstractInstruction {
+    private static class OpGreaterThanInstruction extends ArithmeticInstruction {
 
         @Override
         public void execute(OperandStack stack) {
             checkOperandStackSize(stack, 2);
-
-            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
-
-            byte[] digitBytes2 = stack.pop();
-            byte[] digitBytes1 = stack.pop();
-
-            BigInteger number2 = convertBigInteger(digitBytes2, requireMinimal);
-            BigInteger number1 = convertBigInteger(digitBytes1, requireMinimal);
-
-            BigInteger result = BigInteger.ZERO;
+            prepareNumber(stack);
+            result = BigInteger.ZERO;
             if (number1.compareTo(number2) > 0) {
                 result = BigInteger.ONE;
             }
-
-            byte[] resultBytes = ByteUtils.encodeMPI(result, false);
-            byte[] reversedResult = ByteUtils.reverseBytes(resultBytes);
-
-            stack.push(reversedResult);
+            processResult(stack);
         }
     }
 
-    private static class OpLessThanOrEqualInstruction extends AbstractInstruction {
+    private static class OpLessThanOrEqualInstruction extends ArithmeticInstruction {
 
         @Override
         public void execute(OperandStack stack) {
             checkOperandStackSize(stack, 2);
-
-            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
-
-            byte[] digitBytes2 = stack.pop();
-            byte[] digitBytes1 = stack.pop();
-
-            BigInteger number2 = convertBigInteger(digitBytes2, requireMinimal);
-            BigInteger number1 = convertBigInteger(digitBytes1, requireMinimal);
-
-            BigInteger result = BigInteger.ZERO;
+            prepareNumber(stack);
+            result = BigInteger.ZERO;
             if (number1.compareTo(number2) <= 0) {
                 result = BigInteger.ONE;
             }
-
-            byte[] resultBytes = ByteUtils.encodeMPI(result, false);
-            byte[] reversedResult = ByteUtils.reverseBytes(resultBytes);
-
-            stack.push(reversedResult);
+            processResult(stack);
         }
     }
 
-    private static class OpGreaterThanOrEqualInstruction extends AbstractInstruction {
+    private static class OpGreaterThanOrEqualInstruction extends ArithmeticInstruction {
 
         @Override
         public void execute(OperandStack stack) {
             checkOperandStackSize(stack, 2);
-
-            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
-
-            byte[] digitBytes2 = stack.pop();
-            byte[] digitBytes1 = stack.pop();
-
-            BigInteger number2 = convertBigInteger(digitBytes2, requireMinimal);
-            BigInteger number1 = convertBigInteger(digitBytes1, requireMinimal);
-
-            BigInteger result = BigInteger.ZERO;
+            prepareNumber(stack);
+            result = BigInteger.ZERO;
             if (number1.compareTo(number2) >= 0) {
                 result = BigInteger.ONE;
             }
-
-            byte[] resultBytes = ByteUtils.encodeMPI(result, false);
-            byte[] reversedResult = ByteUtils.reverseBytes(resultBytes);
-
-            stack.push(reversedResult);
+            processResult(stack);
         }
     }
 
-    private static class OpMinInstruction extends AbstractInstruction {
+    private static class OpMinInstruction extends ArithmeticInstruction {
 
         @Override
         public void execute(OperandStack stack) {
             checkOperandStackSize(stack, 2);
-
-            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
-
-            byte[] digitBytes2 = stack.pop();
-            byte[] digitBytes1 = stack.pop();
-
-            BigInteger number2 = convertBigInteger(digitBytes2, requireMinimal);
-            BigInteger number1 = convertBigInteger(digitBytes1, requireMinimal);
-
-            BigInteger result;
+            prepareNumber(stack);
             if (number1.compareTo(number2) < 0) {
                 result = number1;
             } else {
                 result = number2;
             }
-
-            byte[] resultBytes = ByteUtils.encodeMPI(result, false);
-            byte[] reversedResult = ByteUtils.reverseBytes(resultBytes);
-
-            stack.push(reversedResult);
+            processResult(stack);
         }
     }
 
-    private static class OpMaxInstruction extends AbstractInstruction {
+    private static class OpMaxInstruction extends ArithmeticInstruction {
 
         @Override
         public void execute(OperandStack stack) {
             checkOperandStackSize(stack, 2);
-
-            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
-
-            byte[] digitBytes2 = stack.pop();
-            byte[] digitBytes1 = stack.pop();
-
-            BigInteger number2 = convertBigInteger(digitBytes2, requireMinimal);
-            BigInteger number1 = convertBigInteger(digitBytes1, requireMinimal);
-
-            BigInteger result;
+            prepareNumber(stack);
             if (number1.compareTo(number2) > 0) {
                 result = number1;
             } else {
                 result = number2;
             }
-
-            byte[] resultBytes = ByteUtils.encodeMPI(result, false);
-            byte[] reversedResult = ByteUtils.reverseBytes(resultBytes);
-
-            stack.push(reversedResult);
+            processResult(stack);
         }
     }
 
