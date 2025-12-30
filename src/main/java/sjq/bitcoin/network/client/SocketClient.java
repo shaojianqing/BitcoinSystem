@@ -24,22 +24,23 @@ public class SocketClient implements Runnable {
 
     private static final int MAX_MESSAGE_SIZE = 0x02000000;
 
-    private final Callback callback;
-
     private final Socket socket;
+
+    private final AtomicBoolean running;
+
+    private final InetSocketAddress address;
+
+    private final Callback callback;
 
     private InputStream inputstream;
 
     private OutputStream outputStream;
 
-    private InetSocketAddress address;
-
-    private AtomicBoolean running = new AtomicBoolean(false);
-
     public SocketClient(InetSocketAddress address, Callback callback) throws IOException {
         this.callback = callback;
         this.address = address;
         this.socket = SocketFactory.getDefault().createSocket();
+        this.running = new AtomicBoolean(false);
     }
 
     public boolean openConnection() {

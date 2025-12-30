@@ -28,7 +28,7 @@ public class InstructionTable {
 
     public static final byte[] FALSE = new byte[]{};
 
-    private static Map<ScriptOpCode, Class<? extends Instruction>> instructionMap = new HashMap<>();
+    private static final Map<ScriptOpCode, Class<? extends Instruction>> instructionMap = new HashMap<>();
 
     static {
         instructionMap.put(ScriptOpCode.OP_PUSH_0, OpPushInstruction.class);
@@ -321,13 +321,25 @@ public class InstructionTable {
             }
         }
 
-        protected BigInteger convertBigInteger(final byte[] digits, final boolean requireMinimal) {
-            return convertBigInteger(digits, 4, requireMinimal);
+        protected void checkAlternativeStackSize(OperandStack stack) {
+            if (stack.size()<1) {
+                throw new ScriptException(String.format("script execution exception " +
+                        "with %s, no enough elements in alternative stack", getOpCode()));
+            }
         }
 
-        protected BigInteger convertBigInteger(final byte[] digits, final int maxLength, final boolean requireMinimal) {
-            if (digits.length > maxLength) {
-                throw new ScriptException("Script attempted to use an integer larger than " + maxLength + " bytes");
+        protected Boolean convertBoolean(final byte[] digits) {
+            for (int i=0;i<digits.length;++i) {
+                if (digits[i] != 0) {
+                    return !(i == digits.length - 1 && (digits[i] & 0xFF) == 0x80);
+                }
+            }
+            return false;
+        }
+
+        protected BigInteger convertBigInteger(final byte[] digits, final boolean requireMinimal) {
+            if (digits.length > 4) {
+                throw new ScriptException("Script attempted to use an integer larger than 4 bytes");
             }
 
             if (requireMinimal && digits.length > 0) {
@@ -485,7 +497,12 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 1);
 
+            byte[] data = stack.pop();
+            boolean condition = convertBoolean(data);
+            ControlStack controlStack = runtime.getControlStack();
+            controlStack.push(condition);
         }
     }
 
@@ -493,7 +510,12 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 1);
 
+            byte[] data = stack.pop();
+            boolean condition = (!convertBoolean(data));
+            ControlStack controlStack = runtime.getControlStack();
+            controlStack.push(condition);
         }
     }
 
@@ -501,7 +523,16 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            ControlStack controlStack = runtime.getControlStack();
 
+            if (controlStack.isEmpty()) {
+                throw new ScriptException(String.format("script execution exception " +
+                        "with %s, no IF/NOTIF instruction before ELSE instruction!", getOpCode()));
+            }
+
+            byte[] data = stack.pop();
+            boolean condition = (!convertBoolean(data));
+            controlStack.push(condition);
         }
     }
 
@@ -509,7 +540,13 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            ControlStack controlStack = runtime.getControlStack();
 
+            if (controlStack.isEmpty()) {
+                throw new ScriptException(String.format("script execution exception " +
+                        "with %s, no IF/NOTIF instruction before ELSE instruction!", getOpCode()));
+            }
+            controlStack.pop();
         }
     }
 
@@ -517,7 +554,13 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 1);
 
+            byte[] data = stack.pop();
+            boolean condition = convertBoolean(data);
+            if (!condition) {
+                throw new ScriptException(String.format("This is VERIFY operation code failure, with:%s!", getOpCode()));
+            }
         }
     }
 
@@ -525,7 +568,7 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
-
+            throw new ScriptException(String.format("This is RETURN operation code by script system, with:%s!", getOpCode()));
         }
     }
 
@@ -533,7 +576,11 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 1);
+            OperandStack alternativeStack = runtime.getAlternativeStack();
 
+            byte[] operand = stack.pop();
+            alternativeStack.push(operand);
         }
     }
 
@@ -541,7 +588,11 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            OperandStack alternativeStack = runtime.getAlternativeStack();
+            checkAlternativeStackSize(alternativeStack);
 
+            byte[] operand = alternativeStack.pop();
+            stack.push(operand);
         }
     }
 
@@ -549,7 +600,13 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 1);
 
+            byte[] data = stack.peek();
+            boolean condition = convertBoolean(data);
+            if (condition) {
+                stack.push(data);
+            }
         }
     }
 
@@ -557,7 +614,10 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
-
+            BigInteger stackDepth = BigInteger.valueOf(stack.size());
+            byte[] stackDepthBytes = ByteUtils.encodeMPI(stackDepth, false);
+            byte[] reversedDepthBytes = ByteUtils.reverseBytes(stackDepthBytes);
+            stack.push(reversedDepthBytes);
         }
     }
 
@@ -565,7 +625,9 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 1);
 
+            stack.pop();
         }
     }
 
@@ -573,8 +635,12 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
-            byte[] element = stack.peek();
-            stack.push(element);
+            checkOperandStackSize(stack, 1);
+
+            byte[] oldElement = stack.peek();
+            byte[] newElement = new byte[oldElement.length];
+            System.arraycopy(oldElement, 0, newElement, 0, oldElement.length);
+            stack.push(newElement);
         }
     }
 
@@ -582,7 +648,11 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 2);
 
+            byte[] element = stack.pop();
+            stack.pop();
+            stack.push(element);
         }
     }
 
@@ -590,7 +660,17 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 2);
 
+            byte[] element2 = stack.pop();
+            byte[] element1 = stack.pop();
+
+            stack.push(element1);
+            stack.push(element2);
+
+            byte[] newElement = new byte[element1.length];
+            System.arraycopy(element1, 0, newElement, 0, element1.length);
+            stack.push(newElement);
         }
     }
 
@@ -598,7 +678,23 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 1);
 
+            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
+
+            byte[] digitBytes = stack.pop();
+
+            BigInteger number = convertBigInteger(digitBytes, requireMinimal);
+            int index = number.intValue();
+            if (index<0 || index>=stack.size()) {
+                throw new ScriptException(String.format("script execution exception " +
+                        "with %s, element index is overflow for operand stack!", getOpCode()));
+            }
+
+            byte[] element = stack.get(index);
+            byte[] newElement = new byte[element.length];
+            System.arraycopy(element, 0, newElement, 0, element.length);
+            stack.push(newElement);
         }
     }
 
@@ -606,7 +702,24 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 1);
 
+            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
+
+            byte[] digitBytes = stack.pop();
+
+            BigInteger number = convertBigInteger(digitBytes, requireMinimal);
+            int index = number.intValue();
+            if (index<0 || index>=stack.size()) {
+                throw new ScriptException(String.format("script execution exception " +
+                        "with %s, element index is overflow for operand stack!", getOpCode()));
+            }
+
+            byte[] element = stack.get(index);
+            byte[] newElement = new byte[element.length];
+            System.arraycopy(element, 0, newElement, 0, element.length);
+            stack.push(newElement);
+            stack.remove(index);
         }
     }
 
@@ -614,7 +727,15 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 3);
 
+            byte[] element3 = stack.pop();
+            byte[] element2 = stack.pop();
+            byte[] element1 = stack.pop();
+
+            stack.push(element2);
+            stack.push(element3);
+            stack.push(element1);
         }
     }
 
@@ -634,7 +755,12 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            byte[] element2 = stack.pop();
+            byte[] element1 = stack.pop();
 
+            stack.push(element2);
+            stack.push(element1);
+            stack.push(element2);
         }
     }
 
@@ -642,7 +768,10 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 2);
 
+            stack.pop();
+            stack.pop();
         }
     }
 
@@ -650,14 +779,44 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 2);
 
+            int size = stack.size();
+            byte[] element1 = stack.get(size - 1);
+            byte[] element2 = stack.get(size - 2);
+
+            byte[] newElement1 = new byte[element1.length];
+            byte[] newElement2 = new byte[element2.length];
+
+            System.arraycopy(element1, 0, newElement1, 0, element1.length);
+            System.arraycopy(element2, 0, newElement2, 0, element2.length);
+
+            stack.push(newElement2);
+            stack.push(newElement1);
         }
     }
 
     private static class OpDup3Instruction extends AbstractInstruction {
 
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 3);
 
+            int size = stack.size();
+            byte[] element1 = stack.get(size - 1);
+            byte[] element2 = stack.get(size - 2);
+            byte[] element3 = stack.get(size - 3);
+
+            byte[] newElement1 = new byte[element1.length];
+            byte[] newElement2 = new byte[element2.length];
+            byte[] newElement3 = new byte[element3.length];
+
+            System.arraycopy(element1, 0, newElement1, 0, element1.length);
+            System.arraycopy(element2, 0, newElement2, 0, element2.length);
+            System.arraycopy(element3, 0, newElement3, 0, element3.length);
+
+            stack.push(newElement3);
+            stack.push(newElement2);
+            stack.push(newElement1);
         }
     }
 
@@ -665,7 +824,20 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 4);
 
+            int size = stack.size();
+            byte[] element1 = stack.get(size - 3);
+            byte[] element2 = stack.get(size - 4);
+
+            byte[] newElement1 = new byte[element1.length];
+            byte[] newElement2 = new byte[element2.length];
+
+            System.arraycopy(element1, 0, newElement1, 0, element1.length);
+            System.arraycopy(element2, 0, newElement2, 0, element2.length);
+
+            stack.push(newElement2);
+            stack.push(newElement1);
         }
     }
 
@@ -673,7 +845,21 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 6);
 
+            byte[] element6 = stack.pop();
+            byte[] element5 = stack.pop();
+            byte[] element4 = stack.pop();
+            byte[] element3 = stack.pop();
+            byte[] element2 = stack.pop();
+            byte[] element1 = stack.pop();
+
+            stack.push(element3);
+            stack.push(element4);
+            stack.push(element5);
+            stack.push(element6);
+            stack.push(element1);
+            stack.push(element2);
         }
     }
 
@@ -681,7 +867,17 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 4);
 
+            byte[] element4 = stack.pop();
+            byte[] element3 = stack.pop();
+            byte[] element2 = stack.pop();
+            byte[] element1 = stack.pop();
+
+            stack.push(element3);
+            stack.push(element4);
+            stack.push(element1);
+            stack.push(element2);
         }
     }
 
@@ -689,7 +885,7 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
-
+            throw new ScriptException(String.format("This is disabled operation code as for the script system, with:%s!", getOpCode()));
         }
     }
 
@@ -697,7 +893,7 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
-
+            throw new ScriptException(String.format("This is disabled operation code as for the script system, with:%s!", getOpCode()));
         }
     }
 
@@ -705,7 +901,8 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
-
+            OperationCount operationCount = runtime.getOperationCount();
+            operationCount.increaseOne();
         }
     }
 
@@ -713,7 +910,7 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
-
+            throw new ScriptException(String.format("This is disabled operation code as for the script system, with:%s!", getOpCode()));
         }
     }
 
@@ -721,7 +918,7 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
-
+            throw new ScriptException(String.format("This is disabled operation code as for the script system, with:%s!", getOpCode()));
         }
     }
 
@@ -729,7 +926,12 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 1);
 
+            byte[] data = stack.pop();
+            BigInteger size = BigInteger.valueOf(data.length);
+            byte[] result = ByteUtils.reverseBytes(ByteUtils.encodeMPI(size, false));
+            stack.push(result);
         }
     }
 
@@ -737,7 +939,17 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 1);
 
+            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
+
+            byte[] digitBytes = stack.pop();
+            BigInteger number = convertBigInteger(digitBytes, requireMinimal);
+
+            number = number.add(BigInteger.ONE);
+
+            byte[] result = ByteUtils.reverseBytes(ByteUtils.encodeMPI(number, false));
+            stack.push(result);
         }
     }
 
@@ -745,7 +957,17 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 1);
 
+            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
+
+            byte[] digitBytes = stack.pop();
+            BigInteger number = convertBigInteger(digitBytes, requireMinimal);
+
+            number = number.subtract(BigInteger.ONE);
+
+            byte[] result = ByteUtils.reverseBytes(ByteUtils.encodeMPI(number, false));
+            stack.push(result);
         }
     }
 
@@ -769,7 +991,17 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 1);
 
+            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
+
+            byte[] digitBytes = stack.pop();
+            BigInteger number = convertBigInteger(digitBytes, requireMinimal);
+
+            number = number.negate();
+
+            byte[] result = ByteUtils.reverseBytes(ByteUtils.encodeMPI(number, false));
+            stack.push(result);
         }
     }
 
@@ -777,7 +1009,19 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 1);
 
+            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
+
+            byte[] digitBytes = stack.pop();
+            BigInteger number = convertBigInteger(digitBytes, requireMinimal);
+
+            if (number.signum()<0) {
+                number = number.negate();
+            }
+
+            byte[] result = ByteUtils.reverseBytes(ByteUtils.encodeMPI(number, false));
+            stack.push(result);
         }
     }
 
@@ -785,7 +1029,21 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 1);
 
+            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
+
+            byte[] digitBytes = stack.pop();
+            BigInteger number = convertBigInteger(digitBytes, requireMinimal);
+
+            if (BigInteger.ZERO.equals(number)) {
+                number = BigInteger.ONE;
+            } else {
+                number = BigInteger.ZERO;
+            }
+
+            byte[] result = ByteUtils.reverseBytes(ByteUtils.encodeMPI(number, false));
+            stack.push(result);
         }
     }
 
@@ -793,7 +1051,21 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 1);
 
+            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
+
+            byte[] digitBytes = stack.pop();
+            BigInteger number = convertBigInteger(digitBytes, requireMinimal);
+
+            if (BigInteger.ZERO.equals(number)) {
+                number = BigInteger.ZERO;
+            } else {
+                number = BigInteger.ONE;
+            }
+
+            byte[] result = ByteUtils.reverseBytes(ByteUtils.encodeMPI(number, false));
+            stack.push(result);
         }
     }
 
@@ -929,7 +1201,20 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 2);
 
+            byte[] digitBytes2 = stack.pop();
+            byte[] digitBytes1 = stack.pop();
+
+            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
+
+            BigInteger number2 = convertBigInteger(digitBytes2, requireMinimal);
+            BigInteger number1 = convertBigInteger(digitBytes1, requireMinimal);
+
+            if (!number2.equals(number1)) {
+                throw new ScriptException(String.format("script execution exception " +
+                        "with %s, number equal verify failure", getOpCode()));
+            }
         }
     }
 
@@ -1023,7 +1308,26 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 3);
 
+            byte[] digitBytes3 = stack.pop();
+            byte[] digitBytes2 = stack.pop();
+            byte[] digitBytes1 = stack.pop();
+
+            boolean requireMinimal = runtime.supportVerifyFlag(VerifyFlag.MINIMALDATA);
+            BigInteger number3 = convertBigInteger(digitBytes3, requireMinimal);
+            BigInteger number2 = convertBigInteger(digitBytes2, requireMinimal);
+            BigInteger number1 = convertBigInteger(digitBytes1, requireMinimal);
+
+            BigInteger result = BigInteger.ZERO;
+            if (number2.compareTo(number1) <= 0 && number1.compareTo(number3) < 0) {
+                result = BigInteger.ONE;
+            }
+
+            byte[] resultBytes = ByteUtils.encodeMPI(result, false);
+            byte[] reversedResult = ByteUtils.reverseBytes(resultBytes);
+
+            stack.push(reversedResult);
         }
     }
 
@@ -1031,7 +1335,7 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
-
+            throw new ScriptException(String.format("This is disabled operation code as for the script system, with:%s!", getOpCode()));
         }
     }
 
@@ -1039,14 +1343,14 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
-
+            throw new ScriptException(String.format("This is disabled operation code as for the script system, with:%s!", getOpCode()));
         }
     }
 
     private static class OpOrInstruction extends AbstractInstruction {
 
         public void execute(OperandStack stack) {
-
+            throw new ScriptException(String.format("This is disabled operation code as for the script system, with:%s!", getOpCode()));
         }
     }
 
@@ -1054,7 +1358,7 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
-
+            throw new ScriptException(String.format("This is disabled operation code as for the script system, with:%s!", getOpCode()));
         }
     }
 
@@ -1062,7 +1366,16 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 2);
 
+            byte[] data2 = stack.pop();
+            byte[] data1 = stack.pop();
+
+            if (Arrays.equals(data1, data2)) {
+                stack.push(TRUE);
+            } else {
+                stack.push(FALSE);
+            }
         }
     }
 
@@ -1072,8 +1385,8 @@ public class InstructionTable {
         public void execute(OperandStack stack) {
             checkOperandStackSize(stack, 2);
 
-            byte[] data1 = stack.pop();
             byte[] data2 = stack.pop();
+            byte[] data1 = stack.pop();
 
             boolean equal = Arrays.equals(data1, data2);
             if (!equal) {
@@ -1155,7 +1468,8 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
-
+            int nextLocationInScript = runtime.getNextLocationInScript();
+            runtime.setLastCodeSeparatorLocation(nextLocationInScript);
         }
     }
 
@@ -1179,6 +1493,8 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 2);
+
             boolean success = executeCheckSignature(this, stack);
             if (success) {
                 stack.push(TRUE);
@@ -1192,6 +1508,8 @@ public class InstructionTable {
 
         @Override
         public void execute(OperandStack stack) {
+            checkOperandStackSize(stack, 2);
+
             boolean success = executeCheckSignature(this, stack);
             if (!success) {
                 String message = String.format("script execution exception with %s, check signature and verify failure!", getOpCode());
@@ -1279,19 +1597,26 @@ public class InstructionTable {
         try {
             ScriptProgram runtime = instruction.getRuntime();
             SignatureContext signatureContext = runtime.getSignatureContext();
+            int lastCodeSeparatorLocation = runtime.getLastCodeSeparatorLocation();
+            byte[] programBytes = runtime.program();
 
-            if (operandStack.size() < 2) {
-                throw new ScriptException(String.format("script execution exception " +
-                        "with %s, no enough elements in operand stack", instruction.getOpCode()));
-            }
+            byte[] connectedScript = Arrays.copyOfRange(programBytes, lastCodeSeparatorLocation, programBytes.length);
+
+            boolean requireCanonicalSignature = runtime.supportVerifyFlag(VerifyFlag.STRICTENC) ||
+                    runtime.supportVerifyFlag(VerifyFlag.DERSIG) ||
+                    runtime.supportVerifyFlag(VerifyFlag.LOW_S);
+
+            boolean requireCanonicalSValue = runtime.supportVerifyFlag(VerifyFlag.LOW_S);
 
             byte[] pubKeyBytes = operandStack.pop();
             byte[] signatureBytes = operandStack.pop();
 
-            TransactionSignature transactionSignature = TransactionSignature.decode(signatureBytes, true, true);
+            TransactionSignature transactionSignature = TransactionSignature.decode(signatureBytes,
+                    requireCanonicalSignature, requireCanonicalSValue);
+
             SignatureHashType signatureHashType = transactionSignature.getType();
 
-            Hash hash = signatureContext.generateHashForSignature(signatureHashType);
+            Hash hash = signatureContext.generateHashForSignature(signatureHashType, connectedScript);
             return ECDSATool.verifySignature(hash, pubKeyBytes, transactionSignature);
         } catch (SignatureDecodeException se) {
             throw new ScriptException(String.format("script execution exception " +
@@ -1303,6 +1628,17 @@ public class InstructionTable {
     }
 
     private static void executeCheckMultiSignature(AbstractInstruction instruction, OperandStack operandStack) {
+        ScriptProgram runtime = instruction.getRuntime();
+        SignatureContext signatureContext = runtime.getSignatureContext();
+        int lastCodeSeparatorLocation = runtime.getLastCodeSeparatorLocation();
+        byte[] programBytes = runtime.program();
+
+        byte[] connectedScript = Arrays.copyOfRange(programBytes, lastCodeSeparatorLocation, programBytes.length);
+
+        boolean requireCanonicalSignature = runtime.supportVerifyFlag(VerifyFlag.STRICTENC) ||
+                runtime.supportVerifyFlag(VerifyFlag.DERSIG) ||
+                runtime.supportVerifyFlag(VerifyFlag.LOW_S);
+
 
     }
 }

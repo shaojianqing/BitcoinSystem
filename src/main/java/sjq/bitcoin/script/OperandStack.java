@@ -23,6 +23,20 @@ public class OperandStack {
         return stack.peek();
     }
 
+    public byte[] get(int index) {
+        if (index>=stack.size()) {
+            throw new ScriptException("operand stack is overflow!");
+        }
+        return stack.get(index);
+    }
+
+    public void remove(int index) {
+        if (index>=stack.size()) {
+            throw new ScriptException("operand stack is overflow!");
+        }
+        stack.remove(index);
+    }
+
     public boolean peekSuccess() {
         stack.peek();
         return true;

@@ -3,13 +3,9 @@ package sjq.bitcoin.core;
 import sjq.bitcoin.blockchain.Blockchain;
 import sjq.bitcoin.context.Autowire;
 import sjq.bitcoin.network.PeerHandler;
-import sjq.bitcoin.network.PeerManager;
 import sjq.bitcoin.network.PeerDiscovery;
 
 public class BitcoinCore {
-
-    @Autowire
-    private PeerManager peerManager;
 
     @Autowire
     private PeerHandler peerHandler;

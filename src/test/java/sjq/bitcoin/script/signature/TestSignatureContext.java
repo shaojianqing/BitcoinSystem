@@ -1,6 +1,5 @@
 package sjq.bitcoin.script.signature;
 
-import org.bouncycastle.util.encoders.Hex;
 import org.junit.Assert;
 import org.junit.Test;
 import sjq.bitcoin.constant.Constants;
@@ -10,7 +9,6 @@ import sjq.bitcoin.crypto.transaction.TransactionSignature;
 import sjq.bitcoin.hash.Hash;
 import sjq.bitcoin.message.TransactionMessage;
 import sjq.bitcoin.message.convertor.TransactionConvertor;
-import sjq.bitcoin.message.data.TransactionInput;
 import sjq.bitcoin.service.data.TransactionData;
 import sjq.bitcoin.utility.HexUtils;
 
@@ -40,10 +38,9 @@ public class TestSignatureContext {
 
         byte[] connectedScriptPubKeyBytes = HexUtils.parseHex(connectedScriptPubKey);
 
-        SignatureContext signatureContext = new SignatureContext(
-                transactionData, 0, connectedScriptPubKeyBytes);
+        SignatureContext signatureContext = SignatureContext.build(transactionData, 0);
 
-        Hash signatureHash = signatureContext.generateHashForSignature(signatureHashType);
+        Hash signatureHash = signatureContext.generateHashForSignature(signatureHashType, connectedScriptPubKeyBytes);
         String signatureHashString = signatureHash.hexValue();
 
         Assert.assertEquals("signature hash is not correct!", expectedSignatureHash, signatureHashString);

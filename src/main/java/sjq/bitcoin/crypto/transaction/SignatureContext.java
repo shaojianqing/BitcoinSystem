@@ -27,15 +27,16 @@ public class SignatureContext {
 
     private final Integer scriptSignatureIndex;
 
-    private final byte[] connectScriptData;
-
-    public SignatureContext(TransactionData transaction, Integer scriptSignatureIndex, byte[] connectScriptData) {
+    private SignatureContext(TransactionData transaction, Integer scriptSignatureIndex) {
         this.transaction = transaction;
         this.scriptSignatureIndex = scriptSignatureIndex;
-        this.connectScriptData = connectScriptData;
     }
 
-    public Hash generateHashForSignature(SignatureHashType hashType) throws IOException {
+    public static SignatureContext build(TransactionData transaction, Integer scriptSignatureIndex) {
+        return new SignatureContext(transaction, scriptSignatureIndex);
+    }
+
+    public Hash generateHashForSignature(SignatureHashType hashType,  byte[] connectScriptData) throws IOException {
 
         TransactionMessage transactionMessage = TransactionConvertor.convertTransactionMessageFromData(transaction);
 
@@ -91,7 +92,7 @@ public class SignatureContext {
         byte[] transactionBytes = transactionMessage.serializeMessage();
         ByteBuffer buffer = ByteBuffer.allocate(transactionBytes.length + 4);
         buffer.put(transactionBytes);
-        int signatureHashTypeValue = hashType.value & 0x000000FF;
+        int signatureHashTypeValue = (hashType.value & 0x000000FF);
         ByteUtils.writeInt32LE(signatureHashTypeValue, buffer);
 
         byte[] hashBytes = Hash.calculateTwice(buffer.array());

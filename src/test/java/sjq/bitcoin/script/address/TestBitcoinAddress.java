@@ -51,7 +51,7 @@ public class TestBitcoinAddress {
         byte[] scriptPubKey = HexUtils.parseHex(pubKeyString);
         ScriptProgram program = ScriptProgram.build(scriptPubKey);
 
-        BitcoinAddress address = program.getDestAddress(BitcoinNetwork.MAINNET);
+        BitcoinAddress address = program.getDestinationAddress(BitcoinNetwork.MAINNET);
         Logger.info("The bitcoin address:%s", address.getStringFormat());
 
         return StringUtils.equals(address.getStringFormat(), expectedAddress);

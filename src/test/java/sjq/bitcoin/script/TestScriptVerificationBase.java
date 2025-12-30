@@ -18,10 +18,7 @@ public abstract class TestScriptVerificationBase {
             TransactionMessage transactionMessage = TransactionMessage.read(transactionBuffer, Constants.VERSION_CURRENT);
             TransactionData transactionData = TransactionConvertor.convertTransactionDataFromMessage(transactionMessage);
 
-            byte[] connectedScriptPubKeyBytes = HexUtils.parseHex(connectedScriptPubKey);
-
-            SignatureContext signatureContext = new SignatureContext(
-                    transactionData, 0, connectedScriptPubKeyBytes);
+            SignatureContext signatureContext = SignatureContext.build(transactionData, 0);
 
             byte[] signatureBytes = HexUtils.parseHex(scriptSignature);
             ScriptProgram signatureProgram = ScriptProgram.build(signatureBytes);

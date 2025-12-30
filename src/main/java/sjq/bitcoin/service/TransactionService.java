@@ -171,9 +171,7 @@ public class TransactionService {
                break;
            }
 
-           byte[] connectScriptPubKey = transactionOutputData.getScriptPubKey();
-           SignatureContext signatureContext = new SignatureContext(transactionData, index, connectScriptPubKey);
-
+           SignatureContext signatureContext = SignatureContext.build(transactionData, index);
             verifyStatus = transactionInputData.verify(signatureContext, transactionOutputData);
            if (!verifyStatus) {
                transactionDao.updateTransactionVerifyStatus(transactionData.getTransactionHash().hexValue(),
@@ -265,13 +263,13 @@ public class TransactionService {
                                                           TransactionOutputData transactionOutputData) throws Exception {
         ScriptProgram scriptProgram = ScriptProgram.build(transactionOutputData.getScriptPubKey());
         BitcoinNetwork network = NetworkConfiguration.getConfiguration().getBitcoinNetwork();
-        BitcoinAddress destAddress = scriptProgram.getDestAddress(network);
+        BitcoinAddress destinationAddress = scriptProgram.getDestinationAddress(network);
 
         TransactionAddress transactionAddress = new TransactionAddress();
         transactionAddress.setTransactionHash(transactionData.getTransactionHash().hexValue());
         transactionAddress.setTransactionOutputIndex(transactionOutputData.getTransactionOutputIndex());
-        transactionAddress.setAddress(destAddress.getStringFormat());
-        transactionAddress.setAddressType(destAddress.getScriptType().getName());
+        transactionAddress.setAddress(destinationAddress.getStringFormat());
+        transactionAddress.setAddressType(destinationAddress.getScriptType().getName());
         transactionAddress.setCoinValue(transactionOutputData.getCoinValue().getValue());
         return transactionAddress;
     }

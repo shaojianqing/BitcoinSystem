@@ -8,7 +8,7 @@ import sjq.bitcoin.server.APIServer;
 import sjq.bitcoin.storage.manager.DatabaseManager;
 import sjq.bitcoin.wallet.WalletCore;
 
-public class Application {
+public class BitcoinSystem {
 
     @Autowire
     private GuiSystem guiSystem;
@@ -25,21 +25,21 @@ public class Application {
     @Autowire
     private DatabaseManager databaseManager;
 
-    public void initialize() {
+    private void initialize() {
         this.bitcoinCore.initialize();
         this.databaseManager.initialize();
         this.guiSystem.initialize();
     }
 
-    public void start() {
+    private void start() {
         this.guiSystem.start();
         this.apiServer.start();
         this.bitcoinCore.start();
     }
 
     public static void main(String[] args) {
-        Application application = Context.build(Application.class);
-        application.initialize();
-        application.start();
+        BitcoinSystem bitcoinSystem = Context.build(BitcoinSystem.class);
+        bitcoinSystem.initialize();
+        bitcoinSystem.start();
     }
 }

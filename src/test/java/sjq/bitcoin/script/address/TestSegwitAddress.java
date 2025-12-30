@@ -24,7 +24,7 @@ public class TestSegwitAddress {
         byte[] pukKeyBytes = HexUtils.parseHex(originScriptPubKeyP2WH);
         ScriptProgram program = ScriptProgram.build(pukKeyBytes);
 
-        BitcoinAddress address = program.getDestAddress(BitcoinNetwork.MAINNET);
+        BitcoinAddress address = program.getDestinationAddress(BitcoinNetwork.MAINNET);
         Logger.info("The formatted address:%s", address.getStringFormat());
 
         Assert.assertEquals("The Seqwit Address is not expected!", expectedSegwitAddressP2WH, address.getStringFormat());
@@ -36,7 +36,7 @@ public class TestSegwitAddress {
         byte[] pukKeyBytes = HexUtils.parseHex(originScriptPubKeyP2TR);
         ScriptProgram program = ScriptProgram.build(pukKeyBytes);
 
-        BitcoinAddress address = program.getDestAddress(BitcoinNetwork.MAINNET);
+        BitcoinAddress address = program.getDestinationAddress(BitcoinNetwork.MAINNET);
         Logger.info("The formatted address:%s", address.getStringFormat());
 
         Assert.assertEquals("The Seqwit Address is not expected!", expectedSegwitAddressP2TR, address.getStringFormat());

@@ -17,12 +17,25 @@ public class ScriptProgram {
 
     private final List<Instruction> instructions;
 
+    private final ControlStack controlStack;
+
+    private final OperandStack alternativeStack;
+
+    private final OperationCount operationCount;
+
     private SignatureContext signatureContext;
 
     private Set<VerifyFlag> verifyFlagSet;
 
+    private int nextLocationInScript = 0;
+
+    private int lastCodeSeparatorLocation = 0;
+
     private ScriptProgram(List<Instruction> instructions) {
         this.instructions = instructions;
+        this.controlStack = new ControlStack();
+        this.alternativeStack = new OperandStack();
+        this.operationCount = new OperationCount();
     }
 
     public static ScriptProgram build() {
@@ -79,11 +92,22 @@ public class ScriptProgram {
 
     private void executeScript(OperandStack stack) {
         int index = 0;
+
+        nextLocationInScript = 0;
+        lastCodeSeparatorLocation = 0;
         while(index<instructions.size()) {
             Instruction instruction = instructions.get(index);
-            instruction.execute(stack);
+            if (continueExecute()) {
+                nextLocationInScript += instruction.getInstructionSize();
+                instruction.execute(stack);
+            }
             index++;
         }
+    }
+
+    private boolean continueExecute() {
+        boolean stopExecute = controlStack.contain(false);
+        return (!stopExecute);
     }
 
     public ScriptProgram data(byte[] data) throws Exception {
@@ -135,7 +159,7 @@ public class ScriptProgram {
         return false;
     }
 
-    public BitcoinAddress getDestAddress(BitcoinNetwork network) {
+    public BitcoinAddress getDestinationAddress(BitcoinNetwork network) {
         if (isP2SH()) {
             byte[] addressBytes = extractHashFromP2SH();
             return LegacyAddress.fromScriptHash(network, addressBytes);
@@ -340,11 +364,31 @@ public class ScriptProgram {
         return builder.toString();
     }
 
-    public List<Instruction> getInstructions() {
-        return instructions;
+    public ControlStack getControlStack() {
+        return controlStack;
+    }
+
+    public OperandStack getAlternativeStack() {
+        return alternativeStack;
+    }
+
+    public OperationCount getOperationCount() {
+        return operationCount;
     }
 
     public SignatureContext getSignatureContext() {
         return signatureContext;
+    }
+
+    public int getNextLocationInScript() {
+        return nextLocationInScript;
+    }
+
+    public int getLastCodeSeparatorLocation() {
+        return lastCodeSeparatorLocation;
+    }
+
+    public void setLastCodeSeparatorLocation(int lastCodeSeparatorLocation) {
+        this.lastCodeSeparatorLocation = lastCodeSeparatorLocation;
     }
 }

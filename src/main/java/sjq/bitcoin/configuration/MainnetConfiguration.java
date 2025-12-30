@@ -41,16 +41,21 @@ public class MainnetConfiguration extends NetworkConfiguration {
 
     private static final byte[] GENESIS_TRANSACTION_OUTPUT_SCRIPT = HexUtils.parseHex("04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f");
 
-    private static final List<String> DNS_SEED_LIST = new ArrayList<String>();
+    private static final List<String> DNS_SEED_LIST = new ArrayList<>();
 
     public MainnetConfiguration() {
         initDnsSeedList();
     }
 
     private void initDnsSeedList() {
-        DNS_SEED_LIST.add("dnsseed.emzy.de");
         DNS_SEED_LIST.add("seed.bitcoin.sipa.be");
+        DNS_SEED_LIST.add("dnsseed.bluematt.me");
         DNS_SEED_LIST.add("dnsseed.bitcoin.dashjr.org");
+        DNS_SEED_LIST.add("seed.bitcoinstats.com");
+        DNS_SEED_LIST.add("seed.btc.petertodd.org");
+        DNS_SEED_LIST.add("dnsseed.emzy.de");
+        DNS_SEED_LIST.add("seed.bitcoin.wiz.biz");
+        DNS_SEED_LIST.add("seed.mainnet.achownodes.xyz");
     }
 
     @Override

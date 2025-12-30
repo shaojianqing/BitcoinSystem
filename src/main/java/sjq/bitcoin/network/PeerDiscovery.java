@@ -1,6 +1,6 @@
 package sjq.bitcoin.network;
 
-
+import org.apache.commons.collections4.CollectionUtils;
 import sjq.bitcoin.configuration.NetworkConfiguration;
 import sjq.bitcoin.context.Autowire;
 import sjq.bitcoin.logger.Logger;
@@ -101,7 +101,6 @@ public class PeerDiscovery {
                 }
             } catch (Exception e) {
                 Logger.error("refresh seed peer task error:%s!", e);
-                e.printStackTrace();
             }
         }
     }
@@ -125,7 +124,7 @@ public class PeerDiscovery {
         @Override
         public void run() {
             List<PeerNode> peerNodeList = peerManager.getConnectedPeerNodeList();
-            if (peerNodeList!=null && peerNodeList.size()>0) {
+            if (CollectionUtils.isNotEmpty(peerNodeList)) {
                 peerNodeList.forEach(PeerNode::sendVersionReqMessage);
             }
         }
@@ -142,7 +141,7 @@ public class PeerDiscovery {
         @Override
         public void run() {
             try {
-                if (addressList != null && addressList.size()>0) {
+                if (CollectionUtils.isNotEmpty(addressList)) {
                     int limit = peerManager.getNeedConnectionCount();
                     limit = Math.min(limit, addressList.size());
 
@@ -164,7 +163,6 @@ public class PeerDiscovery {
                 }
             } catch (Exception e) {
                 Logger.error("sync peer address task error:%s!", e);
-                e.printStackTrace();
             }
         }
     }

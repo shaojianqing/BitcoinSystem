@@ -24,6 +24,10 @@ public class TestScriptProgram {
 
     private static final String P2PKHSignatureFormat = "PUSH(71) [304402205dc908090ba4aa5ba1e527f6811177a7c3c5a5562453159d8673fd8def924eec022035327b01c1e7908a1dad21f60dde4c9762a7f40a257a2870ed5b0af78457450701] PUSH(33) [027e8acffa97f47f0318524cc4cf16e25da5e0a755e43f6b9544b81916922b08af]";
 
+    private static final String P2SHScriptString = "5121022afc20bf379bc96a2f4e9e63ffceb8652b2b6a097f63fbee6ecec2a49a48010e2103a767c7221e9f15f870f1ad9311f5ab937d79fcaeee15bb2c722bca515581b4c052ae";
+
+    private static final String P2SHScriptFormat = "1 PUSH(33) [022afc20bf379bc96a2f4e9e63ffceb8652b2b6a097f63fbee6ecec2a49a48010e] PUSH(33) [03a767c7221e9f15f870f1ad9311f5ab937d79fcaeee15bb2c722bca515581b4c0] 2 CHECKMULTISIG";
+
     @Test
     public void parseScriptPubKeyP2PK() throws Exception {
         boolean success = verifyParseScript(P2PKPubKeyString, P2PKPubKeyFormat);
@@ -46,6 +50,12 @@ public class TestScriptProgram {
     public void parseScriptSignatureP2PKH() throws Exception {
         boolean success = verifyParseScript(P2PKHSignatureString, P2PKHSignatureFormat);
         Assert.assertTrue("P2PKH script signature not equal!", success);
+    }
+
+    @Test
+    public void parseScriptDataP2SH() throws Exception {
+        boolean success = verifyParseScript(P2SHScriptString, P2SHScriptFormat);
+        Assert.assertTrue("P2SH script data not equal!", success);
     }
 
     @Test
@@ -78,9 +88,9 @@ public class TestScriptProgram {
 
     }
 
-    private boolean verifyParseScript(String pubKeyString, String pubKeyFormat) throws Exception {
-        byte[] scriptPubKey = HexUtils.parseHex(pubKeyString);
-        ScriptProgram program = ScriptProgram.build(scriptPubKey);
+    private boolean verifyParseScript(String scriptString, String pubKeyFormat) throws Exception {
+        byte[] scriptBytes = HexUtils.parseHex(scriptString);
+        ScriptProgram program = ScriptProgram.build(scriptBytes);
         String actualScriptFormat = program.format();
 
         Logger.info("The formatted script:%s", actualScriptFormat);

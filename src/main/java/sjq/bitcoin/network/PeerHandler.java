@@ -131,7 +131,6 @@ public class PeerHandler {
             Logger.info("finish processing %s message from peer address:%s", message.getCommand(), node.getAddress());
         } catch (Exception e) {
             Logger.error("processing peer message error:%s, peer address:%s", e, node.getAddress());
-            e.printStackTrace();
         }
     }
 }

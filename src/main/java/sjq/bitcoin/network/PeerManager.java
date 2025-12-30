@@ -1,5 +1,6 @@
 package sjq.bitcoin.network;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import sjq.bitcoin.blockchain.Blockchain;
 import sjq.bitcoin.constant.Constants;
@@ -63,9 +64,9 @@ public class PeerManager {
     public PeerNode selectSyncNode(long peerSelectIndex) {
         Collection<PeerNode> activePeerNodeList = peerMap.values().
                 stream().filter((peer) -> PeerNode.ACKNOWLEDGE.equals(peer.getStatus())).collect(Collectors.toList());
-        if (activePeerNodeList.size()>0) {
+        if (CollectionUtils.isNotEmpty(activePeerNodeList)) {
             Object[] activePeerNodes = activePeerNodeList.toArray();
-            int position = (int)peerSelectIndex%activePeerNodeList.size();
+            int position = (int)peerSelectIndex % activePeerNodeList.size();
             return (PeerNode)activePeerNodes[position];
         }
         return null;
